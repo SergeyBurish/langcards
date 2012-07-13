@@ -3,8 +3,17 @@ package LangCards;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 public class LCui extends JFrame
 					implements ActionListener {
@@ -17,6 +26,10 @@ public class LCui extends JFrame
 	JMenuItem menuItem;
 	
 	JFileChooser fc = new JFileChooser();
+	
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	DocumentBuilder parser;
+	Document doc;
 	
 	public LCui() {
 		setTitle("Language Cards");
@@ -45,7 +58,6 @@ public class LCui extends JFrame
 		);
 		
 		CreateMenu();
-		
 		pack();
 	}
 	
@@ -80,8 +92,33 @@ public class LCui extends JFrame
         if (actionCmd.equals("New")) {
         	fc.showDialog(this, "New");
         } else if (actionCmd.equals("Open")) {
-        	fc.showOpenDialog(this);
+        	int ret = fc.showOpenDialog(this);
+        	
+        	if (ret == JFileChooser.APPROVE_OPTION) {
+        		File file = fc.getSelectedFile();
+        		
+        		try {
+					ParseFile(file);
+				} catch (ParserConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SAXException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
         }
+	}
+	
+	private void ParseFile(File aFile) throws ParserConfigurationException, SAXException, IOException {
+		parser = factory.newDocumentBuilder();
+		doc = parser.parse(aFile);
 		
+		Node node = doc.getDocumentElement();
+		String root = node.getNodeName();
+		input.setText(root);
 	}
 }
