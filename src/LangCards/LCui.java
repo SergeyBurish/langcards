@@ -10,9 +10,21 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.Comment;
 import org.xml.sax.SAXException;
 
 public class LCui extends JFrame
@@ -90,7 +102,22 @@ public class LCui extends JFrame
 		
         String actionCmd = arg0.getActionCommand();
         if (actionCmd.equals("New")) {
-        	fc.showDialog(this, "New");
+        	//fc.showDialog(this, "New");
+        	try {
+				CreateFile();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TransformerConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TransformerFactoryConfigurationError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } else if (actionCmd.equals("Open")) {
         	int ret = fc.showOpenDialog(this);
         	
@@ -111,6 +138,41 @@ public class LCui extends JFrame
 				}
         	}
         }
+	}
+	
+	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+		parser = factory.newDocumentBuilder();
+		doc = parser.newDocument();
+		
+		// create root
+		Element root = doc.createElement("rootTT");
+		doc.appendChild(root);
+		
+		// create a comment
+		Comment comment = doc.createComment("This is commentTT");
+		root.appendChild(comment);
+		
+		// create child element 1
+		Element childElement = doc.createElement("Child1");
+		childElement.setAttribute("attribute1","The val of Attribute 1");
+		root.appendChild(childElement);		
+		
+		// create child element 2
+		childElement = doc.createElement("Child2");
+		childElement.setAttribute("attr2","The val of Attribute 2");
+		childElement.setTextContent("ZZZxxxccc Val");
+		root.appendChild(childElement);
+		
+		//  Create transformer
+		Transformer tFormer = TransformerFactory.newInstance().newTransformer();
+		
+		//  Output Types (text/xml/html)
+		tFormer.setOutputProperty(OutputKeys.METHOD, "xml");
+		
+		//  Write the document to a file
+		Source source = new DOMSource(doc);
+		Result result = new StreamResult(new File("Test01.xml"));
+		tFormer.transform(source, result);
 	}
 	
 	private void ParseFile(File aFile) throws ParserConfigurationException, SAXException, IOException {
