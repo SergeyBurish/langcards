@@ -27,8 +27,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Comment;
 import org.xml.sax.SAXException;
 
+import cardSet.CardSet;
+
 public class LCui extends JFrame
 					implements ActionListener {
+	GroupLayout layout;
 	
 	private JTextField input = new JTextField("Test", 5);
 	private JLabel label = new JLabel();
@@ -40,20 +43,25 @@ public class LCui extends JFrame
 	JFileChooser fc = new JFileChooser();
 	
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	DocumentBuilder parser;
+	public static DocumentBuilder parser;
 	Document doc;
 	
 	public LCui() {
 		setTitle("Language Cards");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// init layout 
+		layout = new GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setAutoCreateContainerGaps(true);
+
+		if ( !InitParser() ) {
+			ShowErr("fail init xml parser");
+			return;
+		}
 		
 		label.setText("label AAAAAAA");
-		
-		GroupLayout layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
-		
-		layout.setAutoCreateContainerGaps(true);
-		
+				
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 			.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -95,14 +103,63 @@ public class LCui extends JFrame
 		
 		this.setJMenuBar(menuBar);
 	}
+	
+	private boolean InitParser() {
+		try {
+			parser = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	private void ShowErr(String err) {
+		setTitle("Error Language Cards");
+		
+		this.setJMenuBar(null); // remove menu
+		
+		getContentPane().removeAll(); // remove all ui controls
+		
+		label.setText(err);
+		
+		layout.setHorizontalGroup(
+			layout.createSequentialGroup()
+			.addComponent(label)
+		);
+				
+		layout.setVerticalGroup(
+			layout.createSequentialGroup()
+			.addComponent(label)
+		);
+
+		pack();
+	}
 
 	// ActionListener
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		try {
+			actionPerformedThrow(arg0);
+		} catch (SAXException e) {
+			e.printStackTrace();
+			ShowErr(e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			ShowErr(e.getMessage());
+		}
+	}
+
+	
+	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException {
 		
         String actionCmd = arg0.getActionCommand();
         if (actionCmd.equals("New")) {
         	//fc.showDialog(this, "New");
+        	
+        	CardSet cs = CreateSet(null);
+        	cs.f();
+        	
         	try {
 				CreateFile();
 			} catch (ParserConfigurationException e) {
@@ -124,6 +181,9 @@ public class LCui extends JFrame
         	if (ret == JFileChooser.APPROVE_OPTION) {
         		File file = fc.getSelectedFile();
         		
+        		CardSet cs = CreateSet(file);
+        		cs.f();
+        		
         		try {
 					ParseFile(file);
 				} catch (ParserConfigurationException e) {
@@ -138,6 +198,17 @@ public class LCui extends JFrame
 				}
         	}
         }
+	}
+	
+	private CardSet CreateSet(File file) throws SAXException, IOException {
+		CardSet cs = null;
+		if (file != null) {
+			cs = new CardSet(file);
+		} else {
+			cs = new CardSet();
+		}
+		
+		return cs;
 	}
 	
 	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
