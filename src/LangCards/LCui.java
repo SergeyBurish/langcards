@@ -1,6 +1,7 @@
 package LangCards;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,10 +29,13 @@ import org.w3c.dom.Comment;
 import org.xml.sax.SAXException;
 
 import cardSet.CardSet;
+import editView.EditView;
 
 public class LCui extends JFrame
 					implements ActionListener {
-	GroupLayout layout;
+	public static LCui mainFrame;
+	public Container iContainer;
+	public GroupLayout iLayout;
 	
 	private JTextField input = new JTextField("Test", 5);
 	private JLabel label = new JLabel();
@@ -43,17 +47,19 @@ public class LCui extends JFrame
 	JFileChooser fc = new JFileChooser();
 	
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	public static DocumentBuilder parser;
+	public DocumentBuilder parser;
 	Document doc;
 	
 	public LCui() {
 		setTitle("Language Cards");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultLookAndFeelDecorated(true);
 		
-		// init layout 
-		layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setAutoCreateContainerGaps(true);
+		// init layout
+		iContainer = getContentPane();
+		iLayout = new GroupLayout(iContainer);//EditView
+		iContainer.setLayout(iLayout);
+		iLayout.setAutoCreateContainerGaps(true);
 
 		if ( !InitParser() ) {
 			ShowErr("fail init xml parser");
@@ -62,19 +68,19 @@ public class LCui extends JFrame
 		
 		label.setText("label AAAAAAA");
 				
-		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-			.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-			.addComponent(label)
+		iLayout.setHorizontalGroup(
+				iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(label)
 		);
 		
-		layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {label, input});
+		iLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {label, input});
 		
-		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-			.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-			.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-			.addComponent(label)
+		iLayout.setVerticalGroup(
+				iLayout.createSequentialGroup()
+				.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addComponent(label)
 		);
 		
 		CreateMenu();
@@ -82,8 +88,8 @@ public class LCui extends JFrame
 	}
 	
 	public static void main(String[] args) {
-		LCui ui = new LCui();
-		ui.setVisible(true);
+		mainFrame = new LCui();
+		mainFrame.setVisible(true);
 	}
 	
 	private void CreateMenu() {
@@ -119,18 +125,18 @@ public class LCui extends JFrame
 		
 		this.setJMenuBar(null); // remove menu
 		
-		getContentPane().removeAll(); // remove all ui controls
+		iContainer.removeAll(); // remove all ui controls
 		
 		label.setText(err);
 		
-		layout.setHorizontalGroup(
-			layout.createSequentialGroup()
-			.addComponent(label)
+		iLayout.setHorizontalGroup(
+				iLayout.createSequentialGroup()
+				.addComponent(label)
 		);
 				
-		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-			.addComponent(label)
+		iLayout.setVerticalGroup(
+				iLayout.createSequentialGroup()
+				.addComponent(label)
 		);
 
 		pack();
@@ -157,8 +163,11 @@ public class LCui extends JFrame
         if (actionCmd.equals("New")) {
         	//fc.showDialog(this, "New");
         	
-        	CardSet cs = CreateSet(null);
+        	CardSet cs = new CardSet();
         	cs.f();
+        	
+        	EditView editView = new EditView(cs);
+        	editView.Show();
         	
         	try {
 				CreateFile();
@@ -181,7 +190,7 @@ public class LCui extends JFrame
         	if (ret == JFileChooser.APPROVE_OPTION) {
         		File file = fc.getSelectedFile();
         		
-        		CardSet cs = CreateSet(file);
+        		CardSet cs = new CardSet(file);
         		cs.f();
         		
         		try {
@@ -199,18 +208,7 @@ public class LCui extends JFrame
         	}
         }
 	}
-	
-	private CardSet CreateSet(File file) throws SAXException, IOException {
-		CardSet cs = null;
-		if (file != null) {
-			cs = new CardSet(file);
-		} else {
-			cs = new CardSet();
-		}
 		
-		return cs;
-	}
-	
 	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		parser = factory.newDocumentBuilder();
 		doc = parser.newDocument();
