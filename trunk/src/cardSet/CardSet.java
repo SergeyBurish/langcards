@@ -10,18 +10,25 @@ import LangCards.LCui;
 
 public class CardSet {
 	private Document iDoc;
+	private String iName;
 	
 	public CardSet() {
 		// new
-		iDoc = LCui.parser.newDocument();
+		iName = "New set";
+		iDoc = LCui.mainFrame.parser.newDocument();
 		iDoc.createElement("rootTT");
 	}
 	
 	public CardSet(File file) throws SAXException, IOException {
-		iDoc = LCui.parser.parse(file);
+		iName = file.getName();
+		iDoc = LCui.mainFrame.parser.parse(file);
 		iDoc.createElement("rootTT");
 	}
 
 	public void f() {
+	}
+
+	public String Name() {
+		return iName;
 	}
 }
