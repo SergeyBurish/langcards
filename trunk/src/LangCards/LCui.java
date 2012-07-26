@@ -57,7 +57,7 @@ public class LCui extends JFrame
 		
 		// init layout
 		iContainer = getContentPane();
-		iLayout = new GroupLayout(iContainer);//EditView
+		iLayout = new GroupLayout(iContainer);
 		iContainer.setLayout(iLayout);
 		iLayout.setAutoCreateContainerGaps(true);
 
@@ -158,18 +158,17 @@ public class LCui extends JFrame
 
 	
 	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException {
-		
-        String actionCmd = arg0.getActionCommand();
-        if (actionCmd.equals("New")) {
-        	//fc.showDialog(this, "New");
-        	
-        	CardSet cs = new CardSet();
-        	cs.f();
-        	
-        	EditView editView = new EditView(cs);
-        	editView.Show();
-        	
-        	try {
+		String actionCmd = arg0.getActionCommand();
+		if (actionCmd.equals("New")) {
+			//fc.showDialog(this, "New");
+			
+			CardSet cs = new CardSet();
+			cs.f();
+			
+			EditView editView = new EditView(cs);
+			editView.Show();
+			
+			try {
 				CreateFile();
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
@@ -184,16 +183,16 @@ public class LCui extends JFrame
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        } else if (actionCmd.equals("Open")) {
-        	int ret = fc.showOpenDialog(this);
-        	
-        	if (ret == JFileChooser.APPROVE_OPTION) {
-        		File file = fc.getSelectedFile();
-        		
-        		CardSet cs = new CardSet(file);
-        		cs.f();
-        		
-        		try {
+		} else if (actionCmd.equals("Open")) {
+			int ret = fc.showOpenDialog(this);
+			
+			if (ret == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				
+				CardSet cs = new CardSet(file);
+				cs.f();
+				
+				try {
 					ParseFile(file);
 				} catch (ParserConfigurationException e) {
 					// TODO Auto-generated catch block
@@ -205,8 +204,8 @@ public class LCui extends JFrame
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-        	}
-        }
+			}
+		}
 	}
 		
 	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
