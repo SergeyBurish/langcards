@@ -1,6 +1,5 @@
 package LangCards;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,8 +53,9 @@ public class LCui extends JFrame
 		setTitle("Language Cards");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//setDefaultLookAndFeelDecorated(true);
-		
-		// init layout
+	}
+	
+	public void Init() {
 		iContainer = getContentPane();
 		iLayout = new GroupLayout(iContainer);
 		iContainer.setLayout(iLayout);
@@ -66,29 +66,16 @@ public class LCui extends JFrame
 			return;
 		}
 		
-		label.setText("label AAAAAAA");
-				
-		iLayout.setHorizontalGroup(
-				iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(label)
-		);
-		
-		iLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {label, input});
-		
-		iLayout.setVerticalGroup(
-				iLayout.createSequentialGroup()
-				.addComponent(input, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(label)
-		);
+		// load the last set, otherwise create new
+		NewSet();
 		
 		CreateMenu();
-		pack();
+		pack();		
 	}
 	
 	public static void main(String[] args) {
 		mainFrame = new LCui();
+		mainFrame.Init();
 		mainFrame.setVisible(true);
 	}
 	
@@ -162,11 +149,7 @@ public class LCui extends JFrame
 		if (actionCmd.equals("New")) {
 			//fc.showDialog(this, "New");
 			
-			CardSet cs = new CardSet();
-			cs.f();
-			
-			EditView editView = new EditView(cs);
-			editView.Show();
+			NewSet();
 			
 			try {
 				CreateFile();
@@ -206,6 +189,13 @@ public class LCui extends JFrame
 				}
 			}
 		}
+	}
+	
+	private void NewSet() {
+		CardSet cs = new CardSet();
+		
+		EditView editView = new EditView(cs);
+		editView.Show();
 	}
 		
 	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
