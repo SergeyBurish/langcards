@@ -11,9 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.LayoutStyle;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 public class NewCardDlg extends JDialog {
-	JTree tree = new JTree();
+	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("New Card");
+	DefaultTreeModel model = new DefaultTreeModel(rootNode);
+	JTree tree = new JTree(model);
 	JButton ok = new JButton("OK");
 	JLabel lbl = new JLabel("Test");
 	
@@ -56,5 +60,16 @@ public class NewCardDlg extends JDialog {
 		});
 		
 		pack();
+	}
+	
+	public void SetLanguages(String lang1, String lang2) {
+		DefaultMutableTreeNode lng1Node = new DefaultMutableTreeNode(lang1);
+		lng1Node.add(new DefaultMutableTreeNode("lang1 val"));
+		
+		DefaultMutableTreeNode lng2Node = new DefaultMutableTreeNode(lang2);
+		lng2Node.add(new DefaultMutableTreeNode("lang2 val"));
+		
+		rootNode.add(lng1Node);		
+		rootNode.add(lng2Node);
 	}
 }

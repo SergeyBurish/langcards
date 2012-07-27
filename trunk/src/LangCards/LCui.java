@@ -37,8 +37,7 @@ public class LCui extends JFrame
 	public GroupLayout iLayout;
 	
 	private JTextField input = new JTextField("Test", 5);
-	private JLabel label = new JLabel();
-	
+		
 	JMenuBar menuBar;
 	JMenu menu, submenu;
 	JMenuItem menuItem;
@@ -48,6 +47,12 @@ public class LCui extends JFrame
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	public DocumentBuilder parser;
 	Document doc;
+	
+	public static void main(String[] args) {
+		mainFrame = new LCui();
+		mainFrame.Init();
+		mainFrame.setVisible(true);
+	}
 	
 	public LCui() {
 		setTitle("Language Cards");
@@ -73,14 +78,17 @@ public class LCui extends JFrame
 		pack();		
 	}
 	
-	public static void main(String[] args) {
-		mainFrame = new LCui();
-		mainFrame.Init();
-		mainFrame.setVisible(true);
+	private boolean InitParser() {
+		try {
+			parser = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
-	
-	private void CreateMenu() {
 		
+	private void CreateMenu() {
 		menuBar = new JMenuBar();
 		menu = new JMenu("Set");
 		menuBar.add(menu);
@@ -96,17 +104,7 @@ public class LCui extends JFrame
 		
 		this.setJMenuBar(menuBar);
 	}
-	
-	private boolean InitParser() {
-		try {
-			parser = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-	
+		
 	private void ShowErr(String err) {
 		setTitle("Error Language Cards");
 		
@@ -114,7 +112,7 @@ public class LCui extends JFrame
 		
 		iContainer.removeAll(); // remove all ui controls
 		
-		label.setText(err);
+		JLabel label = new JLabel(err);
 		
 		iLayout.setHorizontalGroup(
 				iLayout.createSequentialGroup()
@@ -173,7 +171,7 @@ public class LCui extends JFrame
 				File file = fc.getSelectedFile();
 				
 				CardSet cs = new CardSet(file);
-				cs.f();
+				cs.Name();
 				
 				try {
 					ParseFile(file);
