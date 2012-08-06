@@ -130,7 +130,7 @@ public class EditView implements ActionListener {
 			String btName = srcBt.getText();
 			
 			if (btName.compareTo("Add") == 0) {
-				iNewCardDlg.SetLanguages(iSet.FromLanguage(), "Ru");
+				iNewCardDlg.SetLanguages(iSet.LanguageFrom(), "Ru");
 				
 				iNewCardDlg.setVisible(true);
 				

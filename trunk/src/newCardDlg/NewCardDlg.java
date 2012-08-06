@@ -62,14 +62,14 @@ public class NewCardDlg extends JDialog {
 		pack();
 	}
 	
-	public void SetLanguages(String lang1, String lang2) {
-		DefaultMutableTreeNode lng1Node = new DefaultMutableTreeNode(lang1);
-		lng1Node.add(new DefaultMutableTreeNode("lang1 val"));
+	public void SetLanguages(String langFrom, String langTo) {
+		DefaultMutableTreeNode lngFromNode = new DefaultMutableTreeNode(langFrom);
+		lngFromNode.add(new DefaultMutableTreeNode("lang1 val"));
 		
-		DefaultMutableTreeNode lng2Node = new DefaultMutableTreeNode(lang2);
-		lng2Node.add(new DefaultMutableTreeNode("lang2 val"));
+		DefaultMutableTreeNode lngToNode = new DefaultMutableTreeNode(langTo);
+		lngToNode.add(new DefaultMutableTreeNode("lang2 val"));
 		
-		rootNode.add(lng1Node);		
-		rootNode.add(lng2Node);
+		rootNode.add(lngFromNode);		
+		rootNode.add(lngToNode);
 	}
 }
