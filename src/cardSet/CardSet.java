@@ -86,7 +86,7 @@ public class CardSet {
 		return iName;
 	}
 	
-	public String FromLanguage() {
+	public String LanguageFrom() {
 		NodeList nl = null;
 		try {
 			XPathExpression expr = iXpath.compile("Set/Settings/Languages");
