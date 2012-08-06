@@ -13,6 +13,7 @@ import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.LayoutStyle;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.xpath.XPathExpressionException;
 
 import newCardDlg.NewCardDlg;
 
@@ -130,10 +131,13 @@ public class EditView implements ActionListener {
 			String btName = srcBt.getText();
 			
 			if (btName.compareTo("Add") == 0) {
-				iNewCardDlg.SetLanguages(iSet.LanguageFrom(), "Ru");
-				
-				iNewCardDlg.setVisible(true);
-				
+				try {
+					iNewCardDlg.SetLanguages(iSet.LanguageFrom(), "Ru");
+					iNewCardDlg.setVisible(true);
+				} catch (XPathExpressionException e) {
+					LCui.mainFrame.ShowErr("Internal Error");
+					e.printStackTrace();
+				}
 				//iTableModel.addRow(new Object[] { btName });
 			} else {
 				iTableModel.addColumn(btName);
