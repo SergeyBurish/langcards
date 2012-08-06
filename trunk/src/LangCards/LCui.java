@@ -105,7 +105,7 @@ public class LCui extends JFrame
 		this.setJMenuBar(menuBar);
 	}
 		
-	private void ShowErr(String err) {
+	public void ShowErr(String err) {
 		setTitle("Error Language Cards");
 		
 		this.setJMenuBar(null); // remove menu

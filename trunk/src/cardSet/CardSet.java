@@ -86,16 +86,9 @@ public class CardSet {
 		return iName;
 	}
 	
-	public String LanguageFrom() {
-		NodeList nl = null;
-		try {
-			XPathExpression expr = iXpath.compile("Set/Settings/Languages");
-			nl = (NodeList) expr.evaluate(iDoc, XPathConstants.NODESET);
-			
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public String LanguageFrom() throws XPathExpressionException {
+		XPathExpression expr = iXpath.compile("Set/Settings/Languages");
+		NodeList nl = (NodeList) expr.evaluate(iDoc, XPathConstants.NODESET);
 		
 		if (nl.getLength() == 1) {
 			Node nd = nl.item(0);
