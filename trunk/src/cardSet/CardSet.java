@@ -87,26 +87,44 @@ public class CardSet {
 	}
 	
 	public String LanguageFrom() throws XPathExpressionException {
-		XPathExpression expr = iXpath.compile("Set/Settings/Languages");
-		NodeList nl = (NodeList) expr.evaluate(iDoc, XPathConstants.NODESET);
-		
-		if (nl.getLength() == 1) {
-			Node nd = nl.item(0);
-			NamedNodeMap nnm = nd.getAttributes();
-			
-			for (int i = 0; i < nnm.getLength(); i++) {
-				Node nd1 = nnm.item(i);
-				
-				if (nd1.getNodeName().compareTo("From") == 0) {
-					return nd1.getNodeValue();
-				}				
-			}
+		Node nd = getUnicNode("Set/Settings/Languages");
+		if (nd != null) {
+			return getAttributeValue(nd, "From");
 		}
 		
-		return "invalid From attribute";
+		return "Error: no \"Languages\" node";
 	}
-
-	public String ToLanguage() {
-		return "Rus";
-	}	
+	
+	public String LanguageTo() throws XPathExpressionException {
+		Node nd = getUnicNode("Set/Settings/Languages");
+		if (nd != null) {
+			return getAttributeValue(nd, "To");
+		}
+		
+		return "Error: no \"Languages\" node";
+	}
+	
+	private Node getUnicNode (String path) throws XPathExpressionException {
+		XPathExpression expr = iXpath.compile(path);
+		NodeList nl = (NodeList) expr.evaluate(iDoc, XPathConstants.NODESET);
+		
+		if (nl.getLength() == 1) { // node is unic
+			return nl.item(0);
+		}
+		return null;
+	}
+	
+	private String getAttributeValue(Node nd, String attrName) {
+		NamedNodeMap nnm = nd.getAttributes();
+		
+		for (int i = 0; i < nnm.getLength(); i++) {
+			Node nd1 = nnm.item(i);
+			
+			if (nd1.getNodeName().compareTo(attrName) == 0) {
+				return nd1.getNodeValue();
+			}				
+		}			
+		
+		return "Error: no \"" + attrName + "\" attribute";
+	}
 }
