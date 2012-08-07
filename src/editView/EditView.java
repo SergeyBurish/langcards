@@ -132,7 +132,7 @@ public class EditView implements ActionListener {
 			
 			if (btName.compareTo("Add") == 0) {
 				try {
-					iNewCardDlg.SetLanguages(iSet.LanguageFrom(), "Ru");
+					iNewCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
 					iNewCardDlg.setVisible(true);
 				} catch (XPathExpressionException e) {
 					LCui.mainFrame.ShowErr("Internal Error");
