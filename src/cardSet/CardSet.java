@@ -17,6 +17,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import LangCards.LCui;
+import langCardsExeption.LangCardsExeption;
 
 public class CardSet {
 	private Document iDoc;
@@ -86,22 +87,22 @@ public class CardSet {
 		return iName;
 	}
 	
-	public String LanguageFrom() throws XPathExpressionException {
+	public String LanguageFrom() throws XPathExpressionException, LangCardsExeption {
 		Node nd = getUnicNode("Set/Settings/Languages");
 		if (nd != null) {
 			return getAttributeValue(nd, "From");
 		}
 		
-		return "Error: no \"Languages\" node";
+		throw new LangCardsExeption("Error: no \"Languages\" node");
 	}
 	
-	public String LanguageTo() throws XPathExpressionException {
+	public String LanguageTo() throws XPathExpressionException, LangCardsExeption {
 		Node nd = getUnicNode("Set/Settings/Languages");
 		if (nd != null) {
 			return getAttributeValue(nd, "To");
 		}
 		
-		return "Error: no \"Languages\" node";
+		throw new LangCardsExeption("Error: no \"Languages\" node");
 	}
 	
 	private Node getUnicNode (String path) throws XPathExpressionException {
@@ -114,7 +115,7 @@ public class CardSet {
 		return null;
 	}
 	
-	private String getAttributeValue(Node nd, String attrName) {
+	private String getAttributeValue(Node nd, String attrName) throws LangCardsExeption {
 		NamedNodeMap nnm = nd.getAttributes();
 		
 		for (int i = 0; i < nnm.getLength(); i++) {
@@ -125,6 +126,6 @@ public class CardSet {
 			}				
 		}			
 		
-		return "Error: no \"" + attrName + "\" attribute";
+		throw new LangCardsExeption("Error: no \"" + attrName + "\" attribute");
 	}
 }
