@@ -137,11 +137,11 @@ public class EditView implements ActionListener {
 					iNewCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
 					iNewCardDlg.setVisible(true);
 				} catch (XPathExpressionException e) {
-					LCui.mainFrame.ShowErr("Internal Error" + e.getMessage());
+					LCui.mainFrame.ShowErr("Internal Error: " + e.getMessage());
 					e.printStackTrace();
 				}
 				catch (LangCardsExeption e) {
-					LCui.mainFrame.ShowErr("Internal Error" + e.getMessage());
+					LCui.mainFrame.ShowErr("Internal Error: " + e.getMessage());
 					e.printStackTrace();
 				}
 				//iTableModel.addRow(new Object[] { btName });

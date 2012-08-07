@@ -88,31 +88,22 @@ public class CardSet {
 	}
 	
 	public String LanguageFrom() throws XPathExpressionException, LangCardsExeption {
-		Node nd = getUnicNode("Set/Settings/Languages");
-		if (nd != null) {
-			return getAttributeValue(nd, "From");
-		}
-		
-		throw new LangCardsExeption("Error: no \"Languages\" node");
+		return getAttributeValue(getUniqNode("Set/Settings/Languages"), "From");
 	}
 	
 	public String LanguageTo() throws XPathExpressionException, LangCardsExeption {
-		Node nd = getUnicNode("Set/Settings/Languages");
-		if (nd != null) {
-			return getAttributeValue(nd, "To");
-		}
-		
-		throw new LangCardsExeption("Error: no \"Languages\" node");
+		return getAttributeValue(getUniqNode("Set/Settings/Languages"), "To");
 	}
 	
-	private Node getUnicNode (String path) throws XPathExpressionException {
-		XPathExpression expr = iXpath.compile(path);
+	private Node getUniqNode (String nodePath) throws XPathExpressionException, LangCardsExeption {
+		XPathExpression expr = iXpath.compile(nodePath);
 		NodeList nl = (NodeList) expr.evaluate(iDoc, XPathConstants.NODESET);
 		
-		if (nl.getLength() == 1) { // node is unic
+		if (nl.getLength() == 1) { // node is unique
 			return nl.item(0);
 		}
-		return null;
+		
+		throw new LangCardsExeption("no unique \"" + nodePath + "\" node");
 	}
 	
 	private String getAttributeValue(Node nd, String attrName) throws LangCardsExeption {
@@ -123,9 +114,9 @@ public class CardSet {
 			
 			if (nd1.getNodeName().compareTo(attrName) == 0) {
 				return nd1.getNodeValue();
-			}				
+			}
 		}			
 		
-		throw new LangCardsExeption("Error: no \"" + attrName + "\" attribute");
+		throw new LangCardsExeption("no \"" + attrName + "\" attribute");
 	}
 }
