@@ -15,6 +15,8 @@ import javax.swing.LayoutStyle;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.xpath.XPathExpressionException;
 
+import langCardsExeption.LangCardsExeption;
+
 import newCardDlg.NewCardDlg;
 
 import LangCards.LCui;
@@ -135,7 +137,11 @@ public class EditView implements ActionListener {
 					iNewCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
 					iNewCardDlg.setVisible(true);
 				} catch (XPathExpressionException e) {
-					LCui.mainFrame.ShowErr("Internal Error");
+					LCui.mainFrame.ShowErr("Internal Error" + e.getMessage());
+					e.printStackTrace();
+				}
+				catch (LangCardsExeption e) {
+					LCui.mainFrame.ShowErr("Internal Error" + e.getMessage());
 					e.printStackTrace();
 				}
 				//iTableModel.addRow(new Object[] { btName });
