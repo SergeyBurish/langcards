@@ -20,6 +20,7 @@ public class NewCardDlg extends JDialog {
 	JTree tree = new JTree(model);
 	JButton ok = new JButton("OK");
 	JLabel lbl = new JLabel("Test");
+	JScrollPane iTreeScrollPane; 
 	
 	public NewCardDlg(JFrame parent) {
 		super(parent, "New Card", true);
@@ -27,14 +28,14 @@ public class NewCardDlg extends JDialog {
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		
-		JScrollPane scrollPane = new JScrollPane(tree);
+		iTreeScrollPane = new JScrollPane(tree);
 		
 		layout.setAutoCreateContainerGaps(true);
 		
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-						.addComponent(scrollPane)
+						.addComponent(iTreeScrollPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(ok)
 				)
@@ -45,7 +46,7 @@ public class NewCardDlg extends JDialog {
 				layout.createSequentialGroup()
 				.addGroup(
 						layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(scrollPane)
+						.addComponent(iTreeScrollPane)
 						.addComponent(ok)
 				)
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -55,21 +56,29 @@ public class NewCardDlg extends JDialog {
 		ok.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dispose();				
+				dispose();
 			}
 		});
-		
-		pack();
 	}
 	
 	public void SetLanguages(String langFrom, String langTo) {
 		DefaultMutableTreeNode lngFromNode = new DefaultMutableTreeNode(langFrom);
-		lngFromNode.add(new DefaultMutableTreeNode("lang1 val"));
+		lngFromNode.add(new DefaultMutableTreeNode("Enter new word or phrase here"));
 		
 		DefaultMutableTreeNode lngToNode = new DefaultMutableTreeNode(langTo);
-		lngToNode.add(new DefaultMutableTreeNode("lang2 val"));
+		lngToNode.add(new DefaultMutableTreeNode("Enter new word or phrase here"));
 		
-		rootNode.add(lngFromNode);		
+		rootNode.add(lngFromNode);
 		rootNode.add(lngToNode);
+		
+		//expand all nodes
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
+		}
+		
+		// correct sizes
+		iTreeScrollPane.getViewport().setPreferredSize(tree.getPreferredSize());
+		
+		pack();
 	}
 }
