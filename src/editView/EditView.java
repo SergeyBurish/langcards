@@ -127,7 +127,7 @@ public class EditView implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		Object srcObject = event.getSource();
 		
-		if (srcObject.getClass().getSimpleName().compareTo("JButton") == 0) {
+		if (srcObject instanceof JButton) {
 			JButton srcBt = (JButton)srcObject;
 			
 			String btName = srcBt.getText();
