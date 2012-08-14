@@ -30,7 +30,6 @@ public class EditView implements ActionListener {
 	private JButton iBtEd = new JButton("Edit");
 	
 	private DefaultTableModel iTableModel = new DefaultTableModel();
-	private NewCardDlg iNewCardDlg = new NewCardDlg(null);	
 	
 	public EditView(CardSet set) {
 		iSet = set;
@@ -134,8 +133,9 @@ public class EditView implements ActionListener {
 			
 			if (btName.compareTo("Add") == 0) {
 				try {
-					iNewCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
-					iNewCardDlg.setVisible(true);
+					NewCardDlg newCardDlg = new NewCardDlg(null);
+					newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
+					newCardDlg.setVisible(true);
 				} catch (XPathExpressionException e) {
 					LCui.mainFrame.ShowErr("Internal Error: " + e.getMessage());
 					e.printStackTrace();

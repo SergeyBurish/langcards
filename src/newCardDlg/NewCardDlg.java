@@ -21,10 +21,9 @@ import exTreeNode.ExTreeNode;
 
 public class NewCardDlg extends JDialog implements TreeSelectionListener {
 	ExTreeNode rootNode = new ExTreeNode("New Card", false);
-	DefaultTreeModel model = new DefaultTreeModel(rootNode);
-	JTree tree = new JTree(model);
-	JButton ok = new JButton("OK");
-	JLabel lbl = new JLabel("Test");
+	JTree iTree = new JTree(new DefaultTreeModel(rootNode));
+	JButton iOkBtn = new JButton("OK");
+	JLabel iStatusLbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
 	
 	String iLangFrom = "No language set";
@@ -50,19 +49,19 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 		rootNode.add(lngToNode);
 		
 		//expand all nodes
-		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
+		for (int i = 0; i < iTree.getRowCount(); i++) {
+			iTree.expandRow(i);
 		}
 		
-		//tree.setToggleClickCount(1);
-		tree.setEditable(true);
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		tree.addTreeSelectionListener(this);
+		//iTree.setToggleClickCount(1);
+		iTree.setEditable(true);
+		iTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		iTree.addTreeSelectionListener(this);
 		
-		iTreeScrollPane = new JScrollPane(tree);
+		iTreeScrollPane = new JScrollPane(iTree);
 		
 		// correct sizes
-		iTreeScrollPane.getViewport().setPreferredSize(tree.getPreferredSize());
+		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 	}
 	
 	private void InitLayout() {
@@ -76,9 +75,9 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 				.addGroup(layout.createSequentialGroup()
 						.addComponent(iTreeScrollPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(ok)
+						.addComponent(iOkBtn)
 				)
-				.addComponent(lbl)
+				.addComponent(iStatusLbl)
 		);
 		
 		layout.setVerticalGroup(
@@ -86,13 +85,13 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 				.addGroup(
 						layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(iTreeScrollPane)
-						.addComponent(ok)
+						.addComponent(iOkBtn)
 				)
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(lbl)
+				.addComponent(iStatusLbl)
 		);
 		
-		ok.addActionListener(new ActionListener() {
+		iOkBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
@@ -112,7 +111,7 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 
 	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
-		Object selectedComponent = tree.getLastSelectedPathComponent();
+		Object selectedComponent = iTree.getLastSelectedPathComponent();
 		
 		if (selectedComponent instanceof ExTreeNode) {
 			ExTreeNode node = (ExTreeNode)selectedComponent;
@@ -120,7 +119,7 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 			if (node.isEditable()) {
 				SwingUtilities.invokeLater(new Runnable() {  
 		            public void run() {  
-		            	tree.startEditingAtPath(tree.getSelectionPath());
+		            	iTree.startEditingAtPath(iTree.getSelectionPath());
 		            }  
 		        });  
 			}
