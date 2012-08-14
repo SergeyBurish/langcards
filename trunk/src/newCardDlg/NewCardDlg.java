@@ -27,13 +27,47 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 	JLabel lbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
 	
+	String iLangFrom = "No language set";
+	String iLangTo = "No language set";
+	
 	public NewCardDlg(JFrame parent) {
 		super(parent, "New Card", true);
+	}
+	
+	public void SetLanguages(String langFrom, String langTo) {
+		iLangFrom = langFrom;
+		iLangTo = langTo;
+	}
+	
+	private void InitControls() {
+		ExTreeNode lngFromNode = new ExTreeNode(iLangFrom, false);
+		lngFromNode.add(new ExTreeNode("Enter new word or phrase here", true));		
 		
-		GroupLayout layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
+		ExTreeNode lngToNode = new ExTreeNode(iLangTo, false);
+		lngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
+		
+		rootNode.add(lngFromNode);
+		rootNode.add(lngToNode);
+		
+		//expand all nodes
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
+		}
+		
+		//tree.setToggleClickCount(1);
+		tree.setEditable(true);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.addTreeSelectionListener(this);
 		
 		iTreeScrollPane = new JScrollPane(tree);
+		
+		// correct sizes
+		iTreeScrollPane.getViewport().setPreferredSize(tree.getPreferredSize());
+	}
+	
+	private void InitLayout() {
+		GroupLayout layout = new GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
 		
 		layout.setAutoCreateContainerGaps(true);
 		
@@ -64,34 +98,17 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 				dispose();
 			}
 		});
-	}
-	
-	public void SetLanguages(String langFrom, String langTo) {
-		ExTreeNode lngFromNode = new ExTreeNode(langFrom, false);
-		lngFromNode.add(new ExTreeNode("Enter new word or phrase here", true));		
-		
-		ExTreeNode lngToNode = new ExTreeNode(langTo, false);
-		lngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
-		
-		rootNode.add(lngFromNode);
-		rootNode.add(lngToNode);
-		
-		//expand all nodes
-		for (int i = 0; i < tree.getRowCount(); i++) {
-			tree.expandRow(i);
-		}
-		
-		//tree.setToggleClickCount(1);
-		tree.setEditable(true);
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		
-		tree.addTreeSelectionListener(this);
-		
-		// correct sizes
-		iTreeScrollPane.getViewport().setPreferredSize(tree.getPreferredSize());
 		
 		pack();
 	}
+	
+	@Override
+	public void setVisible(boolean b) {
+		InitControls();
+		InitLayout();
+		super.setVisible(b);
+	}
+	
 
 	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
