@@ -11,16 +11,21 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.LayoutStyle;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
-public class NewCardDlg extends JDialog {
-	DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("New Card");
+import exTreeNode.ExTreeNode;
+
+public class NewCardDlg extends JDialog implements TreeSelectionListener {
+	ExTreeNode rootNode = new ExTreeNode("New Card", false);
 	DefaultTreeModel model = new DefaultTreeModel(rootNode);
 	JTree tree = new JTree(model);
 	JButton ok = new JButton("OK");
 	JLabel lbl = new JLabel("Test");
-	JScrollPane iTreeScrollPane; 
+	JScrollPane iTreeScrollPane;
 	
 	public NewCardDlg(JFrame parent) {
 		super(parent, "New Card", true);
@@ -62,11 +67,11 @@ public class NewCardDlg extends JDialog {
 	}
 	
 	public void SetLanguages(String langFrom, String langTo) {
-		DefaultMutableTreeNode lngFromNode = new DefaultMutableTreeNode(langFrom);
-		lngFromNode.add(new DefaultMutableTreeNode("Enter new word or phrase here"));
+		ExTreeNode lngFromNode = new ExTreeNode(langFrom, false);
+		lngFromNode.add(new ExTreeNode("Enter new word or phrase here", true));		
 		
-		DefaultMutableTreeNode lngToNode = new DefaultMutableTreeNode(langTo);
-		lngToNode.add(new DefaultMutableTreeNode("Enter new word or phrase here"));
+		ExTreeNode lngToNode = new ExTreeNode(langTo, false);
+		lngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
 		
 		rootNode.add(lngFromNode);
 		rootNode.add(lngToNode);
@@ -76,9 +81,32 @@ public class NewCardDlg extends JDialog {
 			tree.expandRow(i);
 		}
 		
+		//tree.setToggleClickCount(1);
+		tree.setEditable(true);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		
+		tree.addTreeSelectionListener(this);
+		
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(tree.getPreferredSize());
 		
 		pack();
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent arg0) {
+		Object selectedComponent = tree.getLastSelectedPathComponent();
+		
+		if (selectedComponent instanceof ExTreeNode) {
+			ExTreeNode node = (ExTreeNode)selectedComponent;
+			
+			if (node.isEditable()) {
+				SwingUtilities.invokeLater(new Runnable() {  
+		            public void run() {  
+		            	tree.startEditingAtPath(tree.getSelectionPath());
+		            }  
+		        });  
+			}
+		}
 	}
 }
