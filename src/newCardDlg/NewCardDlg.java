@@ -17,11 +17,12 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import exTree.ExTree;
 import exTreeNode.ExTreeNode;
 
-public class NewCardDlg extends JDialog implements TreeSelectionListener {
+public class NewCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
 	ExTreeNode rootNode = new ExTreeNode("New Card", false);
-	JTree iTree = new JTree(new DefaultTreeModel(rootNode));
+	ExTree iTree = new ExTree(new DefaultTreeModel(rootNode));
 	JButton iOkBtn = new JButton("OK");
 	JLabel iStatusLbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
@@ -91,16 +92,12 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 				.addComponent(iStatusLbl)
 		);
 		
-		iOkBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-			}
-		});
+		iOkBtn.addActionListener(this);
 		
 		pack();
 	}
 	
+	// JDialog
 	@Override
 	public void setVisible(boolean b) {
 		InitControls();
@@ -109,6 +106,7 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 	}
 	
 
+	// TreeSelectionListener
 	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
 		Object selectedComponent = iTree.getLastSelectedPathComponent();
@@ -117,12 +115,18 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener {
 			ExTreeNode node = (ExTreeNode)selectedComponent;
 			
 			if (node.isEditable()) {
-				SwingUtilities.invokeLater(new Runnable() {  
-		            public void run() {  
-		            	iTree.startEditingAtPath(iTree.getSelectionPath());
-		            }  
-		        });  
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						iTree.startEditingAtPath(iTree.getSelectionPath());
+					}
+				});
 			}
 		}
+	}
+
+	// ActionListener
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		dispose();
 	}
 }
