@@ -16,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
+import lngCard.LngCard;
 
 import newCardDlg.NewCardDlg;
 
@@ -39,7 +40,7 @@ public class EditView implements ActionListener {
 		iBtEd.addActionListener(this);
 	}
 	
-	public void Show() {
+	public void Show() throws XPathExpressionException, LangCardsExeption {
 		LCui.mainFrame.setTitle(iSet.Name() + " Language Cards");
 		//setJMenuBar(null); // remove menu
 		
@@ -66,16 +67,16 @@ public class EditView implements ActionListener {
 		LCui.mainFrame.pack();
 	}
 	
-	private JPanel makeCardsPanel() {
+	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
 		JPanel panel = new JPanel(false);
 		
 		JTable table = new JTable(iTableModel);
 		
-		iTableModel.addColumn("Col1");
-		iTableModel.addColumn("Col2");
-		iTableModel.addRow(new Object[] { "v1", "v2" });
-		iTableModel.addRow(new Object[] { "v3" });
-		iTableModel.addRow(new Object[] { "v4", "v555", "v6" });
+		iTableModel.addColumn(iSet.LanguageFrom());
+		iTableModel.addColumn(iSet.LanguageTo());
+		//iTableModel.addRow(new Object[] { "v1", "v2" });
+		//iTableModel.addRow(new Object[] { "v3" });
+		//iTableModel.addRow(new Object[] { "v4", "v555", "v6" });
 		
 		JScrollPane sp = new JScrollPane(table);
 		
@@ -133,9 +134,16 @@ public class EditView implements ActionListener {
 			
 			if (btName.compareTo("Add") == 0) {
 				try {
-					NewCardDlg newCardDlg = new NewCardDlg(null);
+					LngCard iLngCard = new LngCard();
+					
+					NewCardDlg newCardDlg = new NewCardDlg(null, iLngCard);
 					newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
 					newCardDlg.setVisible(true);
+					
+					if (newCardDlg.Accepted()) {
+						iTableModel.addRow(new Object[] { iLngCard.GetFromPhrase(0), iLngCard.GetToPhrase(0)});
+					}
+					
 				} catch (XPathExpressionException e) {
 					LCui.mainFrame.ShowErr("Internal Error: " + e.getMessage());
 					e.printStackTrace();

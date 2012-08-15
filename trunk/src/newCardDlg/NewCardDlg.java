@@ -9,13 +9,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
+
+import lngCard.LngCard;
 
 import exTree.ExTree;
 import exTreeNode.ExTreeNode;
@@ -30,8 +31,16 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener, Action
 	String iLangFrom = "No language set";
 	String iLangTo = "No language set";
 	
-	public NewCardDlg(JFrame parent) {
+	ExTreeNode iLngFromNode;
+	ExTreeNode iLngToNode;
+	
+	LngCard iLngCard;
+	
+	Boolean iAccepted = false;
+	
+	public NewCardDlg(JFrame parent, LngCard lngCard) {
 		super(parent, "New Card", true);
+		iLngCard = lngCard;
 	}
 	
 	public void SetLanguages(String langFrom, String langTo) {
@@ -40,14 +49,14 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener, Action
 	}
 	
 	private void InitControls() {
-		ExTreeNode lngFromNode = new ExTreeNode(iLangFrom, false);
-		lngFromNode.add(new ExTreeNode("Enter new word or phrase here", true));		
+		iLngFromNode = new ExTreeNode(iLangFrom, false);
+		iLngFromNode.add(new ExTreeNode("Enter new word or phrase here", true));
 		
-		ExTreeNode lngToNode = new ExTreeNode(iLangTo, false);
-		lngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
+		iLngToNode = new ExTreeNode(iLangTo, false);
+		iLngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
 		
-		rootNode.add(lngFromNode);
-		rootNode.add(lngToNode);
+		rootNode.add(iLngFromNode);
+		rootNode.add(iLngToNode);
 		
 		//expand all nodes
 		for (int i = 0; i < iTree.getRowCount(); i++) {
@@ -58,6 +67,7 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener, Action
 		iTree.setEditable(true);
 		iTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		iTree.addTreeSelectionListener(this);
+		iTree.setInvokesStopCellEditing(true);
 		
 		iTreeScrollPane = new JScrollPane(iTree);
 		
@@ -105,6 +115,10 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener, Action
 		super.setVisible(b);
 	}
 	
+	public Boolean Accepted() {
+		return iAccepted;
+	}
+	
 
 	// TreeSelectionListener
 	@Override
@@ -127,6 +141,20 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener, Action
 	// ActionListener
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		// Verify(); // - check, display corresponding error;
+		ExTreeNode node;
+		
+		for (int i = 0; i < iLngFromNode.getChildCount(); i++) {
+			node = (ExTreeNode)iLngFromNode.getChildAt(i);
+			iLngCard.AddFromPhrase(node.toString());
+		}
+
+		for (int i = 0; i < iLngToNode.getChildCount(); i++) {
+			node = (ExTreeNode)iLngToNode.getChildAt(i);
+			iLngCard.AddToPhrase(node.toString());
+		}
+		
+		iAccepted = true;
 		dispose();
 	}
 }
