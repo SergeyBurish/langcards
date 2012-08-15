@@ -17,11 +17,9 @@ import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
 import lngCard.LngCard;
-
-import newCardDlg.NewCardDlg;
-
 import LangCards.LCui;
 import cardSet.CardSet;
+import editCardDlg.EditCardDlg;
 
 public class EditView implements ActionListener {
 	private CardSet iSet;
@@ -136,7 +134,7 @@ public class EditView implements ActionListener {
 				try {
 					LngCard iLngCard = new LngCard();
 					
-					NewCardDlg newCardDlg = new NewCardDlg(null, iLngCard);
+					EditCardDlg newCardDlg = new EditCardDlg(null, iLngCard);
 					newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
 					newCardDlg.setVisible(true);
 					

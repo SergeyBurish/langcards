@@ -1,4 +1,4 @@
-package newCardDlg;
+package editCardDlg;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +21,7 @@ import lngCard.LngCard;
 import exTree.ExTree;
 import exTreeNode.ExTreeNode;
 
-public class NewCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
+public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
 	ExTreeNode rootNode = new ExTreeNode("New Card", false);
 	ExTree iTree = new ExTree(new DefaultTreeModel(rootNode));
 	JButton iOkBtn = new JButton("OK");
@@ -38,7 +38,7 @@ public class NewCardDlg extends JDialog implements TreeSelectionListener, Action
 	
 	Boolean iAccepted = false;
 	
-	public NewCardDlg(JFrame parent, LngCard lngCard) {
+	public EditCardDlg(JFrame parent, LngCard lngCard) {
 		super(parent, "New Card", true);
 		iLngCard = lngCard;
 	}
