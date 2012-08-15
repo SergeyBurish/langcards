@@ -20,6 +20,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathExpressionException;
+
+import langCardsExeption.LangCardsExeption;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -193,7 +196,16 @@ public class LCui extends JFrame
 		CardSet cs = new CardSet();
 		
 		EditView editView = new EditView(cs);
-		editView.Show();
+		
+		try {
+			editView.Show();
+		} catch (XPathExpressionException e) {
+			ShowErr(e.getMessage());
+			e.printStackTrace();
+		} catch (LangCardsExeption e) {
+			ShowErr(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 		
 	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
