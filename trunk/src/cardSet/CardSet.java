@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import LangCards.LCui;
 import langCardsExeption.LangCardsExeption;
+import lngCard.LngCard;
 
 public class CardSet {
 	private Document iDoc;
@@ -44,6 +45,10 @@ public class CardSet {
 		Element root = iDoc.createElement("Set");
 		root.setAttribute("name", iName);
 		iDoc.appendChild(root);
+		
+		// Cards
+		Element cards = iDoc.createElement("Cards");
+		root.appendChild(cards);
 		
 		// Settings
 		Element settings = iDoc.createElement("Settings");
@@ -85,6 +90,41 @@ public class CardSet {
 	
 	public String Name() {
 		return iName;
+	}
+	
+	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsExeption {
+		Node cards = getUniqNode("Set/Cards");
+		NodeList nList = cards.getChildNodes();
+		int cardsCount = nList.getLength();
+		
+		// new card
+		Element card = iDoc.createElement("Card");
+		card.setAttribute("id", "" + (cardsCount+1));
+		cards.appendChild(card);
+		
+		// From Language phrase
+		Element phrase = iDoc.createElement("Phrase");
+		phrase.setAttribute("Language", LanguageFrom());
+		card.appendChild(phrase);
+		
+		for (int i = 0; i < lngCard.FromPhraseCount(); i++) {
+			Element val = iDoc.createElement("Value");
+			val.setTextContent(lngCard.GetFromPhrase(i));
+			//add Transcription, Example
+			phrase.appendChild(val);
+		}
+		
+		// To Language phrase
+		phrase = iDoc.createElement("Phrase");
+		phrase.setAttribute("Language", LanguageTo());
+		card.appendChild(phrase);
+		
+		for (int i = 0; i < lngCard.ToPhraseCount(); i++) {
+			Element val = iDoc.createElement("Value");
+			val.setTextContent(lngCard.GetToPhrase(i));
+			//add Transcription, Example
+			phrase.appendChild(val);
+		}
 	}
 	
 	public String LanguageFrom() throws XPathExpressionException, LangCardsExeption {

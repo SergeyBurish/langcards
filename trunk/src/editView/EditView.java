@@ -132,14 +132,15 @@ public class EditView implements ActionListener {
 			
 			if (btName.compareTo("Add") == 0) {
 				try {
-					LngCard iLngCard = new LngCard();
+					LngCard lngCard = new LngCard();
 					
-					EditCardDlg newCardDlg = new EditCardDlg(null, iLngCard);
+					EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
 					newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
 					newCardDlg.setVisible(true);
 					
 					if (newCardDlg.Accepted()) {
-						iTableModel.addRow(new Object[] { iLngCard.GetFromPhrase(0), iLngCard.GetToPhrase(0)});
+						iSet.AddNewCard(lngCard);
+						iTableModel.addRow(new Object[] { lngCard.GetFromPhrase(0), lngCard.GetToPhrase(0)});
 					}
 					
 				} catch (XPathExpressionException e) {
