@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,6 +26,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
 
+import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -39,13 +42,15 @@ public class LCui extends JFrame
 	public Container iContainer;
 	public GroupLayout iLayout;
 	
+	CardSet iCardSet;
+	
 	private JTextField input = new JTextField("Test", 5);
 		
 	JMenuBar menuBar;
 	JMenu menu, submenu;
 	JMenuItem menuItem;
 	
-	JFileChooser fc = new JFileChooser();
+	JFileChooser iFileChooser = new JFileChooser();
 	
 	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	public DocumentBuilder parser;
@@ -102,7 +107,10 @@ public class LCui extends JFrame
 		
 		menuItem = new JMenuItem("Open");
 		menuItem.addActionListener(this);
+		menu.add(menuItem);
 		
+		menuItem = new JMenuItem("Save As...");
+		menuItem.addActionListener(this);
 		menu.add(menuItem);
 		
 		this.setJMenuBar(menuBar);
@@ -141,14 +149,20 @@ public class LCui extends JFrame
 		} catch (IOException e) {
 			e.printStackTrace();
 			ShowErr(e.getMessage());
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+			ShowErr(e.getMessage());
+		} catch (TransformerException e) {
+			e.printStackTrace();
+			ShowErr(e.getMessage());
 		}
 	}
 
 	
-	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException {
+	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
 		String actionCmd = arg0.getActionCommand();
 		if (actionCmd.equals("New")) {
-			//fc.showDialog(this, "New");
+			//iFileChooser.showDialog(this, "New");
 			
 			NewSet();
 			
@@ -168,10 +182,10 @@ public class LCui extends JFrame
 				e.printStackTrace();
 			}
 		} else if (actionCmd.equals("Open")) {
-			int ret = fc.showOpenDialog(this);
+			int ret = iFileChooser.showOpenDialog(this);
 			
 			if (ret == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
+				File file = iFileChooser.getSelectedFile();
 				
 				CardSet cs = new CardSet(file);
 				cs.Name();
@@ -189,13 +203,23 @@ public class LCui extends JFrame
 					e.printStackTrace();
 				}
 			}
+		} else if (actionCmd.equals("Save As...")) {
+			FileFilter filter = new FileNameExtensionFilter("Language Cards file", "lngcards");
+			iFileChooser.addChoosableFileFilter(filter);
+			if ( iFileChooser.showSaveDialog( this ) == JFileChooser.APPROVE_OPTION ) {
+				File file = iFileChooser.getSelectedFile();
+				
+				String  fName = file.toString();
+				fName = FilenameUtils.removeExtension(fName);
+				iCardSet.Save(fName + ".lngcards");
+			}
 		}
 	}
 	
 	private void NewSet() {
-		CardSet cs = new CardSet();
+		iCardSet = new CardSet();
 		
-		EditView editView = new EditView(cs);
+		EditView editView = new EditView(iCardSet);
 		
 		try {
 			editView.Show();

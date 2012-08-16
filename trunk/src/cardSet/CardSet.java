@@ -3,6 +3,15 @@ package cardSet;
 import java.io.File;
 import java.io.IOException;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -86,6 +95,19 @@ public class CardSet {
 			e.printStackTrace();
 		}
 		*/
+	}
+	
+	public void Save(String fileName) throws TransformerFactoryConfigurationError, TransformerException {
+		//  Create transformer
+		Transformer tFormer = TransformerFactory.newInstance().newTransformer();
+		
+		//  Output Types (text/xml/html)
+		tFormer.setOutputProperty(OutputKeys.METHOD, "xml");
+		
+		//  Write the document to a file
+		Source source = new DOMSource(iDoc);
+		Result result = new StreamResult(new File(fileName));
+		tFormer.transform(source, result);
 	}
 	
 	public String Name() {
