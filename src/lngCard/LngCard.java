@@ -24,6 +24,14 @@ public class LngCard {
 		iToPrases.add(lngPhrase);
 	}
 	
+	public int FromPhraseCount() {
+		return iFromPrases.size();
+	}
+	
+	public int ToPhraseCount() {
+		return iToPrases.size();
+	}
+	
 	public String GetFromPhrase(int i) throws LangCardsExeption {
 		if (i >= 0 && i < iFromPrases.size()) {
 			LngPhrase lngPhrase = iFromPrases.get(i);
