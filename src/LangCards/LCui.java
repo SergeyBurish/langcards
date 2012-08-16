@@ -12,16 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
@@ -29,8 +20,6 @@ import langCardsExeption.LangCardsExeption;
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import org.w3c.dom.Comment;
 import org.xml.sax.SAXException;
 
 import cardSet.CardSet;
@@ -149,9 +138,6 @@ public class LCui extends JFrame
 		} catch (IOException e) {
 			e.printStackTrace();
 			ShowErr(e.getMessage());
-		} catch (TransformerFactoryConfigurationError e) {
-			e.printStackTrace();
-			ShowErr(e.getMessage());
 		} catch (TransformerException e) {
 			e.printStackTrace();
 			ShowErr(e.getMessage());
@@ -159,28 +145,11 @@ public class LCui extends JFrame
 	}
 
 	
-	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException, TransformerFactoryConfigurationError, TransformerException {
+	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException, TransformerException {
 		String actionCmd = arg0.getActionCommand();
 		if (actionCmd.equals("New")) {
 			//iFileChooser.showDialog(this, "New");
-			
 			NewSet();
-			
-			try {
-				CreateFile();
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TransformerConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TransformerFactoryConfigurationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} else if (actionCmd.equals("Open")) {
 			int ret = iFileChooser.showOpenDialog(this);
 			
@@ -230,41 +199,6 @@ public class LCui extends JFrame
 			ShowErr(e.getMessage());
 			e.printStackTrace();
 		}
-	}
-		
-	private void CreateFile() throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
-		parser = factory.newDocumentBuilder();
-		doc = parser.newDocument();
-		
-		// create root
-		Element root = doc.createElement("rootTT");
-		doc.appendChild(root);
-		
-		// create a comment
-		Comment comment = doc.createComment("This is commentTT");
-		root.appendChild(comment);
-		
-		// create child element 1
-		Element childElement = doc.createElement("Child1");
-		childElement.setAttribute("attribute1","The val of Attribute 1");
-		root.appendChild(childElement);		
-		
-		// create child element 2
-		childElement = doc.createElement("Child2");
-		childElement.setAttribute("attr2","The val of Attribute 2");
-		childElement.setTextContent("ZZZxxxccc Val");
-		root.appendChild(childElement);
-		
-		//  Create transformer
-		Transformer tFormer = TransformerFactory.newInstance().newTransformer();
-		
-		//  Output Types (text/xml/html)
-		tFormer.setOutputProperty(OutputKeys.METHOD, "xml");
-		
-		//  Write the document to a file
-		Source source = new DOMSource(doc);
-		Result result = new StreamResult(new File("Test01.xml"));
-		tFormer.transform(source, result);
 	}
 	
 	private void ParseFile(File aFile) throws ParserConfigurationException, SAXException, IOException {

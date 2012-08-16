@@ -9,7 +9,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -68,36 +67,9 @@ public class CardSet {
 		languages.setAttribute("From", "English");
 		languages.setAttribute("To", "Russian");
 		settings.appendChild(languages);		
-		
-		/*
-		//  Create transformer - to check xml structure
-		Transformer tFormer = null;
-		try {
-			tFormer = TransformerFactory.newInstance().newTransformer();
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerFactoryConfigurationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//  Output Types (text/xml/html)
-		tFormer.setOutputProperty(OutputKeys.METHOD, "xml");
-		
-		//  Write the document to a file
-		Source source = new DOMSource(iDoc);
-		Result result = new StreamResult(new File("Test0EEnn.xml"));
-		try {
-			tFormer.transform(source, result);
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 	}
 	
-	public void Save(String fileName) throws TransformerFactoryConfigurationError, TransformerException {
+	public void Save(String fileName) throws TransformerException {
 		//  Create transformer
 		Transformer tFormer = TransformerFactory.newInstance().newTransformer();
 		
