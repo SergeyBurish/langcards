@@ -144,12 +144,10 @@ public class EditView implements ActionListener {
 					}
 					
 				} catch (XPathExpressionException e) {
-					LCui.mainFrame.ShowErr("Internal Error: " + e.getMessage());
-					e.printStackTrace();
+					LCui.mainFrame.ShowErr(e);
 				}
 				catch (LangCardsExeption e) {
-					LCui.mainFrame.ShowErr("Internal Error: " + e.getMessage());
-					e.printStackTrace();
+					LCui.mainFrame.ShowErr(e);
 				}
 				//iTableModel.addRow(new Object[] { btName });
 			} else {

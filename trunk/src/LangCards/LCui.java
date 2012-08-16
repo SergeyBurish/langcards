@@ -62,12 +62,13 @@ public class LCui extends JFrame
 		iLayout = new GroupLayout(iContainer);
 		iContainer.setLayout(iLayout);
 		iLayout.setAutoCreateContainerGaps(true);
-
-		if ( !InitParser() ) {
-			ShowErr("fail init xml parser");
-			return;
-		}
 		
+		try {
+			parser = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			ShowErr(e);
+		}
+
 		// load the last set, otherwise create new
 		NewSet();
 		
@@ -75,16 +76,6 @@ public class LCui extends JFrame
 		pack();		
 	}
 	
-	private boolean InitParser() {
-		try {
-			parser = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-		
 	private void CreateMenu() {
 		menuBar = new JMenuBar();
 		menu = new JMenu("Set");
@@ -105,14 +96,16 @@ public class LCui extends JFrame
 		this.setJMenuBar(menuBar);
 	}
 		
-	public void ShowErr(String err) {
-		setTitle("Error Language Cards");
+	public void ShowErr(Exception e) {
+		e.printStackTrace();
+		
+		setTitle("Internal Error");
 		
 		this.setJMenuBar(null); // remove menu
 		
 		iContainer.removeAll(); // remove all ui controls
 		
-		JLabel label = new JLabel(err);
+		JLabel label = new JLabel(e.getMessage());
 		
 		iLayout.setHorizontalGroup(
 				iLayout.createSequentialGroup()
@@ -133,14 +126,11 @@ public class LCui extends JFrame
 		try {
 			actionPerformedThrow(arg0);
 		} catch (SAXException e) {
-			e.printStackTrace();
-			ShowErr(e.getMessage());
+			ShowErr(e);
 		} catch (IOException e) {
-			e.printStackTrace();
-			ShowErr(e.getMessage());
+			ShowErr(e);
 		} catch (TransformerException e) {
-			e.printStackTrace();
-			ShowErr(e.getMessage());
+			ShowErr(e);
 		}
 	}
 
@@ -193,11 +183,9 @@ public class LCui extends JFrame
 		try {
 			editView.Show();
 		} catch (XPathExpressionException e) {
-			ShowErr(e.getMessage());
-			e.printStackTrace();
+			ShowErr(e);
 		} catch (LangCardsExeption e) {
-			ShowErr(e.getMessage());
-			e.printStackTrace();
+			ShowErr(e);
 		}
 	}
 	
