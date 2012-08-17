@@ -1,6 +1,7 @@
 package editView;
 
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
@@ -23,13 +24,14 @@ import cardSet.CardSet;
 import editCardDlg.EditCardDlg;
 
 public class EditView implements ActionListener {
-	private CardSet iSet;
+	CardSet iSet;
 	
-	private JButton iBtAdd = new JButton("Add");
-	private JButton iBtDel = new JButton("Delete");
-	private JButton iBtEd = new JButton("Edit");
+	JButton iBtAdd = new JButton("Add");
+	JButton iBtDel = new JButton("Delete");
+	JButton iBtEd = new JButton("Edit");
 	
-	private DefaultTableModel iTableModel = new DefaultTableModel();
+	DefaultTableModel iTableModel = new DefaultTableModel();
+	JTable iTable;
 	
 	public EditView(CardSet set) {
 		iSet = set;
@@ -68,9 +70,11 @@ public class EditView implements ActionListener {
 	
 	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
 		JPanel panel = new JPanel(false);
-		JTable table = new JTable(iTableModel);
+		
+		iTable = new JTable(iTableModel);
 		UpdateTable();
-		JScrollPane sp = new JScrollPane(table);
+		
+		JScrollPane sp = new JScrollPane(iTable);
 		
 		GroupLayout layout = new GroupLayout(panel);
 		panel.setLayout(layout);
@@ -126,6 +130,11 @@ public class EditView implements ActionListener {
 		iTableModel.setDataVector(rows, columns);
 	}
 	
+	private void ScrollTableToShowRaw(int row) {
+		Rectangle r = iTable.getCellRect(row, 0, true);
+		iTable.scrollRectToVisible(r);		
+	}
+	
 	// ActionListener
 	@Override
 	public void actionPerformed(ActionEvent event) {
@@ -146,7 +155,8 @@ public class EditView implements ActionListener {
 					
 					if (newCardDlg.Accepted()) {
 						iSet.AddNewCard(lngCard);
-						iTableModel.addRow(new Object[] { lngCard.GetFromPhrase(0), lngCard.GetToPhrase(0)});
+						UpdateTable();
+						ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
 					}
 					
 				} catch (XPathExpressionException e) {
