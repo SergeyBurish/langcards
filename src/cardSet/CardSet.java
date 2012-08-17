@@ -2,6 +2,7 @@ package cardSet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -38,14 +39,13 @@ public class CardSet {
 	public CardSet() {
 		// new
 		iName = "New set";
-		iDoc = LCui.mainFrame.parser.newDocument();
+		iDoc = LCui.mainFrame.iParser.newDocument();
 		InitDoc();
 	}
 	
 	public CardSet(File file) throws SAXException, IOException {
 		iName = file.getName();
-		iDoc = LCui.mainFrame.parser.parse(file);
-		iDoc.createElement("rootTT");
+		iDoc = LCui.mainFrame.iParser.parse(file);
 	}
 	
 	public void InitDoc() {
@@ -121,6 +121,81 @@ public class CardSet {
 		}
 	}
 	
+	public Vector<Vector<String>> GetAllCardsIdFromTo() throws XPathExpressionException, LangCardsExeption {
+		Vector<Vector<String>> rowsVect=new Vector<Vector<String>>();
+		
+		Node cardsNd = getUniqNode("Set/Cards");
+		NodeList cardListNdL = cardsNd.getChildNodes();
+		
+		String fromLanguageStr = LanguageFrom();
+		String toLanguageStr = LanguageTo();
+
+		for (int i = 0; i < cardListNdL.getLength(); i++) {
+			Vector<String> rowVect=new Vector<String>();
+			
+			Node cardNd = cardListNdL.item(i);
+			if (cardNd == null) throw new LangCardsExeption("xml error: fail to get next \"Card\" node");
+			
+			rowVect.addElement(getAttributeValue(cardNd, "id"));
+			
+			String fromStr = "";
+			Boolean fromFoundBool = false;
+			String toStr = "";
+			Boolean toFoundBool = false;
+
+			// 1st phrase
+			Node fstPhraseNd = cardNd.getFirstChild();
+			if (fstPhraseNd == null) throw new LangCardsExeption("invalid xml structure: no \"Phrase\" node");
+			
+			String phraseLngStr = getAttributeValue(fstPhraseNd, "Language");
+			Node phraseValNd = fstPhraseNd.getFirstChild();
+			if (phraseValNd == null) throw new LangCardsExeption("invalid xml structure: no \"Value\" node");
+			
+			String phraseValStr = phraseValNd.getTextContent();
+			
+			if (phraseLngStr.compareTo(fromLanguageStr) == 0) {
+				fromStr = phraseValStr;
+				fromFoundBool = true;
+			} else if (phraseLngStr.compareTo(toLanguageStr) == 0) {
+				toStr = phraseValStr;
+				toFoundBool = true;
+			} else {
+				throw new LangCardsExeption("invalid xml structure: wrong Phrase Language: " + phraseLngStr);
+			}
+
+			// 2nd phrase
+			Node sndPhraseNd = fstPhraseNd.getNextSibling();
+			if (sndPhraseNd == null) throw new LangCardsExeption("invalid xml structure: no 2-nd \"Phrase\" node");
+			
+			phraseLngStr = getAttributeValue(sndPhraseNd, "Language");
+			phraseValNd = sndPhraseNd.getFirstChild();
+			if (phraseValNd == null) throw new LangCardsExeption("invalid xml structure: no 2-nd \"Value\" node");
+			
+			phraseValStr = phraseValNd.getTextContent();
+			
+			if (phraseLngStr.compareTo(fromLanguageStr) == 0) {
+				fromStr = phraseValStr;
+				fromFoundBool = true;
+			} else if (phraseLngStr.compareTo(toLanguageStr) == 0) {
+				toStr = phraseValStr;
+				toFoundBool = true;
+			} else {
+				throw new LangCardsExeption("invalid xml structure: wrong Phrase Language: " + phraseLngStr);
+			}
+			
+			if (!fromFoundBool || !toFoundBool) {
+				throw new LangCardsExeption("invalid xml structure: both Phrases are of same Language: " + phraseLngStr);
+			}
+			
+			rowVect.addElement(fromStr);
+			rowVect.addElement(toStr);
+			
+			rowsVect.addElement(rowVect);
+		}
+
+		return rowsVect;
+	}
+	
 	public String LanguageFrom() throws XPathExpressionException, LangCardsExeption {
 		return getAttributeValue(getUniqNode("Set/Settings/Languages"), "From");
 	}
@@ -149,7 +224,7 @@ public class CardSet {
 			if (nd1.getNodeName().compareTo(attrName) == 0) {
 				return nd1.getNodeValue();
 			}
-		}			
+		}
 		
 		throw new LangCardsExeption("no \"" + attrName + "\" attribute");
 	}

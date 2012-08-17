@@ -3,6 +3,7 @@ package editView;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -67,15 +68,8 @@ public class EditView implements ActionListener {
 	
 	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
 		JPanel panel = new JPanel(false);
-		
 		JTable table = new JTable(iTableModel);
-		
-		iTableModel.addColumn(iSet.LanguageFrom());
-		iTableModel.addColumn(iSet.LanguageTo());
-		//iTableModel.addRow(new Object[] { "v1", "v2" });
-		//iTableModel.addRow(new Object[] { "v3" });
-		//iTableModel.addRow(new Object[] { "v4", "v555", "v6" });
-		
+		UpdateTable();
 		JScrollPane sp = new JScrollPane(table);
 		
 		GroupLayout layout = new GroupLayout(panel);
@@ -118,6 +112,18 @@ public class EditView implements ActionListener {
 		panel.setLayout(new GridLayout(1, 1));
 		panel.add(tree);
 		return panel;
+	}
+	
+	private void UpdateTable() throws XPathExpressionException, LangCardsExeption {
+		
+		Vector<Vector<String>> rows = iSet.GetAllCardsIdFromTo();
+		Vector<String> columns= new Vector<String>();
+		
+		columns.addElement("#");
+		columns.addElement(iSet.LanguageFrom());
+		columns.addElement(iSet.LanguageTo());
+		
+		iTableModel.setDataVector(rows, columns);
 	}
 	
 	// ActionListener

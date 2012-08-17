@@ -33,16 +33,14 @@ public class LCui extends JFrame
 	
 	CardSet iCardSet;
 	
-	private JTextField input = new JTextField("Test", 5);
-		
 	JMenuBar menuBar;
 	JMenu menu, submenu;
 	JMenuItem menuItem;
 	
 	JFileChooser iFileChooser = new JFileChooser();
+	FileFilter iFilefilter = new FileNameExtensionFilter("Language Cards file", "lngcards");
 	
-	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	public DocumentBuilder parser;
+	public DocumentBuilder iParser;
 	Document doc;
 	
 	public static void main(String[] args) {
@@ -63,17 +61,27 @@ public class LCui extends JFrame
 		iContainer.setLayout(iLayout);
 		iLayout.setAutoCreateContainerGaps(true);
 		
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		
 		try {
-			parser = factory.newDocumentBuilder();
+			iParser = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			ShowErr(e);
 		}
+		
+		iFileChooser.addChoosableFileFilter(iFilefilter);
 
 		// load the last set, otherwise create new
-		NewSet();
+		try {
+			NewSet();
+		} catch (XPathExpressionException e) {
+			ShowErr(e);
+		} catch (LangCardsExeption e) {
+			ShowErr(e);
+		}
 		
 		CreateMenu();
-		pack();		
+		pack();
 	}
 	
 	private void CreateMenu() {
@@ -100,18 +108,15 @@ public class LCui extends JFrame
 		e.printStackTrace();
 		
 		setTitle("Internal Error");
-		
 		this.setJMenuBar(null); // remove menu
-		
 		iContainer.removeAll(); // remove all ui controls
-		
 		JLabel label = new JLabel(e.getMessage());
 		
 		iLayout.setHorizontalGroup(
 				iLayout.createSequentialGroup()
 				.addComponent(label)
 		);
-				
+		
 		iLayout.setVerticalGroup(
 				iLayout.createSequentialGroup()
 				.addComponent(label)
@@ -124,47 +129,36 @@ public class LCui extends JFrame
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		try {
+			
 			actionPerformedThrow(arg0);
+			
 		} catch (SAXException e) {
 			ShowErr(e);
 		} catch (IOException e) {
 			ShowErr(e);
 		} catch (TransformerException e) {
 			ShowErr(e);
+		} catch (XPathExpressionException e) {
+			ShowErr(e);
+		} catch (LangCardsExeption e) {
+			ShowErr(e);
 		}
 	}
 
 	
-	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException, TransformerException {
+	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException, TransformerException, XPathExpressionException, LangCardsExeption {
 		String actionCmd = arg0.getActionCommand();
 		if (actionCmd.equals("New")) {
 			//iFileChooser.showDialog(this, "New");
 			NewSet();
 		} else if (actionCmd.equals("Open")) {
-			int ret = iFileChooser.showOpenDialog(this);
-			
-			if (ret == JFileChooser.APPROVE_OPTION) {
+			if (iFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = iFileChooser.getSelectedFile();
-				
-				CardSet cs = new CardSet(file);
-				cs.Name();
-				
-				try {
-					ParseFile(file);
-				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SAXException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				iCardSet = new CardSet(file);
+				EditView editView = new EditView(iCardSet);
+				editView.Show();
 			}
 		} else if (actionCmd.equals("Save As...")) {
-			FileFilter filter = new FileNameExtensionFilter("Language Cards file", "lngcards");
-			iFileChooser.addChoosableFileFilter(filter);
 			if ( iFileChooser.showSaveDialog( this ) == JFileChooser.APPROVE_OPTION ) {
 				File file = iFileChooser.getSelectedFile();
 				
@@ -175,26 +169,9 @@ public class LCui extends JFrame
 		}
 	}
 	
-	private void NewSet() {
+	private void NewSet() throws XPathExpressionException, LangCardsExeption {
 		iCardSet = new CardSet();
-		
 		EditView editView = new EditView(iCardSet);
-		
-		try {
-			editView.Show();
-		} catch (XPathExpressionException e) {
-			ShowErr(e);
-		} catch (LangCardsExeption e) {
-			ShowErr(e);
-		}
-	}
-	
-	private void ParseFile(File aFile) throws ParserConfigurationException, SAXException, IOException {
-		parser = factory.newDocumentBuilder();
-		doc = parser.parse(aFile);
-		
-		Node node = doc.getDocumentElement();
-		String root = node.getNodeName();
-		input.setText(root);
+		editView.Show();
 	}
 }
