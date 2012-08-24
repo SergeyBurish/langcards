@@ -56,6 +56,7 @@ public class LCui extends JFrame
 	}
 	
 	public void Init() {
+		// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		iContainer = getContentPane();
 		iLayout = new GroupLayout(iContainer);
 		iContainer.setLayout(iLayout);

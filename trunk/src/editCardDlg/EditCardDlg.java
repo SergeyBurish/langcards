@@ -19,6 +19,8 @@ import javax.swing.tree.TreeSelectionModel;
 import lngCard.LngCard;
 
 import exTree.ExTree;
+import exTree.MultiLineCellEditor;
+import exTree.MultiLineCellRenderer;
 import exTreeNode.ExTreeNode;
 
 public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
@@ -50,14 +52,16 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	
 	private void InitControls() {
 		iLngFromNode = new ExTreeNode(iLangFrom, false);
-		iLngFromNode.add(new ExTreeNode("Enter new word or phrase here", true));
+		iLngFromNode.add(new ExTreeNode("Enter new word or phrase here", true)); // \n" + "3333\n"  + "4444
 		
 		iLngToNode = new ExTreeNode(iLangTo, false);
 		iLngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
 		
 		rootNode.add(iLngFromNode);
 		rootNode.add(iLngToNode);
-		
+
+		iTree.setCellRenderer(new MultiLineCellRenderer());
+		iTree.setCellEditor(new MultiLineCellEditor());
 		//expand all nodes
 		for (int i = 0; i < iTree.getRowCount(); i++) {
 			iTree.expandRow(i);
