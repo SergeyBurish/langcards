@@ -66,7 +66,7 @@ public class CardSet {
 		Element languages = iDoc.createElement("Languages");
 		languages.setAttribute("From", "English");
 		languages.setAttribute("To", "Russian");
-		settings.appendChild(languages);		
+		settings.appendChild(languages);
 	}
 	
 	public void Save(String fileName) throws TransformerException {

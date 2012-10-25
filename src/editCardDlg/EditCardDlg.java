@@ -16,6 +16,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import LangCards.LCui;
+
 import lngCard.LngCard;
 
 import exTree.ExTree;
@@ -43,6 +45,8 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	public EditCardDlg(JFrame parent, LngCard lngCard) {
 		super(parent, "New Card", true);
 		iLngCard = lngCard;
+		
+		LCui.mainFrame.AddToCloseArray(this);
 	}
 	
 	public void SetLanguages(String langFrom, String langTo) {
@@ -159,6 +163,7 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 		}
 		
 		iAccepted = true;
+		LCui.mainFrame.RemoveFromCloseArray(this);
 		dispose();
 	}
 }
