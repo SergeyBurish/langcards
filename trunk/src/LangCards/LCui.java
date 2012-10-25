@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -38,11 +39,14 @@ public class LCui extends JFrame
 	JMenuItem menuItem;
 	
 	JFileChooser iFileChooser = new JFileChooser();
-	FileFilter iFilefilter = new FileNameExtensionFilter("Language Cards file", "lngcards");
-	
+	FileFilter iFilefilter = new FileNameExtensionFilter("Language Cards file",
+			"lngcards");
+
 	public DocumentBuilder iParser;
 	Document doc;
 	
+	Vector<JDialog> iCloseArray= new Vector<JDialog>();
+
 	public static void main(String[] args) {
 		mainFrame = new LCui();
 		mainFrame.Init();
@@ -52,7 +56,7 @@ public class LCui extends JFrame
 	public LCui() {
 		setTitle("Language Cards");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//setDefaultLookAndFeelDecorated(true);
+		// setDefaultLookAndFeelDecorated(true);
 	}
 	
 	public void Init() {
@@ -104,10 +108,15 @@ public class LCui extends JFrame
 		
 		this.setJMenuBar(menuBar);
 	}
-		
+	
 	public void ShowErr(Exception e) {
 		e.printStackTrace();
 		
+		for (int i = 0; i < iCloseArray.size(); i++) {
+			iCloseArray.get(i).dispose();			
+		}
+		iCloseArray.removeAllElements();		
+
 		setTitle("Internal Error");
 		this.setJMenuBar(null); // remove menu
 		iContainer.removeAll(); // remove all ui controls
@@ -124,6 +133,14 @@ public class LCui extends JFrame
 		);
 
 		pack();
+	}
+	
+	public void AddToCloseArray(JDialog dlg) {
+		iCloseArray.add(dlg);
+	}
+
+	public void RemoveFromCloseArray(JDialog dlg) {
+		iCloseArray.remove(dlg);
 	}
 
 	// ActionListener
@@ -146,11 +163,12 @@ public class LCui extends JFrame
 		}
 	}
 
-	
-	private void actionPerformedThrow(ActionEvent arg0) throws SAXException, IOException, TransformerException, XPathExpressionException, LangCardsExeption {
+	private void actionPerformedThrow(ActionEvent arg0) throws SAXException,
+			IOException, TransformerException, XPathExpressionException,
+			LangCardsExeption {
 		String actionCmd = arg0.getActionCommand();
 		if (actionCmd.equals("New")) {
-			//iFileChooser.showDialog(this, "New");
+			// iFileChooser.showDialog(this, "New");
 			NewSet();
 		} else if (actionCmd.equals("Open")) {
 			if (iFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -160,10 +178,10 @@ public class LCui extends JFrame
 				editView.Show();
 			}
 		} else if (actionCmd.equals("Save As...")) {
-			if ( iFileChooser.showSaveDialog( this ) == JFileChooser.APPROVE_OPTION ) {
+			if (iFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = iFileChooser.getSelectedFile();
 				
-				String  fName = file.toString();
+				String fName = file.toString();
 				fName = FilenameUtils.removeExtension(fName);
 				iCardSet.Save(fName + ".lngcards");
 			}
