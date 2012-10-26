@@ -16,7 +16,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import LangCards.LCmain;
+import lc.LCmain;
 
 import lngCard.LngCard;
 

@@ -19,7 +19,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
 import lngCard.LngCard;
-import LangCards.LCmain;
+import lc.LCmain;
 import cardSet.CardSet;
 import editCardDlg.EditCardDlg;
 
