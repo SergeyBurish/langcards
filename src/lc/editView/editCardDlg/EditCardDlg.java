@@ -18,7 +18,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import lc.LCmain;
 
-import lngCard.LngCard;
+import lc.cardSet.lngCard.LngCard;
 
 import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.MultiLineCellEditor;

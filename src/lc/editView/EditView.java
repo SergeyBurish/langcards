@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
-import lngCard.LngCard;
+import lc.cardSet.lngCard.LngCard;
 import lc.LCmain;
 import lc.cardSet.CardSet;
 import lc.editView.editCardDlg.EditCardDlg;
