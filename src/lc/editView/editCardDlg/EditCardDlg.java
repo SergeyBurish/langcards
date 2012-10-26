@@ -23,7 +23,7 @@ import lngCard.LngCard;
 import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
 import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
-import exTreeNode.ExTreeNode;
+import lc.editView.editCardDlg.exTree.ExTreeNode;
 
 public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
 	ExTreeNode rootNode = new ExTreeNode("New Card", false);

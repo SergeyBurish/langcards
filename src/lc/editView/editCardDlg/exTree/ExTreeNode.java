@@ -1,4 +1,4 @@
-package exTreeNode;
+package lc.editView.editCardDlg.exTree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
