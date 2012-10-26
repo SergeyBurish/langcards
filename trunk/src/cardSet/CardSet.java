@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import LangCards.LCui;
+import LangCards.LCmain;
 import langCardsExeption.LangCardsExeption;
 import lngCard.LngCard;
 
@@ -39,13 +39,13 @@ public class CardSet {
 	public CardSet() {
 		// new
 		iName = "New set";
-		iDoc = LCui.mainFrame.iParser.newDocument();
+		iDoc = LCmain.mainFrame.iParser.newDocument();
 		InitDoc();
 	}
 	
 	public CardSet(File file) throws SAXException, IOException {
 		iName = file.getName();
-		iDoc = LCui.mainFrame.iParser.parse(file);
+		iDoc = LCmain.mainFrame.iParser.parse(file);
 	}
 	
 	public void InitDoc() {

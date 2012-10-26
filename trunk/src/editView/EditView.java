@@ -19,7 +19,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import langCardsExeption.LangCardsExeption;
 import lngCard.LngCard;
-import LangCards.LCui;
+import LangCards.LCmain;
 import cardSet.CardSet;
 import editCardDlg.EditCardDlg;
 
@@ -42,10 +42,10 @@ public class EditView implements ActionListener {
 	}
 	
 	public void Show() throws XPathExpressionException, LangCardsExeption {
-		LCui.mainFrame.setTitle(iSet.Name() + " Language Cards");
+		LCmain.mainFrame.setTitle(iSet.Name() + " Language Cards");
 		//setJMenuBar(null); // remove menu
 		
-		LCui.mainFrame.iContainer.removeAll(); // remove all ui controls
+		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
@@ -55,17 +55,17 @@ public class EditView implements ActionListener {
 		JPanel panSett = makeSettingsPanel();
 		tabbedPane.addTab("Settings", panSett);
 		
-		LCui.mainFrame.iLayout.setHorizontalGroup(
-				LCui.mainFrame.iLayout.createSequentialGroup()
+		LCmain.mainFrame.iLayout.setHorizontalGroup(
+				LCmain.mainFrame.iLayout.createSequentialGroup()
 				.addComponent(tabbedPane)
 		);
 				
-		LCui.mainFrame.iLayout.setVerticalGroup(
-				LCui.mainFrame.iLayout.createSequentialGroup()
+		LCmain.mainFrame.iLayout.setVerticalGroup(
+				LCmain.mainFrame.iLayout.createSequentialGroup()
 				.addComponent(tabbedPane)
 		);
 		
-		LCui.mainFrame.pack();
+		LCmain.mainFrame.pack();
 	}
 	
 	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
@@ -160,10 +160,10 @@ public class EditView implements ActionListener {
 					}
 					
 				} catch (XPathExpressionException e) {
-					LCui.mainFrame.ShowErr(e);
+					LCmain.mainFrame.ShowErr(e);
 				}
 				catch (LangCardsExeption e) {
-					LCui.mainFrame.ShowErr(e);
+					LCmain.mainFrame.ShowErr(e);
 				}
 				//iTableModel.addRow(new Object[] { btName });
 			} else {

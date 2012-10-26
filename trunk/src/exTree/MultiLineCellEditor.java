@@ -10,7 +10,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import LangCards.LCui;
+import LangCards.LCmain;
 
 public class MultiLineCellEditor extends DefaultCellEditor implements DocumentListener, CaretListener, ExTextPaneListener{
 	static ExTextPane iTextPane;
@@ -76,7 +76,7 @@ public class MultiLineCellEditor extends DefaultCellEditor implements DocumentLi
 		try {
 			iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
 		} catch (BadLocationException e) {
-			LCui.mainFrame.ShowErr(e);
+			LCmain.mainFrame.ShowErr(e);
 		}
 	}
 }
