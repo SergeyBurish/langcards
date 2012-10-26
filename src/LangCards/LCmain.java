@@ -26,9 +26,9 @@ import org.xml.sax.SAXException;
 import cardSet.CardSet;
 import editView.EditView;
 
-public class LCui extends JFrame
+public class LCmain extends JFrame
 					implements ActionListener {
-	public static LCui mainFrame;
+	public static LCmain mainFrame;
 	public Container iContainer;
 	public GroupLayout iLayout;
 	
@@ -48,12 +48,12 @@ public class LCui extends JFrame
 	Vector<JDialog> iCloseArray= new Vector<JDialog>();
 
 	public static void main(String[] args) {
-		mainFrame = new LCui();
+		mainFrame = new LCmain();
 		mainFrame.Init();
 		mainFrame.setVisible(true);
 	}
 	
-	public LCui() {
+	public LCmain() {
 		setTitle("Language Cards");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// setDefaultLookAndFeelDecorated(true);
