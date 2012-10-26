@@ -3,7 +3,7 @@ package lc.editView.editCardDlg.exTree;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
 
-import exTreeNode.ExTreeNode;
+import lc.editView.editCardDlg.exTree.ExTreeNode;
 
 public class ExTree extends JTree {
 	public ExTree(TreeModel newModel) {
