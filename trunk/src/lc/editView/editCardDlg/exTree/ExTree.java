@@ -1,4 +1,4 @@
-package exTree;
+package lc.editView.editCardDlg.exTree;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
