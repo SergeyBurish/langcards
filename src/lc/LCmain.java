@@ -16,7 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
-import langCardsExeption.LangCardsExeption;
+import lc.langCardsExeption.LangCardsExeption;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;

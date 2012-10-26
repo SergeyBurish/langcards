@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import lc.LCmain;
-import langCardsExeption.LangCardsExeption;
+import lc.langCardsExeption.LangCardsExeption;
 import lc.cardSet.lngCard.LngCard;
 
 public class CardSet {

@@ -2,7 +2,7 @@ package lc.cardSet.lngCard;
 
 import java.util.ArrayList;
 
-import langCardsExeption.LangCardsExeption;
+import lc.langCardsExeption.LangCardsExeption;
 import lc.cardSet.lngPhrase.LngPhrase;
 
 public class LngCard {
