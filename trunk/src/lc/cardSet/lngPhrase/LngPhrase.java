@@ -1,4 +1,4 @@
-package lngPhrase;
+package lc.cardSet.lngPhrase;
 
 public class LngPhrase {
 	public String iVal;

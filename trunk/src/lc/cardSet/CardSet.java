@@ -27,7 +27,7 @@ import org.xml.sax.SAXException;
 
 import lc.LCmain;
 import langCardsExeption.LangCardsExeption;
-import lngCard.LngCard;
+import lc.cardSet.lngCard.LngCard;
 
 public class CardSet {
 	private Document iDoc;

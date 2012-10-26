@@ -1,9 +1,9 @@
-package lngCard;
+package lc.cardSet.lngCard;
 
 import java.util.ArrayList;
 
 import langCardsExeption.LangCardsExeption;
-import lngPhrase.LngPhrase;
+import lc.cardSet.lngPhrase.LngPhrase;
 
 public class LngCard {
 	ArrayList<LngPhrase> iFromPrases;
