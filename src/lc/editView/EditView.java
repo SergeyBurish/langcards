@@ -1,4 +1,4 @@
-package editView;
+package lc.editView;
 
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -20,7 +20,7 @@ import javax.xml.xpath.XPathExpressionException;
 import langCardsExeption.LangCardsExeption;
 import lngCard.LngCard;
 import lc.LCmain;
-import cardSet.CardSet;
+import lc.cardSet.CardSet;
 import editCardDlg.EditCardDlg;
 
 public class EditView implements ActionListener {

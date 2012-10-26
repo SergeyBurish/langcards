@@ -1,4 +1,4 @@
-package cardSet;
+package lc.cardSet;
 
 import java.io.File;
 import java.io.IOException;
