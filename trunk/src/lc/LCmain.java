@@ -20,11 +20,10 @@ import langCardsExeption.LangCardsExeption;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import cardSet.CardSet;
-import editView.EditView;
+import lc.cardSet.CardSet;
+import lc.editView.EditView;
 
 public class LCmain extends JFrame
 					implements ActionListener {
