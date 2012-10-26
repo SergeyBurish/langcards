@@ -1,4 +1,4 @@
-package editCardDlg;
+package lc.editView.editCardDlg;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

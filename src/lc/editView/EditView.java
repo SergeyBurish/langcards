@@ -21,7 +21,7 @@ import langCardsExeption.LangCardsExeption;
 import lngCard.LngCard;
 import lc.LCmain;
 import lc.cardSet.CardSet;
-import editCardDlg.EditCardDlg;
+import lc.editView.editCardDlg.EditCardDlg;
 
 public class EditView implements ActionListener {
 	CardSet iSet;
