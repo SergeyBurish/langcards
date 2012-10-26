@@ -1,4 +1,4 @@
-package langCardsExeption;
+package lc.langCardsExeption;
 
 public class LangCardsExeption extends Exception {
 
