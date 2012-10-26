@@ -1,4 +1,4 @@
-package exTree;
+package lc.editView.editCardDlg.exTree;
 
 import java.awt.Color;
 import java.awt.Component;

@@ -1,4 +1,4 @@
-package exTree;
+package lc.editView.editCardDlg.exTree;
 
 public interface ExTextPaneListener {
 	public void enterTyped();

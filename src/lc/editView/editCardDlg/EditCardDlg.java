@@ -20,9 +20,9 @@ import lc.LCmain;
 
 import lngCard.LngCard;
 
-import exTree.ExTree;
-import exTree.MultiLineCellEditor;
-import exTree.MultiLineCellRenderer;
+import lc.editView.editCardDlg.exTree.ExTree;
+import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
+import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
 import exTreeNode.ExTreeNode;
 
 public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
