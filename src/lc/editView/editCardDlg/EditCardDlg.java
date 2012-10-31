@@ -27,7 +27,8 @@ import lc.editView.editCardDlg.exTree.ExTreeNode;
 
 public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
 	ExTreeNode rootNode = new ExTreeNode("New Card", false);
-	ExTree iTree = new ExTree(new DefaultTreeModel(rootNode));
+	DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
+	ExTree iTree = new ExTree(iModel);
 	JButton iOkBtn = new JButton("OK");
 	JLabel iStatusLbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
@@ -65,7 +66,7 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 		rootNode.add(iLngToNode);
 
 		iTree.setCellRenderer(new MultiLineCellRenderer());
-		iTree.setCellEditor(new MultiLineCellEditor());
+		iTree.setCellEditor(new MultiLineCellEditor(iModel));
 		//expand all nodes
 		for (int i = 0; i < iTree.getRowCount(); i++) {
 			iTree.expandRow(i);
