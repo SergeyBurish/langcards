@@ -86,6 +86,13 @@ public class CardSet {
 		return iName;
 	}
 	
+	public int CardsCount() throws XPathExpressionException, LangCardsExeption {
+		Node cardsNd = getUniqNode("Set/Cards");
+		NodeList cardListNdL = cardsNd.getChildNodes();
+
+		return cardListNdL.getLength();
+	}
+	
 	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsExeption {
 		Node cards = getUniqNode("Set/Cards");
 		NodeList nList = cards.getChildNodes();
