@@ -2,7 +2,6 @@ package lc.editView.editCardDlg.exTree;
 
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.CaretEvent;

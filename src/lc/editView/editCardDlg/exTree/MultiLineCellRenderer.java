@@ -3,19 +3,14 @@ package lc.editView.editCardDlg.exTree;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.tree.TreeCellRenderer;
 
@@ -75,6 +70,7 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 
 	class TreeTextArea extends JTextArea {
 		Dimension preferredSize;
+		JTextPane iDummy = new JTextPane(); // to recalculate text size only
 
 		TreeTextArea() {
 			setLineWrap(true);
@@ -99,24 +95,10 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 		}
 
 		public void setText(String str) {
-			FontMetrics fm = getToolkit().getFontMetrics(getFont());
-			BufferedReader br = new BufferedReader(new StringReader(str));
-			String line;
-			int maxWidth = 0, lines = 0;
-			try {
-				while ((line = br.readLine()) != null) {
-					int width = SwingUtilities.computeStringWidth(fm, line);
-					if (maxWidth < width) {
-						maxWidth = width;
-					}
-					lines++;
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			lines = (lines < 1) ? 1 : lines;
-			int height = fm.getHeight() * lines;
-			setPreferredSize(new Dimension(maxWidth + 6, height));
+			iDummy.setText(str);
+			Dimension d = iDummy.getPreferredSize();
+			setPreferredSize(d);
+			
 			super.setText(str);
 		}
 
