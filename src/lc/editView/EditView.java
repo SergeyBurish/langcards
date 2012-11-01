@@ -30,6 +30,9 @@ public class EditView implements ActionListener {
 	JButton iBtDel = new JButton("Delete");
 	JButton iBtEd = new JButton("Edit");
 	
+	DefaultTableModel iTableModelState = new DefaultTableModel();
+	JTable iTableState;
+	
 	DefaultTableModel iTableModel = new DefaultTableModel();
 	JTable iTable;
 	
@@ -49,11 +52,16 @@ public class EditView implements ActionListener {
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
+		JPanel panState = makeStatePanel();
+		tabbedPane.addTab("State", panState);
+		
 		JPanel panCards = makeCardsPanel();
 		tabbedPane.addTab("Cards", panCards);
 		
 		JPanel panSett = makeSettingsPanel();
 		tabbedPane.addTab("Settings", panSett);
+		
+		tabbedPane.setSelectedIndex(1); // select Cards panel 
 		
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
@@ -66,6 +74,20 @@ public class EditView implements ActionListener {
 		);
 		
 		LCmain.mainFrame.pack();
+	}
+	
+	private JPanel makeStatePanel() throws XPathExpressionException, LangCardsExeption {
+		JPanel panel = new JPanel(false);
+		
+		iTableState = new JTable(iTableModelState);
+		UpdateStateTable();
+		
+		JScrollPane sp = new JScrollPane(iTableState);
+		
+		panel.setLayout(new GridLayout(1, 1));
+		panel.add(sp);
+		
+		return panel; //makeSettingsPanel();
 	}
 	
 	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
@@ -118,6 +140,33 @@ public class EditView implements ActionListener {
 		return panel;
 	}
 	
+	private void UpdateStateTable() throws XPathExpressionException, LangCardsExeption {
+		
+		Vector<Vector<String>> rows=new Vector<Vector<String>>();
+		
+		Vector<String> rowVect=new Vector<String>();
+		rowVect.addElement("Total number");
+		rowVect.addElement(Integer.toString(iSet.CardsCount()));
+		rows.addElement(rowVect);
+		
+		rowVect=new Vector<String>();
+		rowVect.addElement("Learned");
+		rowVect.addElement("0");
+		rows.addElement(rowVect);
+
+		rowVect=new Vector<String>();
+		rowVect.addElement("Idle");
+		rowVect.addElement("0");
+		rows.addElement(rowVect);
+		
+		
+		Vector<String> columns= new Vector<String>();
+		columns.addElement("Status");
+		columns.addElement("Quantity");
+		
+		iTableModelState.setDataVector(rows, columns);		
+	}
+	
 	private void UpdateTable() throws XPathExpressionException, LangCardsExeption {
 		
 		Vector<Vector<String>> rows = iSet.GetAllCardsIdFromTo();
@@ -156,6 +205,7 @@ public class EditView implements ActionListener {
 					if (newCardDlg.Accepted()) {
 						iSet.AddNewCard(lngCard);
 						UpdateTable();
+						UpdateStateTable();
 						ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
 					}
 					
