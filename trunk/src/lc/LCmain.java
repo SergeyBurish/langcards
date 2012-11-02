@@ -17,6 +17,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.langCardsExeption.LangCardsExeption;
+import lc.lessonView.LessonView;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
@@ -184,6 +185,9 @@ public class LCmain extends JFrame
 				fName = FilenameUtils.removeExtension(fName);
 				iCardSet.Save(fName + ".lngcards");
 			}
+		} else if (actionCmd.equals("Start lesson")) {
+			LessonView lessonView = new LessonView(iCardSet);
+			lessonView.Show();
 		}
 	}
 	

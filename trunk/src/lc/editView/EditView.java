@@ -30,6 +30,8 @@ public class EditView implements ActionListener {
 	JButton iBtDel = new JButton("Delete");
 	JButton iBtEd = new JButton("Edit");
 	
+	JButton iBtStart = new JButton("Start lesson");
+	
 	DefaultTableModel iTableModelState = new DefaultTableModel();
 	JTable iTableState;
 	
@@ -42,6 +44,8 @@ public class EditView implements ActionListener {
 		iBtAdd.addActionListener(this);
 		iBtDel.addActionListener(this);
 		iBtEd.addActionListener(this);
+		
+		iBtStart.addActionListener(LCmain.mainFrame);
 	}
 	
 	public void Show() throws XPathExpressionException, LangCardsExeption {
@@ -61,16 +65,19 @@ public class EditView implements ActionListener {
 		JPanel panSett = makeSettingsPanel();
 		tabbedPane.addTab("Settings", panSett);
 		
-		tabbedPane.setSelectedIndex(1); // select Cards panel 
+		tabbedPane.setSelectedIndex(1); // select Cards panel
 		
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
-				LCmain.mainFrame.iLayout.createSequentialGroup()
+				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(tabbedPane)
+				.addComponent(iBtStart)
 		);
 				
 		LCmain.mainFrame.iLayout.setVerticalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
 				.addComponent(tabbedPane)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addComponent(iBtStart)
 		);
 		
 		LCmain.mainFrame.pack();
@@ -187,38 +194,34 @@ public class EditView implements ActionListener {
 	// ActionListener
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		Object srcObject = event.getSource();
+		String actionCmd = event.getActionCommand();
 		
-		if (srcObject instanceof JButton) {
-			JButton srcBt = (JButton)srcObject;
-			
-			String btName = srcBt.getText();
-			
-			if (btName.compareTo("Add") == 0) {
-				try {
-					LngCard lngCard = new LngCard();
-					
-					EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
-					newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
-					newCardDlg.setVisible(true);
-					
-					if (newCardDlg.Accepted()) {
-						iSet.AddNewCard(lngCard);
-						UpdateTable();
-						UpdateStateTable();
-						ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
-					}
-					
-				} catch (XPathExpressionException e) {
-					LCmain.mainFrame.ShowErr(e);
+		if (actionCmd.equals("Add")) {
+			try {
+				LngCard lngCard = new LngCard();
+				
+				EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
+				newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
+				newCardDlg.setVisible(true);
+				
+				if (newCardDlg.Accepted()) {
+					iSet.AddNewCard(lngCard);
+					UpdateTable();
+					UpdateStateTable();
+					ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
 				}
-				catch (LangCardsExeption e) {
-					LCmain.mainFrame.ShowErr(e);
-				}
-				//iTableModel.addRow(new Object[] { btName });
-			} else {
-				iTableModel.addColumn(btName);
+				
+			} catch (XPathExpressionException e) {
+				LCmain.mainFrame.ShowErr(e);
 			}
+			catch (LangCardsExeption e) {
+				LCmain.mainFrame.ShowErr(e);
+			}
+			//iTableModel.addRow(new Object[] { btName });
+		} else if (actionCmd.equals("Delete")) {
+			iTableModel.addColumn(actionCmd);
+		} else {
+			iTableModel.addColumn(actionCmd);
 		}
 	}
 }
