@@ -49,18 +49,8 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="LCmain (1)">
-        <java classname="lc.LCmain" failonerror="true" fork="yes">
-            <classpath refid="LangCards.classpath"/>
-        </java>
-    </target>
     <target name="LCmain">
-        <java classname="LangCards.LCmain" failonerror="true" fork="yes">
-            <classpath refid="LangCards.classpath"/>
-        </java>
-    </target>
-    <target name="LCui">
-        <java classname="LangCards.LCui" failonerror="true" fork="yes">
+        <java classname="lc.LCmain" failonerror="true" fork="yes">
             <classpath refid="LangCards.classpath"/>
         </java>
     </target>
