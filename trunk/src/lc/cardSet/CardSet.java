@@ -71,6 +71,46 @@ public class CardSet {
 		languages.setAttribute("From", "English");
 		languages.setAttribute("To", "Russian");
 		settings.appendChild(languages);
+		
+		//TestFilling();
+	}
+	
+	private void TestFilling() {
+		try {
+			LngCard lc = new LngCard();
+			lc.AddFromPhrase("F111@ ");
+			lc.AddToPhrase("T111@ ");
+			AddNewCard(lc);
+			
+			lc = new LngCard();
+			lc.AddFromPhrase("F222-1@ ");
+			lc.AddFromPhrase("F222-222@ ");
+			lc.AddToPhrase("T2@ ");
+			AddNewCard(lc);
+			
+			lc = new LngCard();
+			lc.AddFromPhrase("F3-1@ ");
+			lc.AddFromPhrase("F3-2@ ");
+			lc.AddToPhrase("T333-1@ ");
+			lc.AddToPhrase("T333-2@ ");
+			AddNewCard(lc);
+			
+			lc = new LngCard();
+			lc.AddFromPhrase("F44@ ");
+			lc.AddToPhrase("T44444@ ");
+			AddNewCard(lc);
+			
+			lc = new LngCard();
+			lc.AddFromPhrase("F5@ ");
+			lc.AddToPhrase("T5@ ");
+			AddNewCard(lc);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (LangCardsExeption e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void Save(String fileName) throws TransformerException {
@@ -107,28 +147,32 @@ public class CardSet {
 		card.setAttribute("id", "" + (cardsCount+1));
 		cards.appendChild(card);
 		
-		// From Language phrase
-		Element phrase = iDoc.createElement("Phrase");
-		phrase.setAttribute("Language", LanguageFrom());
-		card.appendChild(phrase);
-		
+		// From Language phrases
 		for (int i = 0; i < lngCard.FromPhraseCount(); i++) {
+			Element phrase = iDoc.createElement("Phrase");
+			phrase.setAttribute("Language", LanguageFrom());
+
 			Element val = iDoc.createElement("Value");
 			val.setTextContent(lngCard.GetFromPhrase(i));
-			//add Transcription, Example
+			
 			phrase.appendChild(val);
+			//add Transcription, Examples
+			
+			card.appendChild(phrase);
 		}
 		
-		// To Language phrase
-		phrase = iDoc.createElement("Phrase");
-		phrase.setAttribute("Language", LanguageTo());
-		card.appendChild(phrase);
-		
+		// To Language phrases
 		for (int i = 0; i < lngCard.ToPhraseCount(); i++) {
+			Element phrase = iDoc.createElement("Phrase");
+			phrase.setAttribute("Language", LanguageTo());
+			
 			Element val = iDoc.createElement("Value");
 			val.setTextContent(lngCard.GetToPhrase(i));
-			//add Transcription, Example
+			
 			phrase.appendChild(val);
+			//add Transcription, Examples
+			
+			card.appendChild(phrase);
 		}
 	}
 	
@@ -136,71 +180,36 @@ public class CardSet {
 		Vector<Vector<String>> rowsVect=new Vector<Vector<String>>();
 		
 		Node cardsNd = getUniqNode("Set/Cards");
-		NodeList cardListNdL = cardsNd.getChildNodes();
+		NodeList cardList = cardsNd.getChildNodes();
 		
 		String fromLanguageStr = LanguageFrom();
 		String toLanguageStr = LanguageTo();
 
-		for (int i = 0; i < cardListNdL.getLength(); i++) {
+		for (int i = 0; i < cardList.getLength(); i++) {
 			Vector<String> rowVect=new Vector<String>();
 			
-			Node cardNd = cardListNdL.item(i);
-			if (cardNd == null) throw new LangCardsExeption("xml error: fail to get next \"Card\" node");
+			Node card = cardList.item(i);
+			if (card == null) throw new LangCardsExeption("xml error: fail to get next \"Card\" node");
 			
-			rowVect.addElement(getAttributeValue(cardNd, "id"));
+			String cardID = iXpath.evaluate("@id", card);  // "id" attribute of <Card/>
+			rowVect.addElement(cardID);
 			
-			String fromStr = "";
-			Boolean fromFoundBool = false;
-			String toStr = "";
-			Boolean toFoundBool = false;
+			 // get the first "FROM" phrase
+			NodeList fromPhraseList = (NodeList)iXpath.evaluate(String.format("Phrase[@Language='%s']", fromLanguageStr), card, XPathConstants.NODESET);
+			if (fromPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", fromLanguageStr, cardID));
+			Node fromPhrase = fromPhraseList.item(0);
+			
+			rowVect.addElement(iXpath.evaluate("Value", fromPhrase));
+			
+			
+			 // get the first "TO" phrase
+			NodeList toPhraseList = (NodeList)iXpath.evaluate(String.format("Phrase[@Language='%s']", toLanguageStr), card, XPathConstants.NODESET);
+			if (toPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", toLanguageStr, cardID));
+			Node toPhrase = toPhraseList.item(0);
+			
+			rowVect.addElement(iXpath.evaluate("Value", toPhrase));
+			
 
-			// 1st phrase
-			Node fstPhraseNd = cardNd.getFirstChild();
-			if (fstPhraseNd == null) throw new LangCardsExeption("invalid xml structure: no \"Phrase\" node");
-			
-			String phraseLngStr = getAttributeValue(fstPhraseNd, "Language");
-			Node phraseValNd = fstPhraseNd.getFirstChild();
-			if (phraseValNd == null) throw new LangCardsExeption("invalid xml structure: no \"Value\" node");
-			
-			String phraseValStr = phraseValNd.getTextContent();
-			
-			if (phraseLngStr.compareTo(fromLanguageStr) == 0) {
-				fromStr = phraseValStr;
-				fromFoundBool = true;
-			} else if (phraseLngStr.compareTo(toLanguageStr) == 0) {
-				toStr = phraseValStr;
-				toFoundBool = true;
-			} else {
-				throw new LangCardsExeption("invalid xml structure: wrong Phrase Language: " + phraseLngStr);
-			}
-
-			// 2nd phrase
-			Node sndPhraseNd = fstPhraseNd.getNextSibling();
-			if (sndPhraseNd == null) throw new LangCardsExeption("invalid xml structure: no 2-nd \"Phrase\" node");
-			
-			phraseLngStr = getAttributeValue(sndPhraseNd, "Language");
-			phraseValNd = sndPhraseNd.getFirstChild();
-			if (phraseValNd == null) throw new LangCardsExeption("invalid xml structure: no 2-nd \"Value\" node");
-			
-			phraseValStr = phraseValNd.getTextContent();
-			
-			if (phraseLngStr.compareTo(fromLanguageStr) == 0) {
-				fromStr = phraseValStr;
-				fromFoundBool = true;
-			} else if (phraseLngStr.compareTo(toLanguageStr) == 0) {
-				toStr = phraseValStr;
-				toFoundBool = true;
-			} else {
-				throw new LangCardsExeption("invalid xml structure: wrong Phrase Language: " + phraseLngStr);
-			}
-			
-			if (!fromFoundBool || !toFoundBool) {
-				throw new LangCardsExeption("invalid xml structure: both Phrases are of same Language: " + phraseLngStr);
-			}
-			
-			rowVect.addElement(fromStr);
-			rowVect.addElement(toStr);
-			
 			rowsVect.addElement(rowVect);
 		}
 
@@ -231,19 +240,5 @@ public class CardSet {
 		}
 		
 		throw new LangCardsExeption("no unique \"" + nodePath + "\" node");
-	}
-	
-	private String getAttributeValue(Node nd, String attrName) throws LangCardsExeption {
-		NamedNodeMap nnm = nd.getAttributes();
-		
-		for (int i = 0; i < nnm.getLength(); i++) {
-			Node nd1 = nnm.item(i);
-			
-			if (nd1.getNodeName().compareTo(attrName) == 0) {
-				return nd1.getNodeValue();
-			}
-		}
-		
-		throw new LangCardsExeption("no \"" + attrName + "\" attribute");
 	}
 }
