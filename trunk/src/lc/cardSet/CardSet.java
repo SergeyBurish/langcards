@@ -36,6 +36,7 @@ public class CardSet {
 	XPath iXpath = XPathFactory.newInstance().newXPath();
 	
 	// Path Expressions of frequent operations
+	XPathExpression iSetCards = null;                // Set/Cards
 	XPathExpression iCards_Card = null;              // Set/Cards/Card
 	XPathExpression iIdExpr = null;                  // @id
 	XPathExpression iValueExpr = null;               // Value
@@ -139,7 +140,8 @@ public class CardSet {
 	}
 	
 	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsExeption {
-		Node cards = getUniqNode("Set/Cards");
+		Node cards = CardsNode();
+		
 		NodeList nList = cards.getChildNodes();
 		int cardsCount = nList.getLength();
 		
@@ -223,6 +225,14 @@ public class CardSet {
 		return rowsVect;
 	}
 	
+	private Node CardsNode () throws XPathExpressionException {
+		if (iSetCards == null) {
+			iSetCards = iXpath.compile("Set/Cards");
+		}
+		
+		return (Node)iSetCards.evaluate(iDoc, XPathConstants.NODE);
+	}
+	
 	private NodeList CardsList() throws XPathExpressionException {
 		if (iCards_Card == null) {
 			iCards_Card = iXpath.compile("Set/Cards/Card");
@@ -245,15 +255,5 @@ public class CardSet {
 		}
 		
 		return iSettings_Languages_To.evaluate(iDoc);
-	}
-	
-	private Node getUniqNode (String nodePath) throws XPathExpressionException, LangCardsExeption {
-		NodeList nl = (NodeList) iXpath.evaluate(nodePath, iDoc, XPathConstants.NODESET);
-		
-		if (nl.getLength() == 1) { // node is unique
-			return nl.item(0);
-		}
-		
-		throw new LangCardsExeption("no unique \"" + nodePath + "\" node");
 	}
 }
