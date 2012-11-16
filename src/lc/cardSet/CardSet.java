@@ -222,6 +222,8 @@ public class CardSet {
 	}
 	
 	public LngCard NodeToCard(Node node) throws XPathExpressionException, LangCardsExeption {
+		if (node == null) return null;
+		
 		LngCard lc = new LngCard();
 		
 		NodeList fromPhraseList = FromPhrasesOfCard(node, LanguageFrom());

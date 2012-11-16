@@ -25,7 +25,6 @@ public class LessonView implements ActionListener {
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
-		//LngCard flc = iLesson.NextCard();
 		LngCard firstLessonCard = iLesson.NextCard(); // iSet.FirstLessonCard();
 		if (firstLessonCard == null) {
 			throw new LangCardsExeption("No lesson cards");
