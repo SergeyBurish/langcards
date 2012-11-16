@@ -83,7 +83,7 @@ public class EditView implements ActionListener {
 		LCmain.mainFrame.pack();
 	}
 	
-	private JPanel makeStatePanel() throws XPathExpressionException, LangCardsExeption {
+	private JPanel makeStatePanel() throws XPathExpressionException{
 		JPanel panel = new JPanel(false);
 		
 		iTableState = new JTable(iTableModelState);
@@ -147,7 +147,7 @@ public class EditView implements ActionListener {
 		return panel;
 	}
 	
-	private void UpdateStateTable() throws XPathExpressionException, LangCardsExeption {
+	private void UpdateStateTable() throws XPathExpressionException{
 		
 		Vector<Vector<String>> rows=new Vector<Vector<String>>();
 		

@@ -37,7 +37,8 @@ public class CardSet {
 	
 	// Path Expressions of frequent operations
 	XPathExpression iSetCards = null;                // Set/Cards
-	XPathExpression iCards_Card = null;              // Set/Cards/Card
+	XPathExpression iCardsCard = null;               // Set/Cards/Card
+	XPathExpression iLessonCards = null;             // Set/Cards/Card[@status='lesson']
 	XPathExpression iIdExpr = null;                  // @id
 	XPathExpression iValueExpr = null;               // Value
 	XPathExpression iPhraseLanguageFrom = null;      // Phrase[@Language='fromLanguage']
@@ -135,8 +136,12 @@ public class CardSet {
 		return iName;
 	}
 	
-	public int CardsCount() throws XPathExpressionException, LangCardsExeption {
+	public int CardsCount() throws XPathExpressionException{
 		return  CardsList().getLength();
+	}
+	
+	public int  LessonCardsCount() throws XPathExpressionException {
+		return  LessonCardsList().getLength();
 	}
 	
 	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsExeption {
@@ -187,11 +192,8 @@ public class CardSet {
 		String fromLanguageStr = LanguageFrom();
 		String toLanguageStr = LanguageTo();
 		
-		if (iIdExpr == null || iValueExpr == null || iPhraseLanguageFrom == null || iPhraseLanguageTo == null) {
-			iIdExpr = iXpath.compile("@id");
+		if (iValueExpr == null) {
 			iValueExpr = iXpath.compile("Value");
-			iPhraseLanguageFrom = iXpath.compile(String.format("Phrase[@Language='%s']", fromLanguageStr));
-			iPhraseLanguageTo = iXpath.compile(String.format("Phrase[@Language='%s']", toLanguageStr));
 		}
 		
 		for (int i = 0; i < cardList.getLength(); i++) {
@@ -200,22 +202,16 @@ public class CardSet {
 			Node card = cardList.item(i);
 			if (card == null) throw new LangCardsExeption("xml error: fail to get next \"Card\" node");
 			
-			String cardID = iIdExpr.evaluate(card);  // "id" attribute of <Card/>
-			rowVect.addElement(cardID);
+			rowVect.addElement(CardId(card));
 			
 			 // get the first "FROM" phrase
-			NodeList fromPhraseList = (NodeList)iPhraseLanguageFrom.evaluate(card, XPathConstants.NODESET);
-			if (fromPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", fromLanguageStr, cardID));
+			NodeList fromPhraseList = FromPhrasesOfCard(card, fromLanguageStr);
 			Node fromPhrase = fromPhraseList.item(0);
-			
 			rowVect.addElement(iValueExpr.evaluate(fromPhrase));
 			
-			
 			 // get the first "TO" phrase
-			NodeList toPhraseList = (NodeList)iPhraseLanguageTo.evaluate(card, XPathConstants.NODESET);
-			if (toPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", toLanguageStr, cardID));
+			NodeList toPhraseList = ToPhrasesOfCard(card, toLanguageStr);
 			Node toPhrase = toPhraseList.item(0);
-			
 			rowVect.addElement(iValueExpr.evaluate(toPhrase));
 			
 
@@ -234,11 +230,49 @@ public class CardSet {
 	}
 	
 	private NodeList CardsList() throws XPathExpressionException {
-		if (iCards_Card == null) {
-			iCards_Card = iXpath.compile("Set/Cards/Card");
+		if (iCardsCard == null) {
+			iCardsCard = iXpath.compile("Set/Cards/Card");
 		}
 		
-		return (NodeList) iCards_Card.evaluate(iDoc, XPathConstants.NODESET);
+		return (NodeList) iCardsCard.evaluate(iDoc, XPathConstants.NODESET);
+	}
+	
+	public NodeList LessonCardsList() throws XPathExpressionException {
+		if (iLessonCards == null) {
+			iLessonCards = iXpath.compile("Set/Cards/Card[@status='lesson']");
+		}
+		
+		return (NodeList) iLessonCards.evaluate(iDoc, XPathConstants.NODESET);
+	}
+	
+	private String CardId(Node card) throws XPathExpressionException {
+		if (iIdExpr == null) {
+			iIdExpr = iXpath.compile("@id");
+		}
+		
+		return iIdExpr.evaluate(card);  // "id" attribute of <Card/>
+	}
+	
+	private NodeList FromPhrasesOfCard(Node card, String fromLanguage) throws XPathExpressionException, LangCardsExeption {
+		if (iPhraseLanguageFrom == null) {
+			iPhraseLanguageFrom = iXpath.compile(String.format("Phrase[@Language='%s']", fromLanguage));
+		}
+		
+		NodeList fromPhraseList = (NodeList)iPhraseLanguageFrom.evaluate(card, XPathConstants.NODESET);
+		if (fromPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", fromLanguage, CardId(card)));
+		
+		return fromPhraseList;
+	}
+	
+	private NodeList ToPhrasesOfCard(Node card, String toLanguage) throws XPathExpressionException, LangCardsExeption {
+		if (iPhraseLanguageTo == null) {
+			iPhraseLanguageTo = iXpath.compile(String.format("Phrase[@Language='%s']", toLanguage));
+		}
+		
+		NodeList toPhraseList = (NodeList)iPhraseLanguageTo.evaluate(card, XPathConstants.NODESET);
+		if (toPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", toLanguage, CardId(card)));
+		
+		return toPhraseList;
 	}
 	
 	public String LanguageFrom() throws XPathExpressionException {
