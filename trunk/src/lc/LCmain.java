@@ -72,6 +72,7 @@ public class LCmain extends JFrame
 			iParser = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			ShowErr(e);
+			return;
 		}
 		
 		iFileChooser.addChoosableFileFilter(iFilefilter);
@@ -81,8 +82,10 @@ public class LCmain extends JFrame
 			NewSet();
 		} catch (XPathExpressionException e) {
 			ShowErr(e);
+			return;
 		} catch (LangCardsExeption e) {
 			ShowErr(e);
+			return;
 		}
 		
 		CreateMenu();
