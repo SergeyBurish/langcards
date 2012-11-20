@@ -2,6 +2,11 @@ package lc.lessonView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextPane;
+import javax.swing.LayoutStyle;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import javax.xml.xpath.XPathExpressionException;
@@ -67,14 +72,50 @@ public class LessonView implements ActionListener {
 //		examp31.add(exampVal31);
 //		examp32.add(exampVal32);
 		
+		JTextPane textPane = new JTextPane();
+		textPane.setText("Type your variant of translation here");
+		
+		JButton checkNextBtn = new JButton("Next Card");
+		JButton finishLessonBtn = new JButton("Finish Lesson");
+		
+		JLabel label1 = new JLabel("Test1");
+		JLabel label2 = new JLabel("Test2");
+		
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
-				.addComponent(iTree)
+				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(iTree)
+						.addComponent(textPane)
+						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
+								.addComponent(checkNextBtn)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(finishLessonBtn)
+								)
+						)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(label1)
+						.addComponent(label2)
+						)
 		);
 				
 		LCmain.mainFrame.iLayout.setVerticalGroup(
-				LCmain.mainFrame.iLayout.createSequentialGroup()
-				.addComponent(iTree)
+				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
+						.addComponent(iTree)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(textPane)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(checkNextBtn)
+								.addComponent(finishLessonBtn)
+								)
+						)
+				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
+						.addComponent(label1)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(label2)
+						)
 		);
 		
 		LCmain.mainFrame.pack();
