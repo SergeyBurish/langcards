@@ -57,10 +57,10 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	
 	private void InitControls() {
 		iLngFromNode = new ExTreeNode(iLangFrom, false);
-		iLngFromNode.add(new ExTreeNode("Enter new word or phrase here", true)); // \n" + "3333\n"  + "4444
+		iLngFromNode.add(new ExTreeNode("Type new word or phrase here", true)); // \n" + "3333\n"  + "4444
 		
 		iLngToNode = new ExTreeNode(iLangTo, false);
-		iLngToNode.add(new ExTreeNode("Enter new word or phrase here", true));
+		iLngToNode.add(new ExTreeNode("Type new word or phrase here", true));
 		
 		rootNode.add(iLngFromNode);
 		rootNode.add(iLngToNode);
