@@ -3,6 +3,7 @@ package lc.lessonView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
@@ -24,9 +25,32 @@ public class LessonView implements ActionListener {
 	CardSet iSet;
 	Lesson iLesson;
 	
+	JLabel iLabel1 = null;
+	
+	ImageIcon iNegative = null;
+	ImageIcon iPondering = null;
+	ImageIcon iPositive = null;
+	
+	int z = 0;
+	
 	public LessonView(CardSet set) throws XPathExpressionException {
 		iSet = set;
 		iLesson = iSet.newLesson();
+		
+		java.net.URL imgURL = LCmain.class.getResource("/resources/images/Negative.png");
+        if (imgURL != null) {
+        	iNegative = new ImageIcon(imgURL, "");
+        }
+        
+		imgURL = LCmain.class.getResource("/resources/images/Pondering.png");
+        if (imgURL != null) {
+        	iPondering = new ImageIcon(imgURL, "");
+        }
+        
+		imgURL = LCmain.class.getResource("/resources/images/Positive.png");
+        if (imgURL != null) {
+        	iPositive = new ImageIcon(imgURL, "");
+        }
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
@@ -34,6 +58,34 @@ public class LessonView implements ActionListener {
 		if (firstLessonCard == null) {
 			throw new LangCardsExeption("No lesson cards");
 		}
+		
+		
+		/*
+		ImageIcon icon2 = null;
+		java.net.URL imgURL = LCmain.class.getResource("resources/images/cert-stamp.jpg");
+        if (imgURL != null) {
+        	icon2 = new ImageIcon(imgURL, "");
+        }
+        
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream input = classLoader.getResourceAsStream("resources/images/cert-stamp.jpg");
+        
+        java.net.URL imgURL2 =classLoader.getResource("resources/images/cert-stamp.jpg");
+        Image logo;
+        
+        if (input != null) {
+    		try {
+    			logo = ImageIO.read(input);
+    			icon = new ImageIcon( logo );
+    		} catch (IOException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+		} else {
+			icon2 = new ImageIcon(imgURL2, "");
+		}*/
+
+		
 		
 		LCmain.mainFrame.setTitle(iSet.Name() + " Lesson");
 		//setJMenuBar(null); // remove menu
@@ -76,9 +128,12 @@ public class LessonView implements ActionListener {
 		textPane.setText("Type your variant of translation here");
 		
 		JButton checkNextBtn = new JButton("Next Card");
+		checkNextBtn.addActionListener(this);
 		JButton finishLessonBtn = new JButton("Finish Lesson");
 		
-		JLabel label1 = new JLabel("Test1");
+		iLabel1 = new JLabel("Test1", iNegative, JLabel.CENTER);
+		iLabel1.setVerticalTextPosition(JLabel.TOP);
+		iLabel1.setHorizontalTextPosition(JLabel.CENTER);
 		JLabel label2 = new JLabel("Test2");
 		
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
@@ -94,7 +149,7 @@ public class LessonView implements ActionListener {
 						)
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(label1)
+						.addComponent(iLabel1)
 						.addComponent(label2)
 						)
 		);
@@ -112,7 +167,7 @@ public class LessonView implements ActionListener {
 								)
 						)
 				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-						.addComponent(label1)
+						.addComponent(iLabel1)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(label2)
 						)
@@ -124,5 +179,32 @@ public class LessonView implements ActionListener {
 	// ActionListener
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		String actionCmd = event.getActionCommand();
+		if (actionCmd.equals("Next Card")) {
+			switch (z) {
+			case 0:
+				iLabel1.setText("Pondering");
+				iLabel1.setIcon(iPondering);
+				z = 1;
+				break;
+
+			case 1:
+				iLabel1.setText("Positive");
+				iLabel1.setIcon(iPositive);
+				z = 2;
+				break;
+				
+			case 2:
+				iLabel1.setText("Negative");
+				iLabel1.setIcon(iNegative);
+				z = 0;
+				break;
+				
+			default:
+				break;
+			}
+			
+			LCmain.mainFrame.pack();
+		}
 	}
 }
