@@ -77,7 +77,7 @@ public class CardSet {
 		languages.setAttribute("To", "Russian");
 		settings.appendChild(languages);
 		
-		//TestFilling();
+		TestFilling();
 	}
 	
 	private void TestFilling() {
@@ -106,7 +106,11 @@ public class CardSet {
 			AddNewCard(lc);
 			
 			lc = new LngCard();
-			lc.AddFromPhrase("F5@ ");
+			lc.AddFromPhrase("F5-1@ ");
+			lc.AddFromPhrase("F5-2@ ");
+			lc.AddFromPhrase("F5-3@ ");
+			lc.AddFromPhrase("F5-4@ ");
+			lc.AddFromPhrase("F5-5@ ");
 			lc.AddToPhrase("T5@ ");
 			AddNewCard(lc);
 		} catch (XPathExpressionException e) {

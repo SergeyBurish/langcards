@@ -22,4 +22,8 @@ public class Lesson {
 		Node nextNode = iCards.item(iPos++);
 		return iSet.NodeToCard(nextNode);
 	}
+	
+	public int CurrentCardPos() {
+		return iPos;		
+	}
 }

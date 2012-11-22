@@ -6,6 +6,7 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.LayoutStyle;
 import javax.swing.tree.DefaultTreeModel;
@@ -30,6 +31,10 @@ public class LessonView implements ActionListener {
 	ImageIcon iNegative = null;
 	ImageIcon iPondering = null;
 	ImageIcon iPositive = null;
+	
+	ExTree iTree = null;
+	JScrollPane iTreeScrollPane = null;
+	ExTreeNode iRootNode = null;
 	
 	int z = 0;
 	
@@ -59,42 +64,15 @@ public class LessonView implements ActionListener {
 			throw new LangCardsExeption("No lesson cards");
 		}
 		
-		
-		/*
-		ImageIcon icon2 = null;
-		java.net.URL imgURL = LCmain.class.getResource("resources/images/cert-stamp.jpg");
-        if (imgURL != null) {
-        	icon2 = new ImageIcon(imgURL, "");
-        }
-        
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        InputStream input = classLoader.getResourceAsStream("resources/images/cert-stamp.jpg");
-        
-        java.net.URL imgURL2 =classLoader.getResource("resources/images/cert-stamp.jpg");
-        Image logo;
-        
-        if (input != null) {
-    		try {
-    			logo = ImageIO.read(input);
-    			icon = new ImageIcon( logo );
-    		} catch (IOException e1) {
-    			// TODO Auto-generated catch block
-    			e1.printStackTrace();
-    		}
-		} else {
-			icon2 = new ImageIcon(imgURL2, "");
-		}*/
-
-		
-		
 		LCmain.mainFrame.setTitle(iSet.Name() + " Lesson");
 		//setJMenuBar(null); // remove menu
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
-		ExTreeNode rootNode = new ExTreeNode("Card 1", false);
-		DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
-		ExTree iTree = new ExTree(iModel);
+		iRootNode = new ExTreeNode("Card 1", false);
+		DefaultTreeModel iModel = new DefaultTreeModel(iRootNode);
+		
+		iTree = new ExTree(iModel);
 		
 		iTree.setCellRenderer(new MultiLineCellRenderer());
 		iTree.setEditable(true);
@@ -110,7 +88,7 @@ public class LessonView implements ActionListener {
 //		ExTreeNode exampVal32 = new ExTreeNode("Exampl Text 32 2222222222222222\n222\n222222222", false);
 
 		
-		rootNode.add(word1);
+		iRootNode.add(word1);
 		
 		//expand all nodes
 		for (int i = 0; i < iTree.getRowCount(); i++) {
@@ -123,6 +101,11 @@ public class LessonView implements ActionListener {
 //		
 //		examp31.add(exampVal31);
 //		examp32.add(exampVal32);
+		
+		iTreeScrollPane = new JScrollPane(iTree);
+
+		// correct sizes
+		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 		
 		JTextPane textPane = new JTextPane();
 		textPane.setText("Type your variant of translation here");
@@ -139,7 +122,7 @@ public class LessonView implements ActionListener {
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
 				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(iTree)
+						.addComponent(iTreeScrollPane)
 						.addComponent(textPane)
 						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
 								.addComponent(checkNextBtn)
@@ -157,7 +140,7 @@ public class LessonView implements ActionListener {
 		LCmain.mainFrame.iLayout.setVerticalGroup(
 				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-						.addComponent(iTree)
+						.addComponent(iTreeScrollPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(textPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -179,8 +162,37 @@ public class LessonView implements ActionListener {
 	// ActionListener
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		try {			
+			actionPerformedThrow(event);
+			
+		} catch (XPathExpressionException e) {
+			LCmain.mainFrame.ShowErr(e);
+		} catch (LangCardsExeption e) {
+			LCmain.mainFrame.ShowErr(e);
+		}
+	}
+	
+	private void actionPerformedThrow(ActionEvent event) throws XPathExpressionException, LangCardsExeption {
 		String actionCmd = event.getActionCommand();
 		if (actionCmd.equals("Next Card")) {
+			
+			LngCard nextCard = iLesson.NextCard();
+			if (nextCard == null) {
+				throw new LangCardsExeption("No more lesson cards");
+			}
+			
+			iRootNode.setUserObject("Card " + iLesson.CurrentCardPos());
+			iRootNode.removeAllChildren();
+			
+			for (int i = 0; i < nextCard.FromPhraseCount(); i++) {
+				ExTreeNode phrase = new ExTreeNode(nextCard.GetFromPhrase(i), false);
+				iRootNode.add(phrase);
+			}
+			iTree.updateUI();
+			
+			// correct sizes
+			iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
+			
 			switch (z) {
 			case 0:
 				iLabel1.setText("Pondering");
