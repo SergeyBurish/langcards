@@ -14,13 +14,11 @@ public class LngCard {
 		iToPrases = new ArrayList<LngPhrase>();
 	}
 	
-	public void AddFromPhrase(String val) {
-		LngPhrase lngPhrase = new LngPhrase(val);
+	public void AddFromPhrase(LngPhrase lngPhrase) {
 		iFromPrases.add(lngPhrase);
 	}
 	
-	public void AddToPhrase(String val) {
-		LngPhrase lngPhrase = new LngPhrase(val);
+	public void AddToPhrase(LngPhrase lngPhrase) {
 		iToPrases.add(lngPhrase);
 	}
 	
@@ -32,19 +30,17 @@ public class LngCard {
 		return iToPrases.size();
 	}
 	
-	public String GetFromPhrase(int i) throws LangCardsExeption {
+	public LngPhrase GetFromPhrase(int i) throws LangCardsExeption {
 		if (i >= 0 && i < iFromPrases.size()) {
-			LngPhrase lngPhrase = iFromPrases.get(i);
-			return lngPhrase.iVal;
+			return iFromPrases.get(i);
 		}
 		
 		throw new LangCardsExeption("GetFromPhrase: out of bounds");
 	}
 	
-	public String GetToPhrase(int i) throws LangCardsExeption {
+	public LngPhrase GetToPhrase(int i) throws LangCardsExeption {
 		if (i < iToPrases.size()) {
-			LngPhrase lngPhrase = iToPrases.get(i);
-			return lngPhrase.iVal;
+			return iToPrases.get(i);
 		}
 		
 		throw new LangCardsExeption("GetToPhrase: out of bounds");

@@ -1,11 +1,14 @@
 package lc.cardSet.lngPhrase;
 
+import java.util.ArrayList;
+
 public class LngPhrase {
-	public String iVal;
-	public String iTranscription;
-	public String iExample; // make array here
+	public String iValue;
+	public String iTranscription = null;
+	public ArrayList<String> iExamples;
 	
 	public LngPhrase(String val) {
-		iVal = val;
+		iValue = val;
+		iExamples = new ArrayList<String>();
 	}
 }
