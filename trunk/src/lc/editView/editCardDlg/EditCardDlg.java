@@ -19,6 +19,7 @@ import javax.swing.tree.TreeSelectionModel;
 import lc.LCmain;
 
 import lc.cardSet.lngCard.LngCard;
+import lc.cardSet.lngPhrase.LngPhrase;
 
 import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
@@ -155,12 +156,12 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 		
 		for (int i = 0; i < iLngFromNode.getChildCount(); i++) {
 			node = (ExTreeNode)iLngFromNode.getChildAt(i);
-			iLngCard.AddFromPhrase(node.toString());
+			iLngCard.AddFromPhrase(new LngPhrase(node.toString()));
 		}
 
 		for (int i = 0; i < iLngToNode.getChildCount(); i++) {
 			node = (ExTreeNode)iLngToNode.getChildAt(i);
-			iLngCard.AddToPhrase(node.toString());
+			iLngCard.AddToPhrase(new LngPhrase(node.toString()));
 		}
 		
 		iAccepted = true;

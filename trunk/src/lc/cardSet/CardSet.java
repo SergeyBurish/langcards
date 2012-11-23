@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import lc.LCmain;
 import lc.langCardsExeption.LangCardsExeption;
 import lc.cardSet.lngCard.LngCard;
+import lc.cardSet.lngPhrase.LngPhrase;
 
 public class CardSet {
 	private Document iDoc;
@@ -83,35 +84,47 @@ public class CardSet {
 	private void TestFilling() {
 		try {
 			LngCard lc = new LngCard();
-			lc.AddFromPhrase("F111@ ");
-			lc.AddToPhrase("T111@ ");
+			lc.AddFromPhrase(new LngPhrase("F111@ "));
+			lc.AddToPhrase(new LngPhrase("T111@ "));
 			AddNewCard(lc);
 			
 			lc = new LngCard();
-			lc.AddFromPhrase("F222-1@ ");
-			lc.AddFromPhrase("F222-222@ ");
-			lc.AddToPhrase("T2@ ");
+			LngPhrase lngPhrase = new LngPhrase("F222-1@ ");
+			lngPhrase.iTranscription = "[trans F222-1]";
+			lngPhrase.iExamples.add("Examp1 F222-1");
+			lngPhrase.iExamples.add("Examp2 F222-1");
+			lc.AddFromPhrase(lngPhrase);
+			
+			lngPhrase = new LngPhrase("F222-222@ ");
+			lngPhrase.iTranscription = "[trans F222-222]";
+			lc.AddFromPhrase(lngPhrase);
+			
+			lc.AddToPhrase(new LngPhrase("T2@ "));
 			AddNewCard(lc);
 			
 			lc = new LngCard();
-			lc.AddFromPhrase("F3-1@ ");
-			lc.AddFromPhrase("F3-2@ ");
-			lc.AddToPhrase("T333-1@ ");
-			lc.AddToPhrase("T333-2@ ");
+			lc.AddFromPhrase(new LngPhrase("F3-1@ "));
+			lc.AddFromPhrase(new LngPhrase("F3-2@ "));
+			lc.AddToPhrase(new LngPhrase("T333-1@ "));
+			
+			lngPhrase = new LngPhrase("T333-2@ ");
+			lngPhrase.iTranscription = "[trans T333-2]";
+			lngPhrase.iExamples.add("Examp1 T333-2");
+			lc.AddToPhrase(lngPhrase);
 			AddNewCard(lc);
 			
 			lc = new LngCard();
-			lc.AddFromPhrase("F44@ ");
-			lc.AddToPhrase("T44444@ ");
+			lc.AddFromPhrase(new LngPhrase("F44@ "));
+			lc.AddToPhrase(new LngPhrase("T44444@ "));
 			AddNewCard(lc);
 			
 			lc = new LngCard();
-			lc.AddFromPhrase("F5-1@ ");
-			lc.AddFromPhrase("F5-2@ ");
-			lc.AddFromPhrase("F5-3@ ");
-			lc.AddFromPhrase("F5-4@ ");
-			lc.AddFromPhrase("F5-5@ ");
-			lc.AddToPhrase("T5@ ");
+			lc.AddFromPhrase(new LngPhrase("F5-1@ "));
+			lc.AddFromPhrase(new LngPhrase("F5-2@ "));
+			lc.AddFromPhrase(new LngPhrase("F5-3@ "));
+			lc.AddFromPhrase(new LngPhrase("F5-4@ "));
+			lc.AddFromPhrase(new LngPhrase("F5-5@ "));
+			lc.AddToPhrase(new LngPhrase("T5@ "));
 			AddNewCard(lc);
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
@@ -150,42 +163,50 @@ public class CardSet {
 	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsExeption {
 		Node cards = CardsNode();
 		
-		NodeList nList = cards.getChildNodes();
-		int cardsCount = nList.getLength();
-		
 		// new card
 		Element card = iDoc.createElement("Card");
-		card.setAttribute("id", "" + (cardsCount+1));
+		card.setAttribute("id", "" + FreeCardId());
 		card.setAttribute("status", "lesson");
 		cards.appendChild(card);
 		
 		// From Language phrases
 		for (int i = 0; i < lngCard.FromPhraseCount(); i++) {
-			Element phrase = iDoc.createElement("Phrase");
+			Element phrase = PhraseToElement(lngCard.GetFromPhrase(i));
 			phrase.setAttribute("Language", LanguageFrom());
-
-			Element val = iDoc.createElement("Value");
-			val.setTextContent(lngCard.GetFromPhrase(i));
-			
-			phrase.appendChild(val);
-			//add Transcription, Examples
-			
 			card.appendChild(phrase);
 		}
 		
 		// To Language phrases
 		for (int i = 0; i < lngCard.ToPhraseCount(); i++) {
-			Element phrase = iDoc.createElement("Phrase");
+			Element phrase = PhraseToElement(lngCard.GetToPhrase(i));
 			phrase.setAttribute("Language", LanguageTo());
-			
-			Element val = iDoc.createElement("Value");
-			val.setTextContent(lngCard.GetToPhrase(i));
-			
-			phrase.appendChild(val);
-			//add Transcription, Examples
-			
 			card.appendChild(phrase);
 		}
+	}
+	
+	private Element PhraseToElement(LngPhrase lngPhrase) {
+		Element phrase = iDoc.createElement("Phrase");
+		
+		// Value
+		Element val = iDoc.createElement("Value");
+		val.setTextContent(lngPhrase.iValue);
+		phrase.appendChild(val);
+		
+		// Transcription
+		if (lngPhrase.iTranscription != null && !lngPhrase.iTranscription.isEmpty()) {
+			Element transcr = iDoc.createElement("Transcription");
+			transcr.setTextContent(lngPhrase.iTranscription);
+			phrase.appendChild(transcr);
+		}
+		
+		// Example
+		for (int j = 0; j < lngPhrase.iExamples.size(); j++) {
+			Element example = iDoc.createElement("Example");
+			example.setTextContent(lngPhrase.iExamples.get(j));
+			phrase.appendChild(example);
+		}
+		
+		return phrase;
 	}
 	
 	public Vector<Vector<String>> GetAllCardsIdFromTo() throws XPathExpressionException, LangCardsExeption {
@@ -234,7 +255,7 @@ public class CardSet {
 		
 		for (int i = 0; i < fromPhraseList.getLength(); i++) {
 			Node fromPhrase = fromPhraseList.item(i);
-			lc.AddFromPhrase(ValueOfPhrase(fromPhrase));
+			lc.AddFromPhrase(new LngPhrase(ValueOfPhrase(fromPhrase)));
 		}
 		
 		
@@ -242,7 +263,7 @@ public class CardSet {
 		
 		for (int i = 0; i < toPhraseList.getLength(); i++) {
 			Node toPhrase = toPhraseList.item(i);
-			lc.AddToPhrase(ValueOfPhrase(toPhrase));
+			lc.AddToPhrase(new LngPhrase(ValueOfPhrase(toPhrase)));
 		}
 		
 		return lc;
@@ -308,6 +329,10 @@ public class CardSet {
 		}
 		
 		return iValueExpr.evaluate(phrase);
+	}
+	
+	private int FreeCardId() throws XPathExpressionException {
+		return CardsCount() + 1; // temporary
 	}
 	
 	public String LanguageFrom() throws XPathExpressionException {
