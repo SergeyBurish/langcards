@@ -78,7 +78,7 @@ public class LessonView implements ActionListener {
 		iTree.setEditable(true);
 		iTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		
-		ExTreeNode word1 = new ExTreeNode(firstLessonCard.GetFromPhrase(0), false);
+		ExTreeNode word1 = new ExTreeNode(firstLessonCard.GetFromPhrase(0).iValue, false);
 		
 //		ExTreeNode trans3 = new ExTreeNode("trans3", false);
 //		ExTreeNode examp31 = new ExTreeNode("Exampl31", false);
@@ -185,7 +185,7 @@ public class LessonView implements ActionListener {
 			iRootNode.removeAllChildren();
 			
 			for (int i = 0; i < nextCard.FromPhraseCount(); i++) {
-				ExTreeNode phrase = new ExTreeNode(nextCard.GetFromPhrase(i), false);
+				ExTreeNode phrase = new ExTreeNode(nextCard.GetFromPhrase(i).iValue, false);
 				iRootNode.add(phrase);
 			}
 			iTree.updateUI();
