@@ -20,7 +20,7 @@ public class Lesson {
 	
 	public LngCard NextCard() throws XPathExpressionException, LangCardsExeption {
 		Node nextNode = iCards.item(iPos++);
-		return iSet.NodeToCard(nextNode);
+		return iSet.XmlNodeToLngCard(nextNode);
 	}
 	
 	public int CurrentCardPos() {

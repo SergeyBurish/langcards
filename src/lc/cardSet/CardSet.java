@@ -41,6 +41,8 @@ public class CardSet {
 	XPathExpression iLessonCards = null;             // Set/Cards/Card[@status='lesson']
 	XPathExpression iIdExpr = null;                  // @id
 	XPathExpression iValueExpr = null;               // Value
+	XPathExpression iTranscriptionExpr = null;       // Transcription
+	XPathExpression iExampleExpr = null;             // Example
 	XPathExpression iPhraseLanguageFrom = null;      // Phrase[@Language='fromLanguage']
 	XPathExpression iPhraseLanguageTo = null;        // Phrase[@Language='toLanguage']
 	XPathExpression iSettings_Languages_From = null; // Set/Settings/Languages/@From
@@ -84,7 +86,8 @@ public class CardSet {
 	private void TestFilling() {
 		try {
 			LngCard lc = new LngCard();
-			lc.AddFromPhrase(new LngPhrase("F111@ "));
+			lc.AddFromPhrase(new LngPhrase("F111-1@ "));
+			lc.AddFromPhrase(new LngPhrase("F111-2@ "));
 			lc.AddToPhrase(new LngPhrase("T111@ "));
 			AddNewCard(lc);
 			
@@ -121,7 +124,11 @@ public class CardSet {
 			lc = new LngCard();
 			lc.AddFromPhrase(new LngPhrase("F5-1@ "));
 			lc.AddFromPhrase(new LngPhrase("F5-2@ "));
-			lc.AddFromPhrase(new LngPhrase("F5-3@ "));
+			
+			lngPhrase = new LngPhrase("F5-3@ ");
+			lngPhrase.iTranscription = "[trans F5-3]";
+			lc.AddFromPhrase(lngPhrase);
+			
 			lc.AddFromPhrase(new LngPhrase("F5-4@ "));
 			lc.AddFromPhrase(new LngPhrase("F5-5@ "));
 			lc.AddToPhrase(new LngPhrase("T5@ "));
@@ -228,12 +235,12 @@ public class CardSet {
 			 // get the first "FROM" phrase
 			NodeList fromPhraseList = FromPhrasesOfCard(card, fromLanguageStr);
 			Node fromPhrase = fromPhraseList.item(0);
-			rowVect.addElement(ValueOfPhrase(fromPhrase));
+			rowVect.addElement(ValueOfXmlPhrase(fromPhrase));
 			
 			 // get the first "TO" phrase
 			NodeList toPhraseList = ToPhrasesOfCard(card, toLanguageStr);
 			Node toPhrase = toPhraseList.item(0);
-			rowVect.addElement(ValueOfPhrase(toPhrase));
+			rowVect.addElement(ValueOfXmlPhrase(toPhrase));
 			
 
 			rowsVect.addElement(rowVect);
@@ -246,7 +253,7 @@ public class CardSet {
 		return new Lesson(this);
 	}
 	
-	public LngCard NodeToCard(Node node) throws XPathExpressionException, LangCardsExeption {
+	public LngCard XmlNodeToLngCard(Node node) throws XPathExpressionException, LangCardsExeption {
 		if (node == null) return null;
 		
 		LngCard lc = new LngCard();
@@ -255,7 +262,7 @@ public class CardSet {
 		
 		for (int i = 0; i < fromPhraseList.getLength(); i++) {
 			Node fromPhrase = fromPhraseList.item(i);
-			lc.AddFromPhrase(new LngPhrase(ValueOfPhrase(fromPhrase)));
+			lc.AddFromPhrase(XmlNodeToLngPhrase(fromPhrase));
 		}
 		
 		
@@ -263,10 +270,33 @@ public class CardSet {
 		
 		for (int i = 0; i < toPhraseList.getLength(); i++) {
 			Node toPhrase = toPhraseList.item(i);
-			lc.AddToPhrase(new LngPhrase(ValueOfPhrase(toPhrase)));
+			lc.AddToPhrase(new LngPhrase(ValueOfXmlPhrase(toPhrase)));
 		}
 		
 		return lc;
+	}
+	
+	private LngPhrase XmlNodeToLngPhrase(Node phraseNode) throws XPathExpressionException {
+		// Value
+		LngPhrase phrase = new LngPhrase(ValueOfXmlPhrase(phraseNode));
+		
+		// Transcription
+		String tr = TranscriptionOfXmlPhrase(phraseNode);
+		if (tr != null && !tr.isEmpty()) {
+			phrase.iTranscription = TranscriptionOfXmlPhrase(phraseNode);
+		}
+		
+		// Example
+		NodeList examplesList = ExamplesOfXmlPhrase(phraseNode);
+		for (int i = 0; i < examplesList.getLength(); i++) {
+			Node example = examplesList.item(i);
+			String exmpStr = example.getTextContent(); //getNodeValue();
+			
+			if (exmpStr != null && !exmpStr.isEmpty()) {
+				phrase.iExamples.add(exmpStr);
+			}
+		}
+		return phrase;
 	}
 	
 	private Node CardsNode () throws XPathExpressionException {
@@ -298,7 +328,7 @@ public class CardSet {
 			iIdExpr = iXpath.compile("@id");
 		}
 		
-		return iIdExpr.evaluate(card);  // "id" attribute of <Card/>
+		return iIdExpr.evaluate(card);
 	}
 	
 	private NodeList FromPhrasesOfCard(Node card, String fromLanguage) throws XPathExpressionException, LangCardsExeption {
@@ -323,12 +353,28 @@ public class CardSet {
 		return toPhraseList;
 	}
 	
-	private String ValueOfPhrase(Node phrase) throws XPathExpressionException {
+	private String ValueOfXmlPhrase(Node phrase) throws XPathExpressionException {
 		if (iValueExpr == null) {
 			iValueExpr = iXpath.compile("Value");
 		}
 		
 		return iValueExpr.evaluate(phrase);
+	}
+	
+	private String TranscriptionOfXmlPhrase(Node phrase) throws XPathExpressionException {
+		if (iTranscriptionExpr == null) {
+			iTranscriptionExpr = iXpath.compile("Transcription");
+		}
+		
+		return iTranscriptionExpr.evaluate(phrase);
+	}
+	
+	private NodeList ExamplesOfXmlPhrase(Node phrase) throws XPathExpressionException {
+		if (iExampleExpr == null) {
+			iExampleExpr = iXpath.compile("Example");
+		}
+		
+		return (NodeList)iExampleExpr.evaluate(phrase, XPathConstants.NODESET);
 	}
 	
 	private int FreeCardId() throws XPathExpressionException {
