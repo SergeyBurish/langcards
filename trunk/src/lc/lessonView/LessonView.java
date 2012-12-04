@@ -17,6 +17,7 @@ import lc.LCmain;
 import lc.cardSet.CardSet;
 import lc.cardSet.Lesson;
 import lc.cardSet.lngCard.LngCard;
+import lc.cardSet.lngPhrase.LngPhrase;
 import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
 import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
@@ -34,7 +35,7 @@ public class LessonView implements ActionListener {
 	
 	ExTree iTree = null;
 	JScrollPane iTreeScrollPane = null;
-	ExTreeNode iRootNode = null;
+	ExTreeNode iCardNode = new ExTreeNode(null, false);;
 	
 	int z = 0;
 	
@@ -59,48 +60,16 @@ public class LessonView implements ActionListener {
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
-		LngCard firstLessonCard = iLesson.NextCard(); // iSet.FirstLessonCard();
-		if (firstLessonCard == null) {
-			throw new LangCardsExeption("No lesson cards");
-		}
-		
 		LCmain.mainFrame.setTitle(iSet.Name() + " Lesson");
 		//setJMenuBar(null); // remove menu
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
-		iRootNode = new ExTreeNode("Card 1", false);
-		DefaultTreeModel iModel = new DefaultTreeModel(iRootNode);
-		
-		iTree = new ExTree(iModel);
+		iTree = new ExTree(new DefaultTreeModel(iCardNode));
 		
 		iTree.setCellRenderer(new MultiLineCellRenderer());
 		iTree.setEditable(true);
 		iTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		
-		ExTreeNode word1 = new ExTreeNode(firstLessonCard.GetFromPhrase(0).iValue, false);
-		
-//		ExTreeNode trans3 = new ExTreeNode("trans3", false);
-//		ExTreeNode examp31 = new ExTreeNode("Exampl31", false);
-//		ExTreeNode examp32 = new ExTreeNode("Exampl32", false);
-//		
-//		ExTreeNode exampVal31 = new ExTreeNode("Exampl Text 31 1111111111111\n111", false);
-//		ExTreeNode exampVal32 = new ExTreeNode("Exampl Text 32 2222222222222222\n222\n222222222", false);
-
-		
-		iRootNode.add(word1);
-		
-		//expand all nodes
-		for (int i = 0; i < iTree.getRowCount(); i++) {
-			iTree.expandRow(i);
-		}
-		
-//		word1.add(trans3);
-//		word1.add(examp31);
-//		word1.add(examp32);
-//		
-//		examp31.add(exampVal31);
-//		examp32.add(exampVal32);
 		
 		iTreeScrollPane = new JScrollPane(iTree);
 
@@ -156,6 +125,8 @@ public class LessonView implements ActionListener {
 						)
 		);
 		
+		NextCard();
+		
 		LCmain.mainFrame.pack();
 	}
 	
@@ -175,23 +146,7 @@ public class LessonView implements ActionListener {
 	private void actionPerformedThrow(ActionEvent event) throws XPathExpressionException, LangCardsExeption {
 		String actionCmd = event.getActionCommand();
 		if (actionCmd.equals("Next Card")) {
-			
-			LngCard nextCard = iLesson.NextCard();
-			if (nextCard == null) {
-				throw new LangCardsExeption("No more lesson cards");
-			}
-			
-			iRootNode.setUserObject("Card " + iLesson.CurrentCardPos());
-			iRootNode.removeAllChildren();
-			
-			for (int i = 0; i < nextCard.FromPhraseCount(); i++) {
-				ExTreeNode phrase = new ExTreeNode(nextCard.GetFromPhrase(i).iValue, false);
-				iRootNode.add(phrase);
-			}
-			iTree.updateUI();
-			
-			// correct sizes
-			iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
+			NextCard();
 			
 			switch (z) {
 			case 0:
@@ -218,5 +173,43 @@ public class LessonView implements ActionListener {
 			
 			LCmain.mainFrame.pack();
 		}
+	}
+	
+	private void NextCard() throws XPathExpressionException, LangCardsExeption {
+		LngCard nextCard = iLesson.NextCard();
+		if (nextCard == null) {
+			throw new LangCardsExeption("No lesson cards");
+		}
+		
+		iCardNode.setUserObject("Card " + iLesson.CurrentCardPos());
+		iCardNode.removeAllChildren();
+		
+		for (int i = 0; i < nextCard.FromPhraseCount(); i++) {
+			ExTreeNode phraseNode = LngPhraseToTreeNode(nextCard.GetFromPhrase(i));
+			iCardNode.add(phraseNode);
+		}
+		
+		iTree.updateUI();
+		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
+	}
+	
+	private ExTreeNode LngPhraseToTreeNode(LngPhrase phrase) {
+		ExTreeNode phraseNode = new ExTreeNode(phrase.iValue, false);
+		
+		if (phrase.iTranscription != null && !phrase.iTranscription.isEmpty()) {
+			ExTreeNode transcrNode = new ExTreeNode(phrase.iTranscription, false);
+			phraseNode.add(transcrNode);
+		}
+
+		if (phrase.iExamples.size() > 0) {
+			ExTreeNode examples = new ExTreeNode("Examples", false);
+			for (int j = 0; j < phrase.iExamples.size(); j++) {
+				ExTreeNode exampleNode = new ExTreeNode(phrase.iExamples.get(j), false);
+				examples.add(exampleNode);
+			}			
+			phraseNode.add(examples);
+		}
+		
+		return phraseNode;
 	}
 }
