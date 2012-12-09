@@ -176,12 +176,12 @@ public class EditView implements ActionListener {
 	
 	private void UpdateTable() throws XPathExpressionException, LangCardsExeption {
 		
-		Vector<Vector<String>> rows = iSet.GetAllCardsIdFromTo();
+		Vector<Vector<String>> rows = iSet.GetAllCardsIdFrstScnd();
 		Vector<String> columns= new Vector<String>();
 		
 		columns.addElement("#");
-		columns.addElement(iSet.LanguageFrom());
-		columns.addElement(iSet.LanguageTo());
+		columns.addElement(iSet.LanguageFrst());
+		columns.addElement(iSet.LanguageScnd());
 		
 		iTableModel.setDataVector(rows, columns);
 	}
@@ -201,7 +201,7 @@ public class EditView implements ActionListener {
 				LngCard lngCard = new LngCard();
 				
 				EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
-				newCardDlg.SetLanguages(iSet.LanguageFrom(), iSet.LanguageTo());
+				newCardDlg.SetLanguages(iSet.LanguageFrst(), iSet.LanguageScnd());
 				newCardDlg.setVisible(true);
 				
 				if (newCardDlg.Accepted()) {

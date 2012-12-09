@@ -6,43 +6,43 @@ import lc.langCardsExeption.LangCardsExeption;
 import lc.cardSet.lngPhrase.LngPhrase;
 
 public class LngCard {
-	ArrayList<LngPhrase> iFromPrases;
-	ArrayList<LngPhrase> iToPrases;
+	ArrayList<LngPhrase> iFrstPrases;
+	ArrayList<LngPhrase> iScndPrases;
 	
 	public LngCard() {
-		iFromPrases = new ArrayList<LngPhrase>();
-		iToPrases = new ArrayList<LngPhrase>();
+		iFrstPrases = new ArrayList<LngPhrase>();
+		iScndPrases = new ArrayList<LngPhrase>();
 	}
 	
-	public void AddFromPhrase(LngPhrase lngPhrase) {
-		iFromPrases.add(lngPhrase);
+	public void AddFrstPhrase(LngPhrase lngPhrase) {
+		iFrstPrases.add(lngPhrase);
 	}
 	
-	public void AddToPhrase(LngPhrase lngPhrase) {
-		iToPrases.add(lngPhrase);
+	public void AddScndPhrase(LngPhrase lngPhrase) {
+		iScndPrases.add(lngPhrase);
 	}
 	
-	public int FromPhraseCount() {
-		return iFromPrases.size();
+	public int FrstPhraseCount() {
+		return iFrstPrases.size();
 	}
 	
-	public int ToPhraseCount() {
-		return iToPrases.size();
+	public int ScndPhraseCount() {
+		return iScndPrases.size();
 	}
 	
-	public LngPhrase GetFromPhrase(int i) throws LangCardsExeption {
-		if (i >= 0 && i < iFromPrases.size()) {
-			return iFromPrases.get(i);
+	public LngPhrase GetFrstPhrase(int i) throws LangCardsExeption {
+		if (i >= 0 && i < iFrstPrases.size()) {
+			return iFrstPrases.get(i);
 		}
 		
-		throw new LangCardsExeption("GetFromPhrase: out of bounds");
+		throw new LangCardsExeption("GetFrstPhrase: out of bounds");
 	}
 	
-	public LngPhrase GetToPhrase(int i) throws LangCardsExeption {
-		if (i < iToPrases.size()) {
-			return iToPrases.get(i);
+	public LngPhrase GetScndPhrase(int i) throws LangCardsExeption {
+		if (i < iScndPrases.size()) {
+			return iScndPrases.get(i);
 		}
 		
-		throw new LangCardsExeption("GetToPhrase: out of bounds");
+		throw new LangCardsExeption("GetScndPhrase: out of bounds");
 	}
 }
