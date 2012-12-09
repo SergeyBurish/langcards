@@ -34,11 +34,11 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	JLabel iStatusLbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
 	
-	String iLangFrom = "No language set";
-	String iLangTo = "No language set";
+	String iLangFrst = "No language set";
+	String iLangScnd = "No language set";
 	
-	ExTreeNode iLngFromNode;
-	ExTreeNode iLngToNode;
+	ExTreeNode iLngFrstNode;
+	ExTreeNode iLngScndNode;
 	
 	LngCard iLngCard;
 	
@@ -51,20 +51,20 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 		LCmain.mainFrame.AddToCloseArray(this);
 	}
 	
-	public void SetLanguages(String langFrom, String langTo) {
-		iLangFrom = langFrom;
-		iLangTo = langTo;
+	public void SetLanguages(String langFrst, String langScnd) {
+		iLangFrst = langFrst;
+		iLangScnd = langScnd;
 	}
 	
 	private void InitControls() {
-		iLngFromNode = new ExTreeNode(iLangFrom, false);
-		iLngFromNode.add(new ExTreeNode("Type new word or phrase here", true)); // \n" + "3333\n"  + "4444
+		iLngFrstNode = new ExTreeNode(iLangFrst, false);
+		iLngFrstNode.add(new ExTreeNode("Type new word or phrase here", true)); // \n" + "3333\n"  + "4444
 		
-		iLngToNode = new ExTreeNode(iLangTo, false);
-		iLngToNode.add(new ExTreeNode("Type new word or phrase here", true));
+		iLngScndNode = new ExTreeNode(iLangScnd, false);
+		iLngScndNode.add(new ExTreeNode("Type new word or phrase here", true));
 		
-		rootNode.add(iLngFromNode);
-		rootNode.add(iLngToNode);
+		rootNode.add(iLngFrstNode);
+		rootNode.add(iLngScndNode);
 
 		iTree.setCellRenderer(new MultiLineCellRenderer());
 		iTree.setCellEditor(new MultiLineCellEditor(iModel));
@@ -154,14 +154,14 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 		// Verify(); // - check, display corresponding error;
 		ExTreeNode node;
 		
-		for (int i = 0; i < iLngFromNode.getChildCount(); i++) {
-			node = (ExTreeNode)iLngFromNode.getChildAt(i);
-			iLngCard.AddFromPhrase(new LngPhrase(node.toString()));
+		for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
+			node = (ExTreeNode)iLngFrstNode.getChildAt(i);
+			iLngCard.AddFrstPhrase(new LngPhrase(node.toString()));
 		}
 
-		for (int i = 0; i < iLngToNode.getChildCount(); i++) {
-			node = (ExTreeNode)iLngToNode.getChildAt(i);
-			iLngCard.AddToPhrase(new LngPhrase(node.toString()));
+		for (int i = 0; i < iLngScndNode.getChildCount(); i++) {
+			node = (ExTreeNode)iLngScndNode.getChildAt(i);
+			iLngCard.AddScndPhrase(new LngPhrase(node.toString()));
 		}
 		
 		iAccepted = true;

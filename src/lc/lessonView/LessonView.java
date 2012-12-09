@@ -184,8 +184,8 @@ public class LessonView implements ActionListener {
 		iCardNode.setUserObject("Card " + iLesson.CurrentCardPos());
 		iCardNode.removeAllChildren();
 		
-		for (int i = 0; i < nextCard.FromPhraseCount(); i++) {
-			ExTreeNode phraseNode = LngPhraseToTreeNode(nextCard.GetFromPhrase(i));
+		for (int i = 0; i < nextCard.FrstPhraseCount(); i++) {
+			ExTreeNode phraseNode = LngPhraseToTreeNode(nextCard.GetFrstPhrase(i));
 			iCardNode.add(phraseNode);
 		}
 		
