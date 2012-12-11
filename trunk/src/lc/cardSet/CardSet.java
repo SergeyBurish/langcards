@@ -35,6 +35,23 @@ public class CardSet {
 	
 	XPath iXpath = XPathFactory.newInstance().newXPath();
 	
+	// xml structure elements
+	private static final String XML_SET				= "Set";			// <Set name=...>
+	private static final String XML_NAME			= "name";			// |
+	private static final String XML_CARDS			= "Cards";			// |- <Cards>
+	private static final String XML_CARD			= "Card";			// |  |- <Card id=... status=...>
+	private static final String XML_ID				= "id";				// |     |
+	private static final String XML_STATUS			= "status";			// |     |
+	private static final String XML_PHRASE			= "Phrase";			// |     |- <Phrase Language=...> 
+	private static final String XML_LANGUAGE		= "Language";		// |        |
+	private static final String XML_VALUE			= "Value";			// |        |- <Value>...</>
+	private static final String XML_TRANSCRIPTION	= "Transcription";	// |        |- <Transcription>...</>
+	private static final String XML_EXAMPLE			= "Example";		// |        |- <Example>...</>
+	private static final String XML_SETTINGS		= "Settings";		// |- <Settings>
+	private static final String XML_LANGUAGES		= "Languages";		//    |- <Languages Frst=... Scnd=...>
+	private static final String XML_FRST			= "Frst";
+	private static final String XML_SCND			= "Scnd";
+	
 	// Path Expressions of frequent operations
 	XPathExpression iSetCards = null;                // Set/Cards
 	XPathExpression iCardsCard = null;               // Set/Cards/Card
@@ -62,22 +79,22 @@ public class CardSet {
 	
 	public void InitDoc() {
 		// Set
-		Element root = iDoc.createElement("Set");
-		root.setAttribute("name", iName);
+		Element root = iDoc.createElement(XML_SET);
+		root.setAttribute(XML_NAME, iName);
 		iDoc.appendChild(root);
 		
 		// Cards
-		Element cards = iDoc.createElement("Cards");
+		Element cards = iDoc.createElement(XML_CARDS);
 		root.appendChild(cards);
 		
 		// Settings
-		Element settings = iDoc.createElement("Settings");
+		Element settings = iDoc.createElement(XML_SETTINGS);
 		root.appendChild(settings);
 		
 		// Languages
-		Element languages = iDoc.createElement("Languages");
-		languages.setAttribute("Frst", "English");
-		languages.setAttribute("Scnd", "Russian");
+		Element languages = iDoc.createElement(XML_LANGUAGES);
+		languages.setAttribute(XML_FRST, "English");
+		languages.setAttribute(XML_SCND, "Russian");
 		settings.appendChild(languages);
 		
 		TestFilling();
@@ -171,44 +188,44 @@ public class CardSet {
 		Node cards = CardsNode();
 		
 		// new card
-		Element card = iDoc.createElement("Card");
-		card.setAttribute("id", "" + FreeCardId());
-		card.setAttribute("status", "lesson");
+		Element card = iDoc.createElement(XML_CARD);
+		card.setAttribute(XML_ID, "" + FreeCardId());
+		card.setAttribute(XML_STATUS, "lesson");
 		cards.appendChild(card);
 		
 		// Frst Language phrases
 		for (int i = 0; i < lngCard.FrstPhraseCount(); i++) {
-			Element phrase = PhraseScndElement(lngCard.GetFrstPhrase(i));
-			phrase.setAttribute("Language", LanguageFrst());
+			Element phrase = LngPhraseToXmlElement(lngCard.GetFrstPhrase(i));
+			phrase.setAttribute(XML_LANGUAGE, LanguageFrst());
 			card.appendChild(phrase);
 		}
 		
 		// Scnd Language phrases
 		for (int i = 0; i < lngCard.ScndPhraseCount(); i++) {
-			Element phrase = PhraseScndElement(lngCard.GetScndPhrase(i));
-			phrase.setAttribute("Language", LanguageScnd());
+			Element phrase = LngPhraseToXmlElement(lngCard.GetScndPhrase(i));
+			phrase.setAttribute(XML_LANGUAGE, LanguageScnd());
 			card.appendChild(phrase);
 		}
 	}
 	
-	private Element PhraseScndElement(LngPhrase lngPhrase) {
-		Element phrase = iDoc.createElement("Phrase");
+	private Element LngPhraseToXmlElement(LngPhrase lngPhrase) {
+		Element phrase = iDoc.createElement(XML_PHRASE);
 		
 		// Value
-		Element val = iDoc.createElement("Value");
+		Element val = iDoc.createElement(XML_VALUE);
 		val.setTextContent(lngPhrase.iValue);
 		phrase.appendChild(val);
 		
 		// Transcription
 		if (lngPhrase.iTranscription != null && !lngPhrase.iTranscription.isEmpty()) {
-			Element transcr = iDoc.createElement("Transcription");
+			Element transcr = iDoc.createElement(XML_TRANSCRIPTION);
 			transcr.setTextContent(lngPhrase.iTranscription);
 			phrase.appendChild(transcr);
 		}
 		
 		// Example
 		for (int j = 0; j < lngPhrase.iExamples.size(); j++) {
-			Element example = iDoc.createElement("Example");
+			Element example = iDoc.createElement(XML_EXAMPLE);
 			example.setTextContent(lngPhrase.iExamples.get(j));
 			phrase.appendChild(example);
 		}
@@ -291,7 +308,7 @@ public class CardSet {
 		NodeList examplesList = ExamplesOfXmlPhrase(phraseNode);
 		for (int i = 0; i < examplesList.getLength(); i++) {
 			Node example = examplesList.item(i);
-			String exmpStr = example.getTextContent(); //getNodeValue();
+			String exmpStr = example.getTextContent();
 			
 			if (exmpStr != null && !exmpStr.isEmpty()) {
 				phrase.iExamples.add(exmpStr);
@@ -302,7 +319,7 @@ public class CardSet {
 	
 	private Node CardsNode () throws XPathExpressionException {
 		if (iSetCards == null) {
-			iSetCards = iXpath.compile("Set/Cards");
+			iSetCards = iXpath.compile(XML_SET + "/" + XML_CARDS);
 		}
 		
 		return (Node)iSetCards.evaluate(iDoc, XPathConstants.NODE);
@@ -310,7 +327,7 @@ public class CardSet {
 	
 	private NodeList CardsList() throws XPathExpressionException {
 		if (iCardsCard == null) {
-			iCardsCard = iXpath.compile("Set/Cards/Card");
+			iCardsCard = iXpath.compile(XML_SET + "/" + XML_CARDS + "/" + XML_CARD);
 		}
 		
 		return (NodeList) iCardsCard.evaluate(iDoc, XPathConstants.NODESET);
@@ -318,7 +335,7 @@ public class CardSet {
 	
 	public NodeList LessonCardsList() throws XPathExpressionException {
 		if (iLessonCards == null) {
-			iLessonCards = iXpath.compile("Set/Cards/Card[@status='lesson']");
+			iLessonCards = iXpath.compile(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_STATUS + "='lesson']");
 		}
 		
 		return (NodeList) iLessonCards.evaluate(iDoc, XPathConstants.NODESET);
@@ -326,7 +343,7 @@ public class CardSet {
 	
 	private String CardId(Node card) throws XPathExpressionException {
 		if (iIdExpr == null) {
-			iIdExpr = iXpath.compile("@id");
+			iIdExpr = iXpath.compile("@" + XML_ID);
 		}
 		
 		return iIdExpr.evaluate(card);
@@ -334,7 +351,7 @@ public class CardSet {
 	
 	private NodeList FrstPhrasesOfCard(Node card, String frstLanguage) throws XPathExpressionException, LangCardsExeption {
 		if (iPhraseLanguageFrst == null) {
-			iPhraseLanguageFrst = iXpath.compile(String.format("Phrase[@Language='%s']", frstLanguage));
+			iPhraseLanguageFrst = iXpath.compile(String.format(XML_PHRASE + "[@" + XML_LANGUAGE + "='%s']", frstLanguage));
 		}
 		
 		NodeList frstPhraseList = (NodeList)iPhraseLanguageFrst.evaluate(card, XPathConstants.NODESET);
@@ -345,7 +362,7 @@ public class CardSet {
 	
 	private NodeList ScndPhrasesOfCard(Node card, String scndLanguage) throws XPathExpressionException, LangCardsExeption {
 		if (iPhraseLanguageScnd == null) {
-			iPhraseLanguageScnd = iXpath.compile(String.format("Phrase[@Language='%s']", scndLanguage));
+			iPhraseLanguageScnd = iXpath.compile(String.format(XML_PHRASE + "[@" + XML_LANGUAGE + "='%s']", scndLanguage));
 		}
 		
 		NodeList scndPhraseList = (NodeList)iPhraseLanguageScnd.evaluate(card, XPathConstants.NODESET);
@@ -356,7 +373,7 @@ public class CardSet {
 	
 	private String ValueOfXmlPhrase(Node phrase) throws XPathExpressionException {
 		if (iValueExpr == null) {
-			iValueExpr = iXpath.compile("Value");
+			iValueExpr = iXpath.compile(XML_VALUE);
 		}
 		
 		return iValueExpr.evaluate(phrase);
@@ -364,7 +381,7 @@ public class CardSet {
 	
 	private String TranscriptionOfXmlPhrase(Node phrase) throws XPathExpressionException {
 		if (iTranscriptionExpr == null) {
-			iTranscriptionExpr = iXpath.compile("Transcription");
+			iTranscriptionExpr = iXpath.compile(XML_TRANSCRIPTION);
 		}
 		
 		return iTranscriptionExpr.evaluate(phrase);
@@ -372,7 +389,7 @@ public class CardSet {
 	
 	private NodeList ExamplesOfXmlPhrase(Node phrase) throws XPathExpressionException {
 		if (iExampleExpr == null) {
-			iExampleExpr = iXpath.compile("Example");
+			iExampleExpr = iXpath.compile(XML_EXAMPLE);
 		}
 		
 		return (NodeList)iExampleExpr.evaluate(phrase, XPathConstants.NODESET);
@@ -384,7 +401,7 @@ public class CardSet {
 	
 	public String LanguageFrst() throws XPathExpressionException {
 		if (iSettings_Languages_Frst == null) {
-			iSettings_Languages_Frst = iXpath.compile("Set/Settings/Languages/@Frst");
+			iSettings_Languages_Frst = iXpath.compile(XML_SET + "/" + XML_SETTINGS + "/" + XML_LANGUAGES + "/@" + XML_FRST);
 		}
 		
 		return iSettings_Languages_Frst.evaluate(iDoc);
@@ -392,7 +409,7 @@ public class CardSet {
 	
 	public String LanguageScnd() throws XPathExpressionException {
 		if (iSettings_Languages_Scnd == null) {
-			iSettings_Languages_Scnd = iXpath.compile("Set/Settings/Languages/@Scnd");
+			iSettings_Languages_Scnd = iXpath.compile(XML_SET + "/" + XML_SETTINGS + "/" + XML_LANGUAGES + "/@" + XML_SCND);
 		}
 		
 		return iSettings_Languages_Scnd.evaluate(iDoc);
