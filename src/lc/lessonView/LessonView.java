@@ -14,6 +14,7 @@ import javax.swing.tree.TreeSelectionModel;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.LCmain;
+import lc.LCutils;
 import lc.cardSet.CardSet;
 import lc.cardSet.Lesson;
 import lc.cardSet.lngCard.LngCard;
@@ -60,7 +61,7 @@ public class LessonView implements ActionListener {
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
-		LCmain.mainFrame.setTitle(iSet.Name() + " Lesson");
+		LCmain.mainFrame.setTitle(iSet.Name() + " - " + LCutils.String("Lesson"));
 		//setJMenuBar(null); // remove menu
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
@@ -77,11 +78,11 @@ public class LessonView implements ActionListener {
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 		
 		JTextPane textPane = new JTextPane();
-		textPane.setText("Type your variant of translation here");
+		textPane.setText(LCutils.String("Type_your_variant_of_translation_here"));
 		
-		JButton checkNextBtn = new JButton("Next Card");
+		JButton checkNextBtn = new JButton(LCutils.String("Next_Card"));
 		checkNextBtn.addActionListener(this);
-		JButton finishLessonBtn = new JButton("Finish Lesson");
+		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
 		
 		iLabel1 = new JLabel("Test1", iNegative, JLabel.CENTER);
 		iLabel1.setVerticalTextPosition(JLabel.TOP);
@@ -145,7 +146,7 @@ public class LessonView implements ActionListener {
 	
 	private void actionPerformedThrow(ActionEvent event) throws XPathExpressionException, LangCardsExeption {
 		String actionCmd = event.getActionCommand();
-		if (actionCmd.equals("Next Card")) {
+		if (actionCmd.equals(LCutils.String("Next_Card"))) {
 			NextCard();
 			
 			switch (z) {
@@ -181,7 +182,7 @@ public class LessonView implements ActionListener {
 			throw new LangCardsExeption("No lesson cards");
 		}
 		
-		iCardNode.setUserObject("Card " + iLesson.CurrentCardPos());
+		iCardNode.setUserObject(LCutils.String("Card") + " " + iLesson.CurrentCardPos());
 		iCardNode.removeAllChildren();
 		
 		for (int i = 0; i < nextCard.FrstPhraseCount(); i++) {
@@ -202,7 +203,7 @@ public class LessonView implements ActionListener {
 		}
 
 		if (phrase.iExamples.size() > 0) {
-			ExTreeNode examples = new ExTreeNode("Examples", false);
+			ExTreeNode examples = new ExTreeNode(LCutils.String("Examples"), false);
 			for (int j = 0; j < phrase.iExamples.size(); j++) {
 				ExTreeNode exampleNode = new ExTreeNode(phrase.iExamples.get(j), false);
 				examples.add(exampleNode);

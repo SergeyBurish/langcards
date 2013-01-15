@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import lc.LCmain;
+import lc.LCutils;
 import lc.langCardsExeption.LangCardsExeption;
 import lc.cardSet.lngCard.LngCard;
 import lc.cardSet.lngPhrase.LngPhrase;
@@ -67,7 +68,7 @@ public class CardSet {
 	
 	public CardSet() {
 		// new
-		iName = "New set";
+		iName = LCutils.String("Unnamed");
 		iDoc = LCmain.mainFrame.iParser.newDocument();
 		InitDoc();
 	}
@@ -94,7 +95,7 @@ public class CardSet {
 		// Languages
 		Element languages = iDoc.createElement(XML_LANGUAGES);
 		languages.setAttribute(XML_FRST, "English");
-		languages.setAttribute(XML_SCND, "Russian");
+		languages.setAttribute(XML_SCND, "Русский");
 		settings.appendChild(languages);
 		
 		TestFilling();
@@ -174,6 +175,19 @@ public class CardSet {
 	
 	public String Name() {
 		return iName;
+	}
+	
+	public void SetName(String name) {
+		if (name != null && !name.isEmpty()) {
+			iName = name;
+			
+			Element root = iDoc.getDocumentElement(); // get root (XML_SET node)
+			String nameString = root.getAttribute(XML_NAME);
+			if (nameString != null && !nameString.isEmpty()) {
+				root.removeAttribute(XML_NAME);
+				root.setAttribute(XML_NAME, name);
+			}
+		}
 	}
 	
 	public int CardsCount() throws XPathExpressionException{
