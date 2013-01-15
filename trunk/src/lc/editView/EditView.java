@@ -14,29 +14,34 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.LayoutStyle;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.langCardsExeption.LangCardsExeption;
 import lc.cardSet.lngCard.LngCard;
 import lc.LCmain;
+import lc.LCutils;
 import lc.cardSet.CardSet;
 import lc.editView.editCardDlg.EditCardDlg;
 
 public class EditView implements ActionListener {
 	CardSet iSet;
 	
-	JButton iBtAdd = new JButton("Add");
-	JButton iBtDel = new JButton("Delete");
-	JButton iBtEd = new JButton("Edit");
+	JButton iBtAdd = new JButton(LCutils.String("Add"));
+	JButton iBtDel = new JButton(LCutils.String("Delete"));
+	JButton iBtEd = new JButton(LCutils.String("Edit"));
 	
-	JButton iBtStart = new JButton("Start lesson");
+	JButton iBtStart = new JButton(LCutils.String("Start_lesson"));
 	
 	DefaultTableModel iTableModelState = new DefaultTableModel();
 	JTable iTableState;
 	
 	DefaultTableModel iTableModel = new DefaultTableModel();
 	JTable iTable;
+	
+	JTabbedPane iTabbedPane = new JTabbedPane();
 	
 	public EditView(CardSet set) {
 		iSet = set;
@@ -49,33 +54,31 @@ public class EditView implements ActionListener {
 	}
 	
 	public void Show() throws XPathExpressionException, LangCardsExeption {
-		LCmain.mainFrame.setTitle(iSet.Name() + " Language Cards");
+		LCmain.mainFrame.setTitle(iSet.Name() + " - " + LCutils.String("Editing_the_current_set"));
 		//setJMenuBar(null); // remove menu
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
-		
 		JPanel panState = makeStatePanel();
-		tabbedPane.addTab("State", panState);
+		iTabbedPane.addTab(LCutils.String("State"), panState);
 		
 		JPanel panCards = makeCardsPanel();
-		tabbedPane.addTab("Cards", panCards);
+		iTabbedPane.addTab(LCutils.String("Cards"), panCards);
 		
 		JPanel panSett = makeSettingsPanel();
-		tabbedPane.addTab("Settings", panSett);
+		iTabbedPane.addTab(LCutils.String("Settings"), panSett);
 		
-		tabbedPane.setSelectedIndex(1); // select Cards panel
+		iTabbedPane.setSelectedIndex(1); // select Cards panel
 		
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(tabbedPane)
+				.addComponent(iTabbedPane)
 				.addComponent(iBtStart)
 		);
 				
 		LCmain.mainFrame.iLayout.setVerticalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
-				.addComponent(tabbedPane)
+				.addComponent(iTabbedPane)
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 				.addComponent(iBtStart)
 		);
@@ -94,7 +97,7 @@ public class EditView implements ActionListener {
 		panel.setLayout(new GridLayout(1, 1));
 		panel.add(sp);
 		
-		return panel; //makeSettingsPanel();
+		return panel;
 	}
 	
 	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
@@ -142,6 +145,47 @@ public class EditView implements ActionListener {
 		
 		JTree tree = new JTree();
 		
+		tree.addTreeExpansionListener(new TreeExpansionListener() {
+			
+			@Override
+			public void treeExpanded(TreeExpansionEvent arg0) {
+				LCutils.SetLocale("ru_RU");
+				
+				//recreate all invisible elements
+				try {
+					JPanel panState = makeStatePanel();
+					iTabbedPane.remove(0);
+					iTabbedPane.add(panState, 0);
+				} catch (XPathExpressionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// rename all visible elements
+				// if unnamed - translate
+				iSet.SetName(LCutils.String("Unnamed"));
+				
+				LCmain.mainFrame.setTitle(iSet.Name() + " - " + LCutils.String("Editing_the_current_set"));
+				LCmain.mainFrame.SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
+				LCmain.mainFrame.CreateMenu();
+				
+				iTabbedPane.setTitleAt(0, LCutils.String("State"));
+				iTabbedPane.setTitleAt(1, LCutils.String("Cards"));
+				iTabbedPane.setTitleAt(2, LCutils.String("Settings"));
+				
+				iBtAdd.setText(LCutils.String("Add"));
+				iBtDel.setText(LCutils.String("Delete"));
+				iBtEd.setText(LCutils.String("Edit"));
+				iBtStart.setText(LCutils.String("Start_lesson"));
+			}
+			
+			@Override
+			public void treeCollapsed(TreeExpansionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		panel.setLayout(new GridLayout(1, 1));
 		panel.add(tree);
 		return panel;
@@ -152,24 +196,24 @@ public class EditView implements ActionListener {
 		Vector<Vector<String>> rows=new Vector<Vector<String>>();
 		
 		Vector<String> rowVect=new Vector<String>();
-		rowVect.addElement("Total number");
+		rowVect.addElement(LCutils.String("Total_number"));
 		rowVect.addElement(Integer.toString(iSet.CardsCount()));
 		rows.addElement(rowVect);
 		
 		rowVect=new Vector<String>();
-		rowVect.addElement("Learned");
+		rowVect.addElement(LCutils.String("Learned"));
 		rowVect.addElement("0");
 		rows.addElement(rowVect);
 
 		rowVect=new Vector<String>();
-		rowVect.addElement("Idle");
+		rowVect.addElement(LCutils.String("Idle"));
 		rowVect.addElement("0");
 		rows.addElement(rowVect);
 		
 		
 		Vector<String> columns= new Vector<String>();
-		columns.addElement("Status");
-		columns.addElement("Quantity");
+		columns.addElement(LCutils.String("Status"));
+		columns.addElement(LCutils.String("Quantity"));
 		
 		iTableModelState.setDataVector(rows, columns);		
 	}
@@ -196,7 +240,7 @@ public class EditView implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		String actionCmd = event.getActionCommand();
 		
-		if (actionCmd.equals("Add")) {
+		if (actionCmd.equals(LCutils.String("Add"))) {
 			try {
 				LngCard lngCard = new LngCard();
 				
@@ -218,7 +262,7 @@ public class EditView implements ActionListener {
 				LCmain.mainFrame.ShowErr(e);
 			}
 			//iTableModel.addRow(new Object[] { btName });
-		} else if (actionCmd.equals("Delete")) {
+		} else if (actionCmd.equals(LCutils.String("Delete"))) {
 			iTableModel.addColumn(actionCmd);
 		} else {
 			iTableModel.addColumn(actionCmd);

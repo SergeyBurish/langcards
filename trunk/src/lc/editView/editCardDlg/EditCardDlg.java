@@ -17,6 +17,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import lc.LCmain;
+import lc.LCutils;
 
 import lc.cardSet.lngCard.LngCard;
 import lc.cardSet.lngPhrase.LngPhrase;
@@ -27,10 +28,10 @@ import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
 
 public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
-	ExTreeNode rootNode = new ExTreeNode("New Card", false);
+	ExTreeNode rootNode = new ExTreeNode(LCutils.String("New_Card"), false);
 	DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
 	ExTree iTree = new ExTree(iModel);
-	JButton iOkBtn = new JButton("OK");
+	JButton iOkBtn = new JButton(LCutils.String("Save"));
 	JLabel iStatusLbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
 	
@@ -45,7 +46,7 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	Boolean iAccepted = false;
 	
 	public EditCardDlg(JFrame parent, LngCard lngCard) {
-		super(parent, "New Card", true);
+		super(parent, LCutils.String("New_Card"), true);
 		iLngCard = lngCard;
 		
 		LCmain.mainFrame.AddToCloseArray(this);
@@ -58,10 +59,10 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	
 	private void InitControls() {
 		iLngFrstNode = new ExTreeNode(iLangFrst, false);
-		iLngFrstNode.add(new ExTreeNode("Type new word or phrase here", true)); // \n" + "3333\n"  + "4444
+		iLngFrstNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true)); // \n" + "3333\n"  + "4444
 		
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
-		iLngScndNode.add(new ExTreeNode("Type new word or phrase here", true));
+		iLngScndNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
 		
 		rootNode.add(iLngFrstNode);
 		rootNode.add(iLngScndNode);

@@ -38,9 +38,10 @@ public class LCmain extends JFrame
 	JMenu menu, submenu;
 	JMenuItem menuItem;
 	
+	private static final String lcFileExt = "lngcards";
+	
 	JFileChooser iFileChooser = new JFileChooser();
-	FileFilter iFilefilter = new FileNameExtensionFilter("Language Cards file",
-			"lngcards");
+	FileFilter iFilefilter = null;
 
 	public DocumentBuilder iParser;
 	Document doc;
@@ -54,7 +55,7 @@ public class LCmain extends JFrame
 	}
 	
 	public LCmain() {
-		setTitle("Language Cards");
+		setTitle("Language Cards"); // no i18n
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// setDefaultLookAndFeelDecorated(true);
 	}
@@ -75,7 +76,7 @@ public class LCmain extends JFrame
 			return;
 		}
 		
-		iFileChooser.addChoosableFileFilter(iFilefilter);
+		SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
 
 		// load the last set, otherwise create new
 		try {
@@ -92,20 +93,22 @@ public class LCmain extends JFrame
 		pack();
 	}
 	
-	private void CreateMenu() {
+	public void CreateMenu() {
+		this.setJMenuBar(null); // remove menu
+		
 		menuBar = new JMenuBar();
-		menu = new JMenu("Set");
+		menu = new JMenu(LCutils.String("Set"));
 		menuBar.add(menu);
 		
-		menuItem = new JMenuItem("New");
+		menuItem = new JMenuItem(LCutils.String("New"));
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 		
-		menuItem = new JMenuItem("Open");
+		menuItem = new JMenuItem(LCutils.String("Open"));
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 		
-		menuItem = new JMenuItem("Save As...");
+		menuItem = new JMenuItem(LCutils.String("Save_As") + "...");
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 		
@@ -170,25 +173,25 @@ public class LCmain extends JFrame
 			IOException, TransformerException, XPathExpressionException,
 			LangCardsExeption {
 		String actionCmd = arg0.getActionCommand();
-		if (actionCmd.equals("New")) {
+		if (actionCmd.equals(LCutils.String("New"))) {
 			// iFileChooser.showDialog(this, "New");
 			NewSet();
-		} else if (actionCmd.equals("Open")) {
+		} else if (actionCmd.equals(LCutils.String("Open"))) {
 			if (iFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = iFileChooser.getSelectedFile();
 				iCardSet = new CardSet(file);
 				EditView editView = new EditView(iCardSet);
 				editView.Show();
 			}
-		} else if (actionCmd.equals("Save As...")) {
+		} else if (actionCmd.equals(LCutils.String("Save_As") + "...")) {
 			if (iFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = iFileChooser.getSelectedFile();
 				
 				String fName = file.toString();
 				fName = FilenameUtils.removeExtension(fName);
-				iCardSet.Save(fName + ".lngcards");
+				iCardSet.Save(fName + "." + lcFileExt);
 			}
-		} else if (actionCmd.equals("Start lesson")) {
+		} else if (actionCmd.equals(LCutils.String("Start_lesson"))) {
 			LessonView lessonView = new LessonView(iCardSet);
 			lessonView.Show();
 		}
@@ -198,5 +201,14 @@ public class LCmain extends JFrame
 		iCardSet = new CardSet();
 		EditView editView = new EditView(iCardSet);
 		editView.Show();
+	}
+	
+	public void SetFileFilterPrompt(String ffPrompt) {
+		if (iFilefilter != null) {
+			iFileChooser.removeChoosableFileFilter(iFilefilter);
+		}
+		
+		iFilefilter = new FileNameExtensionFilter(ffPrompt + " (*." + lcFileExt + ")", lcFileExt);
+		iFileChooser.addChoosableFileFilter(iFilefilter);
 	}
 }
