@@ -3,6 +3,8 @@ package lc;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
+
 public class LCutils {
 	
 	// en_EN - default locale
@@ -22,5 +24,14 @@ public class LCutils {
 	// current locale string
 	public static String String(String key) {
 		return iResourceBundle.getString(key);
+	}
+	
+	public static ImageIcon Image(String imgName) {
+		java.net.URL imgURL = LCmain.class.getResource("/resources/images/" + imgName);
+		if (imgURL != null) {
+			return new ImageIcon(imgURL, "");
+		}
+		
+		return null;
 	}
 }

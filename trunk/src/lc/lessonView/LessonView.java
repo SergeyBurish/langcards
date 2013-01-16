@@ -44,20 +44,9 @@ public class LessonView implements ActionListener {
 		iSet = set;
 		iLesson = iSet.newLesson();
 		
-		java.net.URL imgURL = LCmain.class.getResource("/resources/images/Negative.png");
-        if (imgURL != null) {
-        	iNegative = new ImageIcon(imgURL, "");
-        }
-        
-		imgURL = LCmain.class.getResource("/resources/images/Pondering.png");
-        if (imgURL != null) {
-        	iPondering = new ImageIcon(imgURL, "");
-        }
-        
-		imgURL = LCmain.class.getResource("/resources/images/Positive.png");
-        if (imgURL != null) {
-        	iPositive = new ImageIcon(imgURL, "");
-        }
+        iNegative = LCutils.Image("Negative.png");
+        iPondering = LCutils.Image("Pondering.png");
+        iPositive = LCutils.Image("Positive.png");
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
