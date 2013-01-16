@@ -50,8 +50,6 @@ public class LessonView implements ActionListener {
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
-		LCmain.mainFrame.setTitle(iSet.Name() + " - " + LCutils.String("Lesson"));
-		//setJMenuBar(null); // remove menu
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
