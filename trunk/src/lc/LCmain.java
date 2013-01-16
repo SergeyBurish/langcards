@@ -38,7 +38,8 @@ public class LCmain extends JFrame
 	JMenu menu, submenu;
 	JMenuItem menuItem;
 	
-	private static final String lcFileExt = "lngcards";
+	public static final String LC_TITLE = "Language Cards";
+	private static final String LC_FILE_EXT = "lngcards";
 	
 	JFileChooser iFileChooser = new JFileChooser();
 	FileFilter iFilefilter = null;
@@ -55,7 +56,7 @@ public class LCmain extends JFrame
 	}
 	
 	public LCmain() {
-		setTitle("Language Cards"); // no i18n
+		setTitle(LC_TITLE); // no i18n
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// setDefaultLookAndFeelDecorated(true);
 	}
@@ -189,7 +190,7 @@ public class LCmain extends JFrame
 				
 				String fName = file.toString();
 				fName = FilenameUtils.removeExtension(fName);
-				iCardSet.Save(fName + "." + lcFileExt);
+				iCardSet.Save(fName + "." + LC_FILE_EXT);
 			}
 		} else if (actionCmd.equals(LCutils.String("Start_lesson"))) {
 			LessonView lessonView = new LessonView(iCardSet);
@@ -208,7 +209,11 @@ public class LCmain extends JFrame
 			iFileChooser.removeChoosableFileFilter(iFilefilter);
 		}
 		
-		iFilefilter = new FileNameExtensionFilter(ffPrompt + " (*." + lcFileExt + ")", lcFileExt);
+		iFilefilter = new FileNameExtensionFilter(ffPrompt + " (*." + LC_FILE_EXT + ")", LC_FILE_EXT);
 		iFileChooser.addChoosableFileFilter(iFilefilter);
+	}
+	
+	public void ChangeSetNameInTitle(String setName) {
+		setTitle(setName + " - " + LC_TITLE);
 	}
 }

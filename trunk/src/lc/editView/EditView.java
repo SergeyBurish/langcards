@@ -54,8 +54,7 @@ public class EditView implements ActionListener {
 	}
 	
 	public void Show() throws XPathExpressionException, LangCardsExeption {
-		LCmain.mainFrame.setTitle(iSet.Name() + " - " + LCutils.String("Editing_the_current_set"));
-		//setJMenuBar(null); // remove menu
+		LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
@@ -164,8 +163,8 @@ public class EditView implements ActionListener {
 				// rename all visible elements
 				// if unnamed - translate
 				iSet.SetName(LCutils.String("Unnamed"));
+				LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
 				
-				LCmain.mainFrame.setTitle(iSet.Name() + " - " + LCutils.String("Editing_the_current_set"));
 				LCmain.mainFrame.SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
 				LCmain.mainFrame.CreateMenu();
 				
