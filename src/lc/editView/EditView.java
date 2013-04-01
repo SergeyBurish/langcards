@@ -1,13 +1,19 @@
 package lc.editView;
 
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -19,12 +25,12 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.xpath.XPathExpressionException;
 
-import lc.langCardsExeption.LangCardsExeption;
-import lc.cardSet.lngCard.LngCard;
 import lc.LCmain;
 import lc.LCutils;
 import lc.cardSet.CardSet;
+import lc.cardSet.lngCard.LngCard;
 import lc.editView.editCardDlg.EditCardDlg;
+import lc.langCardsExeption.LangCardsExeption;
 
 public class EditView implements ActionListener {
 	CardSet iSet;
@@ -42,6 +48,8 @@ public class EditView implements ActionListener {
 	JTable iTable;
 	
 	JTabbedPane iTabbedPane = new JTabbedPane();
+	
+	boolean iEn = true;
 	
 	public EditView(CardSet set) {
 		iSet = set;
@@ -142,13 +150,45 @@ public class EditView implements ActionListener {
 	private JPanel makeSettingsPanel() {
 		JPanel panel = new JPanel(false);
 		
+		Collection<String> supportedLangList = null;
+		
+		try {
+			supportedLangList = LCutils.supportedUILanguages();
+		} catch (IOException e1) { // ignore all exceptions
+			e1.printStackTrace();
+		} catch (URISyntaxException e) { // ignore all exceptions
+			e.printStackTrace();
+		}
+		
+		Vector<String> model = new Vector<String>();
+		
+		if (supportedLangList != null) {
+			Iterator<String> iterator = supportedLangList.iterator();
+			
+			while(iterator.hasNext()) {
+				model.add(iterator.next());
+			}
+		} else {
+			model.add("English");
+		}
+		
+		JComboBox combobox = new JComboBox(model);
+		//combobox.setSelectedIndex(currentLang); // TODO: find current language
+		
 		JTree tree = new JTree();
 		
 		tree.addTreeExpansionListener(new TreeExpansionListener() {
 			
 			@Override
 			public void treeExpanded(TreeExpansionEvent arg0) {
-				LCutils.SetLocale("ru_RU");
+				
+				if (iEn) {
+					LCutils.SetLocale("ru_RU");
+					iEn = false;
+				} else {
+					LCutils.SetLocale("en_EN");
+					iEn = true;
+				}
 				
 				//recreate all invisible elements
 				try {
@@ -185,8 +225,13 @@ public class EditView implements ActionListener {
 			}
 		});
 		
-		panel.setLayout(new GridLayout(1, 1));
+		panel.setLayout(new GridLayout(0, 1));
 		panel.add(tree);
+		
+		JPanel flow = new JPanel(new FlowLayout( FlowLayout.LEFT));
+		flow.add(combobox);
+		
+		panel.add(flow);
 		return panel;
 	}
 	
