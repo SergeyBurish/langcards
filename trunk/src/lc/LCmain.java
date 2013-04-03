@@ -5,9 +5,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Vector;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
@@ -16,6 +32,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
+import lc.cardSet.CardSet;
+import lc.editView.EditView;
 import lc.langCardsExeption.LangCardsExeption;
 import lc.lessonView.LessonView;
 
@@ -23,11 +41,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import lc.cardSet.CardSet;
-import lc.editView.EditView;
-
 public class LCmain extends JFrame
 					implements ActionListener {
+	
 	public static LCmain mainFrame;
 	public Container iContainer;
 	public GroupLayout iLayout;
@@ -40,6 +56,7 @@ public class LCmain extends JFrame
 	
 	public static final String LC_TITLE = "Language Cards";
 	private static final String LC_FILE_EXT = "lngcards";
+	private static final String LC_LOG_FILE = "langCardsLog.txt";
 	
 	JFileChooser iFileChooser = new JFileChooser();
 	FileFilter iFilefilter = null;
@@ -62,6 +79,8 @@ public class LCmain extends JFrame
 	}
 	
 	public void Init() {
+		initLogger();
+		
 		// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		iContainer = getContentPane();
 		iLayout = new GroupLayout(iContainer);
@@ -93,7 +112,51 @@ public class LCmain extends JFrame
 		CreateMenu();
 		pack();
 	}
-	
+
+	private void initLogger() {
+		// reset all default loggers
+		LogManager.getLogManager().reset();
+
+		Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+		// log format
+		Formatter formatter = new Formatter() {
+			@Override
+			public String format(LogRecord arg0) {
+				StringBuilder b = new StringBuilder();
+				Date date = new Date();
+				DateFormat df = DateFormat.getDateTimeInstance();
+				b.append(df.format(date));
+				b.append(" ");
+				b.append(arg0.getSourceClassName());
+				b.append(" ");
+				b.append(arg0.getSourceMethodName());
+				b.append(" ");
+				b.append(arg0.getLevel());
+				b.append("\t\t");
+				b.append(arg0.getMessage());
+				b.append(System.getProperty("line.separator"));
+				return b.toString();
+			}
+		};
+
+		// log to console
+		Handler consoleHandler = new ConsoleHandler();
+		consoleHandler.setFormatter(formatter);
+		logger.addHandler(consoleHandler);
+
+		// log to file
+		try {
+			FileHandler fileHandler = new FileHandler(LC_LOG_FILE);
+			fileHandler.setFormatter(formatter);
+			logger.addHandler(fileHandler);
+		} catch (SecurityException e1) { // ignore all exceptions
+			e1.printStackTrace();
+		} catch (IOException e1) { // ignore all exceptions
+			e1.printStackTrace();
+		}
+	}
+
 	public void CreateMenu() {
 		this.setJMenuBar(null); // remove menu
 		

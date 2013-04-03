@@ -22,6 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 
 
 public class LCutils {
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private interface SearchResourceListener{
 		Object OnFind(Object param);
@@ -81,6 +82,7 @@ public class LCutils {
 								String langName = langNameOfStringResource(baseName);
 
 								if (langName != null && !langName.isEmpty()) {
+									LOGGER.info("supported language found: " + langName);
 									langList.add(langName);
 								}
 
