@@ -7,9 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -20,19 +19,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.LayoutStyle;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.LCmain;
 import lc.LCutils;
+import lc.LCutils.LanguageResourceItem;
 import lc.cardSet.CardSet;
 import lc.cardSet.lngCard.LngCard;
 import lc.editView.editCardDlg.EditCardDlg;
 import lc.langCardsExeption.LangCardsExeption;
 
 public class EditView implements ActionListener {
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	CardSet iSet;
 	
 	JButton iBtAdd = new JButton(LCutils.String("Add"));
@@ -150,86 +149,48 @@ public class EditView implements ActionListener {
 	private JPanel makeSettingsPanel() {
 		JPanel panel = new JPanel(false);
 		
-		Collection<String> supportedLangList = null;
+		Vector<LanguageResourceItem> langListModel = null;
 		
 		try {
-			supportedLangList = LCutils.supportedUILanguages();
+			langListModel = LCutils.supportedUILanguages();
 		} catch (IOException e1) { // ignore all exceptions
 			e1.printStackTrace();
 		} catch (URISyntaxException e) { // ignore all exceptions
 			e.printStackTrace();
 		}
 		
-		Vector<String> model = new Vector<String>();
-		
-		if (supportedLangList != null) {
-			Iterator<String> iterator = supportedLangList.iterator();
-			
-			while(iterator.hasNext()) {
-				model.add(iterator.next());
-			}
-		} else {
-			model.add("English");
+		int currentLangInd = 0;
+		if (langListModel == null || langListModel.isEmpty()) {
+			langListModel.add(new LanguageResourceItem("English (English)", "en_EN"));
+		}
+		else {
+			currentLangInd = LCutils.GetCurrentLocaleIndexOfList(langListModel);
 		}
 		
-		JComboBox combobox = new JComboBox(model);
-		//combobox.setSelectedIndex(currentLang); // TODO: find current language
+		JComboBox langListCombobox = new JComboBox(langListModel);
+		langListCombobox.setSelectedIndex(currentLangInd);
 		
-		JTree tree = new JTree();
-		
-		tree.addTreeExpansionListener(new TreeExpansionListener() {
+		langListCombobox.addActionListener(new ActionListener() {
 			
 			@Override
-			public void treeExpanded(TreeExpansionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
+				JComboBox comboBox = (JComboBox)event.getSource();
+				LanguageResourceItem item = (LanguageResourceItem)comboBox.getSelectedItem();
 				
-				if (iEn) {
-					LCutils.SetLocale("ru_RU");
-					iEn = false;
-				} else {
-					LCutils.SetLocale("en_EN");
-					iEn = true;
+				if (!item.localeString().equals(LCutils.CurrentLocaleString())) {
+					LOGGER.info("language selected: " + item + "; locale: " + item.localeString());
+					ChangeUiLanguage(item.localeString());
 				}
-				
-				//recreate all invisible elements
-				try {
-					JPanel panState = makeStatePanel();
-					iTabbedPane.remove(0);
-					iTabbedPane.add(panState, 0);
-				} catch (XPathExpressionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				// rename all visible elements
-				// if unnamed - translate
-				iSet.SetName(LCutils.String("Unnamed"));
-				LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
-				
-				LCmain.mainFrame.SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
-				LCmain.mainFrame.CreateMenu();
-				
-				iTabbedPane.setTitleAt(0, LCutils.String("State"));
-				iTabbedPane.setTitleAt(1, LCutils.String("Cards"));
-				iTabbedPane.setTitleAt(2, LCutils.String("Settings"));
-				
-				iBtAdd.setText(LCutils.String("Add"));
-				iBtDel.setText(LCutils.String("Delete"));
-				iBtEd.setText(LCutils.String("Edit"));
-				iBtStart.setText(LCutils.String("Start_lesson"));
-			}
-			
-			@Override
-			public void treeCollapsed(TreeExpansionEvent arg0) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
+		
+		JTree tree = new JTree();
 		
 		panel.setLayout(new GridLayout(0, 1));
 		panel.add(tree);
 		
 		JPanel flow = new JPanel(new FlowLayout( FlowLayout.LEFT));
-		flow.add(combobox);
+		flow.add(langListCombobox);
 		
 		panel.add(flow);
 		return panel;
@@ -277,6 +238,37 @@ public class EditView implements ActionListener {
 	private void ScrollTableToShowRaw(int row) {
 		Rectangle r = iTable.getCellRect(row, 0, true);
 		iTable.scrollRectToVisible(r);		
+	}
+	
+	private void ChangeUiLanguage(String localeString) {
+		LCutils.SetLocale(localeString);
+		
+		//recreate all invisible elements
+		try {
+			JPanel panState = makeStatePanel();
+			iTabbedPane.remove(0);
+			iTabbedPane.add(panState, 0);
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// rename all visible elements
+		// if unnamed - translate
+		iSet.SetName(LCutils.String("Unnamed"));
+		LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
+		
+		LCmain.mainFrame.SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
+		LCmain.mainFrame.CreateMenu();
+		
+		iTabbedPane.setTitleAt(0, LCutils.String("State"));
+		iTabbedPane.setTitleAt(1, LCutils.String("Cards"));
+		iTabbedPane.setTitleAt(2, LCutils.String("Settings"));
+		
+		iBtAdd.setText(LCutils.String("Add"));
+		iBtDel.setText(LCutils.String("Delete"));
+		iBtEd.setText(LCutils.String("Edit"));
+		iBtStart.setText(LCutils.String("Start_lesson"));
 	}
 	
 	// ActionListener

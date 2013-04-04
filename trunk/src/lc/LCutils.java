@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -22,15 +23,50 @@ import org.apache.commons.io.FilenameUtils;
 
 
 public class LCutils {
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private static final String STRING_RESOURCE_NAME = "NameInLanguageList";
+	
+	// en_EN - default locale
+	//private static Locale iLocale = new Locale("en_EN");
+	private static String iCurrentLocaleString = "en_EN";
+	private static ResourceBundle iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", new Locale(iCurrentLocaleString));
 	
 	private interface SearchResourceListener{
 		Object OnFind(Object param);
 	}
-
-	// en_EN - default locale
-	//private static Locale iLocale = new Locale("en_EN");
-	private static ResourceBundle iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", new Locale("en_EN"));
+	
+	public static class LanguageResourceItem{
+		private String iName;
+		private String iLocaleString;
+		
+		public LanguageResourceItem(String name, String localeString) {
+			iName = name;
+			iLocaleString = localeString;
+		}
+		
+		public String toString() {
+			return iName;
+		}
+		
+		public String localeString() {
+			return iLocaleString;
+		}
+	}
+	
+	public static String CurrentLocaleString() {
+		return iCurrentLocaleString;
+	}
+	
+	public static int GetCurrentLocaleIndexOfList(Collection<LanguageResourceItem> langListModel) {
+		int i = 0;
+		for (LanguageResourceItem languageResourceItem : langListModel) {
+			if (languageResourceItem.localeString().equals(iCurrentLocaleString)) {
+				return i;
+			}
+			i++;
+		}
+		return 0;
+	}
 	
 	public static void SetLocale(String localeString) {
 		Locale locale = new Locale(localeString);
@@ -38,6 +74,7 @@ public class LCutils {
 		if (locale != null) {
 			//ResourceBundle.clearCache(null);
 			iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", locale);
+			iCurrentLocaleString = localeString;
 			//iResourceBundle
 		}
 	}
@@ -56,7 +93,7 @@ public class LCutils {
 		return null;
 	}
 
-	public static Collection<String> supportedUILanguages() throws IOException,
+	public static Vector<LanguageResourceItem> supportedUILanguages() throws IOException,
 			URISyntaxException {
 		CodeSource src = LCutils.class.getProtectionDomain().getCodeSource();
 		if (src != null) {
@@ -70,7 +107,7 @@ public class LCutils {
 				Pattern stringsPropertiesPattern = Pattern
 						.compile(stringsPropertiesPath);
 
-				final ArrayList<String> langList = new ArrayList<String>();
+				final Vector<LanguageResourceItem> langList = new Vector<LanguageResourceItem>();
 
 				getResources(binJarUri.getPath(), stringsPropertiesPattern,
 						new SearchResourceListener() {
@@ -79,13 +116,17 @@ public class LCutils {
 							public Object OnFind(Object fileName) {
 								String baseName = FilenameUtils
 										.getBaseName((String) fileName);
-								String langName = langNameOfStringResource(baseName);
-
-								if (langName != null && !langName.isEmpty()) {
-									LOGGER.info("supported language found: " + langName);
-									langList.add(langName);
+								LanguageResourceItem langItem = itemOfStringResource(baseName);
+								
+								if (langItem != null) {
+									String name = langItem.toString();
+									String localeString = langItem.localeString();
+									
+									if (!name.isEmpty() && !localeString.isEmpty()) {
+										LOGGER.info("supported language found: " + langItem);
+										langList.add(new LanguageResourceItem(name, localeString));
+									}
 								}
-
 								return null;
 							}
 						});
@@ -96,10 +137,11 @@ public class LCutils {
 		return null;
 	}
 
-	private static String langNameOfStringResource(String fileBaseName) {
-		ResourceBundle iResourceBundle = ResourceBundle
-				.getBundle("resources.strings." + fileBaseName);
-		return iResourceBundle.getString("NameInLanguageList");
+	private static LanguageResourceItem itemOfStringResource(String fileBaseName) {
+		String localeString = fileBaseName.replaceFirst("strings_", "") ; // "strings_en_EN" -> "en_EN"
+		ResourceBundle iResourceBundle = ResourceBundle.getBundle("resources.strings." + fileBaseName);
+		
+		return new LanguageResourceItem(iResourceBundle.getString(STRING_RESOURCE_NAME), localeString);
 	}
 
 	// for all elements of searchPath get a Collection of resources Pattern
