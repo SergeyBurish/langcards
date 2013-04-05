@@ -26,10 +26,8 @@ public class LCutils {
 	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private static final String STRING_RESOURCE_NAME = "NameInLanguageList";
 	
-	// en_EN - default locale
-	//private static Locale iLocale = new Locale("en_EN");
-	private static String iCurrentLocaleString = "en_EN";
-	private static ResourceBundle iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", new Locale(iCurrentLocaleString));
+	private static String iCurrentLocaleString;
+	private static ResourceBundle iResourceBundle;
 	
 	private interface SearchResourceListener{
 		Object OnFind(Object param);
@@ -69,13 +67,32 @@ public class LCutils {
 	}
 	
 	public static void SetLocale(String localeString) {
-		Locale locale = new Locale(localeString);
+		String[] localeStringsArr = localeString.split("_");
+		
+		Locale locale = null;
+		
+		switch (localeStringsArr.length) {
+		case 1:
+			locale = new Locale(localeStringsArr[0]);
+			break;
+			
+		case 2:
+			locale = new Locale(localeStringsArr[0], localeStringsArr[1]);
+			break;
+			
+		case 3:
+			locale = new Locale(localeStringsArr[0], localeStringsArr[1], localeStringsArr[2]);
+			break;
+
+		default: // do nothing
+			break;
+		}
 		
 		if (locale != null) {
-			//ResourceBundle.clearCache(null);
 			iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", locale);
+			LOGGER.info("SetLocale: " + iResourceBundle.getLocale().toString());
+			
 			iCurrentLocaleString = localeString;
-			//iResourceBundle
 		}
 	}
 
@@ -103,7 +120,8 @@ public class LCutils {
 				URI binJarUri = binJarUrl.toURI();
 				String separator = "(\\\\|/)";
 				String stringsPropertiesPath = ".*resources" + separator
-						+ "strings" + separator + "strings_.._..\\.properties";
+						+ "strings" + separator + "strings_.*\\.properties";
+
 				Pattern stringsPropertiesPattern = Pattern
 						.compile(stringsPropertiesPath);
 
