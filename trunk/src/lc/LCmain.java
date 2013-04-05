@@ -81,6 +81,9 @@ public class LCmain extends JFrame
 	public void Init() {
 		initLogger();
 		
+		// set default locale: "en_EN"
+		LCutils.SetLocale("en_EN");
+		
 		// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		iContainer = getContentPane();
 		iLayout = new GroupLayout(iContainer);
