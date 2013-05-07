@@ -112,6 +112,8 @@ public class LCutils {
 
 	public static Vector<LanguageResourceItem> supportedUILanguages() throws IOException,
 			URISyntaxException {
+        final Vector<LanguageResourceItem> langList = new Vector<LanguageResourceItem>();
+
 		CodeSource src = LCutils.class.getProtectionDomain().getCodeSource();
 		if (src != null) {
 
@@ -124,8 +126,6 @@ public class LCutils {
 
 				Pattern stringsPropertiesPattern = Pattern
 						.compile(stringsPropertiesPath);
-
-				final Vector<LanguageResourceItem> langList = new Vector<LanguageResourceItem>();
 
 				getResources(binJarUri.getPath(), stringsPropertiesPattern,
 						new SearchResourceListener() {
@@ -148,11 +148,9 @@ public class LCutils {
 								return null;
 							}
 						});
-
-				return langList;
 			}
 		}
-		return null;
+		return langList;
 	}
 
 	private static LanguageResourceItem itemOfStringResource(String fileBaseName) {
@@ -192,7 +190,7 @@ public class LCutils {
 
 		final Enumeration<? extends ZipEntry> e = zf.entries();
 		while (e.hasMoreElements()) {
-			final ZipEntry ze = (ZipEntry) e.nextElement();
+			final ZipEntry ze = e.nextElement();
 			final String fileName = ze.getName();
 			final boolean accept = pattern.matcher(fileName).matches();
 
@@ -215,23 +213,25 @@ public class LCutils {
 		final ArrayList<String> resourcesList = new ArrayList<String>();
 		final File[] fileList = directory.listFiles();
 
-		for (final File file : fileList) {
-			if (file.isDirectory()) {
-				resourcesList.addAll(getResourcesFromDirectory(file, pattern,
-						listener));
-			} else {
-				final String fileName = file.getCanonicalPath();
-				final boolean accept = pattern.matcher(fileName).matches();
+        if (fileList != null) {
+            for (final File file : fileList) {
+                if (file.isDirectory()) {
+                    resourcesList.addAll(getResourcesFromDirectory(file, pattern,
+                            listener));
+                } else {
+                    final String fileName = file.getCanonicalPath();
+                    final boolean accept = pattern.matcher(fileName).matches();
 
-				if (accept) {
-					resourcesList.add(fileName);
+                    if (accept) {
+                        resourcesList.add(fileName);
 
-					if (listener != null) {
-						listener.OnFind(fileName);
-					}
-				}
-			}
-		}
+                        if (listener != null) {
+                            listener.OnFind(fileName);
+                        }
+                    }
+                }
+            }
+        }
 
 		return resourcesList;
 	}

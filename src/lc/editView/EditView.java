@@ -48,8 +48,6 @@ public class EditView implements ActionListener {
 	
 	JTabbedPane iTabbedPane = new JTabbedPane();
 	
-	boolean iEn = true;
-	
 	public EditView(CardSet set) {
 		iSet = set;
 		
@@ -129,7 +127,7 @@ public class EditView implements ActionListener {
 						.addComponent(iBtEd))
 		);
 		
-		layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {iBtAdd, iBtDel, iBtEd});
+		layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, iBtAdd, iBtDel, iBtEd);
 		
 		layout.setVerticalGroup(
 				layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -149,25 +147,27 @@ public class EditView implements ActionListener {
 	private JPanel makeSettingsPanel() {
 		JPanel panel = new JPanel(false);
 		
-		Vector<LanguageResourceItem> langListModel = null;
+		Vector<LanguageResourceItem> langListModel;
 		
 		try {
 			langListModel = LCutils.supportedUILanguages();
-		} catch (IOException e1) { // ignore all exceptions
+		} catch (IOException e1) { // ignore all exceptions, create empty langListModel
 			e1.printStackTrace();
-		} catch (URISyntaxException e) { // ignore all exceptions
+            langListModel = new Vector<LanguageResourceItem>();
+        } catch (URISyntaxException e) { // ignore all exceptions, create empty langListModel
 			e.printStackTrace();
+            langListModel = new Vector<LanguageResourceItem>();
 		}
 		
 		int currentLangInd = 0;
-		if (langListModel == null || langListModel.isEmpty()) {
+		if (langListModel.isEmpty()) {
 			langListModel.add(new LanguageResourceItem("English (English)", "en_EN"));
 		}
 		else {
 			currentLangInd = LCutils.GetCurrentLocaleIndexOfList(langListModel);
 		}
 		
-		JComboBox langListCombobox = new JComboBox(langListModel);
+		JComboBox<LanguageResourceItem> langListCombobox = new JComboBox<LanguageResourceItem>(langListModel);
 		langListCombobox.setSelectedIndex(currentLangInd);
 		
 		langListCombobox.addActionListener(new ActionListener() {
@@ -178,7 +178,7 @@ public class EditView implements ActionListener {
 				LanguageResourceItem item = (LanguageResourceItem)comboBox.getSelectedItem();
 				
 				if (!item.localeString().equals(LCutils.CurrentLocaleString())) {
-					LOGGER.info("language selected: " + item + "; locale: " + item.localeString());
+					LOGGER.info("a new language selected: " + item + "; locale: " + item.localeString());
 					ChangeUiLanguage(item.localeString());
 				}
 			}
