@@ -1,28 +1,23 @@
 package lc.lessonView;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.LayoutStyle;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeSelectionModel;
-import javax.xml.xpath.XPathExpressionException;
-
 import lc.LCmain;
 import lc.LCutils;
 import lc.cardSet.CardSet;
 import lc.cardSet.Lesson;
 import lc.cardSet.lngCard.LngCard;
 import lc.cardSet.lngPhrase.LngPhrase;
+import lc.controls.TextPaneWithDefault;
 import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
 import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
 import lc.langCardsExeption.LangCardsExeption;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
+import javax.xml.xpath.XPathExpressionException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LessonView implements ActionListener {
 	CardSet iSet;
@@ -36,7 +31,7 @@ public class LessonView implements ActionListener {
 	
 	ExTree iTree = null;
 	JScrollPane iTreeScrollPane = null;
-	ExTreeNode iCardNode = new ExTreeNode(null, false);;
+	ExTreeNode iCardNode = new ExTreeNode(null, false);
 	
 	int z = 0;
 	
@@ -63,10 +58,8 @@ public class LessonView implements ActionListener {
 
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
-		
-		JTextPane textPane = new JTextPane();
-		textPane.setText(LCutils.String("Type_your_variant_of_translation_here"));
-		
+
+        TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"));
 		JButton checkNextBtn = new JButton(LCutils.String("Next_Card"));
 		checkNextBtn.addActionListener(this);
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
