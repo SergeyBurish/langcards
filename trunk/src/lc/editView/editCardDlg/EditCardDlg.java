@@ -27,7 +27,7 @@ import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
 import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
 
-public class EditCardDlg extends JDialog implements TreeSelectionListener, ActionListener {
+public class EditCardDlg extends JDialog implements TreeSelectionListener {
 	ExTreeNode rootNode = new ExTreeNode(LCutils.String("New_Card"), false);
 	DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
 	ExTree iTree = new ExTree(iModel);
@@ -112,8 +112,30 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 				.addComponent(iStatusLbl)
 		);
+
+		final EditCardDlg self = this;
 		
-		iOkBtn.addActionListener(this);
+		iOkBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Verify(); // - check, display corresponding error;
+				ExTreeNode node;
+
+				for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
+					node = (ExTreeNode)iLngFrstNode.getChildAt(i);
+					iLngCard.AddFrstPhrase(new LngPhrase(node.toString()));
+				}
+
+				for (int i = 0; i < iLngScndNode.getChildCount(); i++) {
+					node = (ExTreeNode)iLngScndNode.getChildAt(i);
+					iLngCard.AddScndPhrase(new LngPhrase(node.toString()));
+				}
+
+				iAccepted = true;
+				LCmain.mainFrame.RemoveFromCloseArray(self);
+				dispose();
+			}
+		});
 		
 		pack();
 	}
@@ -129,7 +151,6 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 	public Boolean Accepted() {
 		return iAccepted;
 	}
-	
 
 	// TreeSelectionListener
 	@Override
@@ -147,26 +168,5 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener, Actio
 				});
 			}
 		}
-	}
-
-	// ActionListener
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// Verify(); // - check, display corresponding error;
-		ExTreeNode node;
-		
-		for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
-			node = (ExTreeNode)iLngFrstNode.getChildAt(i);
-			iLngCard.AddFrstPhrase(new LngPhrase(node.toString()));
-		}
-
-		for (int i = 0; i < iLngScndNode.getChildCount(); i++) {
-			node = (ExTreeNode)iLngScndNode.getChildAt(i);
-			iLngCard.AddScndPhrase(new LngPhrase(node.toString()));
-		}
-		
-		iAccepted = true;
-		LCmain.mainFrame.RemoveFromCloseArray(this);
-		dispose();
 	}
 }
