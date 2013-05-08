@@ -39,9 +39,9 @@ public class LessonView implements ActionListener {
 		iSet = set;
 		iLesson = iSet.newLesson();
 		
-        iNegative = LCutils.Image("Negative.png");
-        iPondering = LCutils.Image("Pondering.png");
-        iPositive = LCutils.Image("Positive.png");
+		iNegative = LCutils.Image("Negative.png");
+		iPondering = LCutils.Image("Pondering.png");
+		iPositive = LCutils.Image("Positive.png");
 	}
 	
 	public void Show() throws LangCardsExeption, XPathExpressionException {
@@ -59,7 +59,7 @@ public class LessonView implements ActionListener {
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-        TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"));
+		TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"));
 		JButton checkNextBtn = new JButton(LCutils.String("Next_Card"));
 		checkNextBtn.addActionListener(this);
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
