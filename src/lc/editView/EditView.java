@@ -29,8 +29,9 @@ import lc.cardSet.CardSet;
 import lc.cardSet.lngCard.LngCard;
 import lc.editView.editCardDlg.EditCardDlg;
 import lc.langCardsExeption.LangCardsExeption;
+import lc.lessonView.LessonView;
 
-public class EditView implements ActionListener {
+public class EditView {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	CardSet iSet;
 	
@@ -50,12 +51,60 @@ public class EditView implements ActionListener {
 	
 	public EditView(CardSet set) {
 		iSet = set;
-		
-		iBtAdd.addActionListener(this);
-		iBtDel.addActionListener(this);
-		iBtEd.addActionListener(this);
-		
-		iBtStart.addActionListener(LCmain.mainFrame);
+
+		//----------------------Add----------------------
+		iBtAdd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					LngCard lngCard = new LngCard();
+
+					EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
+					newCardDlg.SetLanguages(iSet.LanguageFrst(), iSet.LanguageScnd());
+					newCardDlg.setVisible(true);
+
+					if (newCardDlg.Accepted()) {
+						iSet.AddNewCard(lngCard);
+						UpdateTable();
+						UpdateStateTable();
+						ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
+					}
+
+				}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsExeption e)			{LCmain.mainFrame.ShowErr(e);}
+			}
+		});
+
+		//----------------------Delete----------------------
+		iBtDel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				iTableModel.addColumn("Delete");
+			}
+		});
+
+		//----------------------Edit----------------------
+		iBtEd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				iTableModel.addColumn("Edit");
+			}
+		});
+
+		//----------------------Start_lesson----------------------
+		iBtStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent vent) {
+				LessonView lessonView = null;
+				try {
+					lessonView = new LessonView(iSet);
+					lessonView.Show();
+				}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsExeption e)			{LCmain.mainFrame.ShowErr(e);}
+			}
+		});
 	}
 	
 	public void Show() throws XPathExpressionException, LangCardsExeption {
@@ -269,39 +318,5 @@ public class EditView implements ActionListener {
 		iBtDel.setText(LCutils.String("Delete"));
 		iBtEd.setText(LCutils.String("Edit"));
 		iBtStart.setText(LCutils.String("Start_lesson"));
-	}
-	
-	// ActionListener
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		String actionCmd = event.getActionCommand();
-		
-		if (actionCmd.equals(LCutils.String("Add"))) {
-			try {
-				LngCard lngCard = new LngCard();
-				
-				EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
-				newCardDlg.SetLanguages(iSet.LanguageFrst(), iSet.LanguageScnd());
-				newCardDlg.setVisible(true);
-				
-				if (newCardDlg.Accepted()) {
-					iSet.AddNewCard(lngCard);
-					UpdateTable();
-					UpdateStateTable();
-					ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
-				}
-				
-			} catch (XPathExpressionException e) {
-				LCmain.mainFrame.ShowErr(e);
-			}
-			catch (LangCardsExeption e) {
-				LCmain.mainFrame.ShowErr(e);
-			}
-			//iTableModel.addRow(new Object[] { btName });
-		} else if (actionCmd.equals(LCutils.String("Delete"))) {
-			iTableModel.addColumn(actionCmd);
-		} else {
-			iTableModel.addColumn(actionCmd);
-		}
 	}
 }

@@ -19,7 +19,7 @@ import javax.xml.xpath.XPathExpressionException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LessonView implements ActionListener {
+public class LessonView {
 	CardSet iSet;
 	Lesson iLesson;
 	
@@ -60,8 +60,44 @@ public class LessonView implements ActionListener {
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
 		TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"));
+
 		JButton checkNextBtn = new JButton(LCutils.String("Next_Card"));
-		checkNextBtn.addActionListener(this);
+		checkNextBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					NextCard();
+				}
+				catch (XPathExpressionException e) {LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsExeption e) {LCmain.mainFrame.ShowErr(e);}
+
+				switch (z) {
+					case 0:
+						iLabel1.setText("Pondering");
+						iLabel1.setIcon(iPondering);
+						z = 1;
+						break;
+
+					case 1:
+						iLabel1.setText("Positive");
+						iLabel1.setIcon(iPositive);
+						z = 2;
+						break;
+
+					case 2:
+						iLabel1.setText("Negative");
+						iLabel1.setIcon(iNegative);
+						z = 0;
+						break;
+
+					default:
+						break;
+				}
+
+				LCmain.mainFrame.pack();
+			}
+		});
+
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
 		
 		iLabel1 = new JLabel("Test1", iNegative, JLabel.CENTER);
@@ -110,52 +146,7 @@ public class LessonView implements ActionListener {
 		
 		LCmain.mainFrame.pack();
 	}
-	
-	// ActionListener
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		try {			
-			actionPerformedThrow(event);
-			
-		} catch (XPathExpressionException e) {
-			LCmain.mainFrame.ShowErr(e);
-		} catch (LangCardsExeption e) {
-			LCmain.mainFrame.ShowErr(e);
-		}
-	}
-	
-	private void actionPerformedThrow(ActionEvent event) throws XPathExpressionException, LangCardsExeption {
-		String actionCmd = event.getActionCommand();
-		if (actionCmd.equals(LCutils.String("Next_Card"))) {
-			NextCard();
-			
-			switch (z) {
-			case 0:
-				iLabel1.setText("Pondering");
-				iLabel1.setIcon(iPondering);
-				z = 1;
-				break;
 
-			case 1:
-				iLabel1.setText("Positive");
-				iLabel1.setIcon(iPositive);
-				z = 2;
-				break;
-				
-			case 2:
-				iLabel1.setText("Negative");
-				iLabel1.setIcon(iNegative);
-				z = 0;
-				break;
-				
-			default:
-				break;
-			}
-			
-			LCmain.mainFrame.pack();
-		}
-	}
-	
 	private void NextCard() throws XPathExpressionException, LangCardsExeption {
 		LngCard nextCard = iLesson.NextCard();
 		if (nextCard == null) {

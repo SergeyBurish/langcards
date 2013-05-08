@@ -41,9 +41,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class LCmain extends JFrame
-					implements ActionListener {
-	
+public class LCmain extends JFrame {
+
 	public static LCmain mainFrame;
 	public Container iContainer;
 	public GroupLayout iLayout;
@@ -103,15 +102,13 @@ public class LCmain extends JFrame
 
 		// load the last set, otherwise create new
 		try {
-			NewSet();
-		} catch (XPathExpressionException e) {
-			ShowErr(e);
-			return;
-		} catch (LangCardsExeption e) {
-			ShowErr(e);
-			return;
+			NewOpen(null);
 		}
-		
+		catch (XPathExpressionException e)	{ShowErr(e);return;}
+		catch (LangCardsExeption e)			{ShowErr(e);return;}
+		catch (SAXException e)				{ShowErr(e);return;}
+		catch (IOException e)				{ShowErr(e);return;}
+
 		CreateMenu();
 		pack();
 	}
@@ -162,21 +159,64 @@ public class LCmain extends JFrame
 
 	public void CreateMenu() {
 		this.setJMenuBar(null); // remove menu
+		final LCmain self = this;
 		
 		menuBar = new JMenuBar();
 		menu = new JMenu(LCutils.String("Set"));
 		menuBar.add(menu);
-		
+
+		//----------------------New----------------------
 		menuItem = new JMenuItem(LCutils.String("New"));
-		menuItem.addActionListener(this);
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					NewOpen(null);
+				}
+				catch (SAXException e)				{ShowErr(e);}
+				catch (IOException e)				{ShowErr(e);}
+				catch (LangCardsExeption e)			{ShowErr(e);}
+				catch (XPathExpressionException e)	{ShowErr(e);}
+			}
+		});
 		menu.add(menuItem);
-		
+
+		//----------------------Open----------------------
 		menuItem = new JMenuItem(LCutils.String("Open"));
-		menuItem.addActionListener(this);
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (iFileChooser.showOpenDialog(self) == JFileChooser.APPROVE_OPTION) {
+					File file = iFileChooser.getSelectedFile();
+					try {
+						NewOpen(file);
+					}
+					catch (SAXException e)				{ShowErr(e);}
+					catch (IOException e)				{ShowErr(e);}
+					catch (LangCardsExeption e)			{ShowErr(e);}
+					catch (XPathExpressionException e)	{ShowErr(e);}
+				}
+			}
+		});
 		menu.add(menuItem);
-		
+
+		//----------------------Save_As----------------------
 		menuItem = new JMenuItem(LCutils.String("Save_As") + "...");
-		menuItem.addActionListener(this);
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (iFileChooser.showSaveDialog(self) == JFileChooser.APPROVE_OPTION) {
+					File file = iFileChooser.getSelectedFile();
+
+					String fName = file.toString();
+					fName = FilenameUtils.removeExtension(fName);
+					try {
+						iCardSet.Save(fName + "." + LC_FILE_EXT);
+					}
+					catch (TransformerException e) {ShowErr(e);}
+				}
+			}
+		});
 		menu.add(menuItem);
 		
 		this.setJMenuBar(menuBar);
@@ -216,56 +256,8 @@ public class LCmain extends JFrame
 		iCloseArray.remove(dlg);
 	}
 
-	// ActionListener
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		try {
-			
-			actionPerformedThrow(arg0);
-			
-		} catch (SAXException e) {
-			ShowErr(e);
-		} catch (IOException e) {
-			ShowErr(e);
-		} catch (TransformerException e) {
-			ShowErr(e);
-		} catch (XPathExpressionException e) {
-			ShowErr(e);
-		} catch (LangCardsExeption e) {
-			ShowErr(e);
-		}
-	}
-
-	private void actionPerformedThrow(ActionEvent arg0) throws SAXException,
-			IOException, TransformerException, XPathExpressionException,
-			LangCardsExeption {
-		String actionCmd = arg0.getActionCommand();
-		if (actionCmd.equals(LCutils.String("New"))) {
-			// iFileChooser.showDialog(this, "New");
-			NewSet();
-		} else if (actionCmd.equals(LCutils.String("Open"))) {
-			if (iFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				File file = iFileChooser.getSelectedFile();
-				iCardSet = new CardSet(file);
-				EditView editView = new EditView(iCardSet);
-				editView.Show();
-			}
-		} else if (actionCmd.equals(LCutils.String("Save_As") + "...")) {
-			if (iFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				File file = iFileChooser.getSelectedFile();
-				
-				String fName = file.toString();
-				fName = FilenameUtils.removeExtension(fName);
-				iCardSet.Save(fName + "." + LC_FILE_EXT);
-			}
-		} else if (actionCmd.equals(LCutils.String("Start_lesson"))) {
-			LessonView lessonView = new LessonView(iCardSet);
-			lessonView.Show();
-		}
-	}
-	
-	private void NewSet() throws XPathExpressionException, LangCardsExeption {
-		iCardSet = new CardSet();
+	private void NewOpen(File file) throws XPathExpressionException, LangCardsExeption, IOException, SAXException {
+		iCardSet = (file == null) ? new CardSet() : new CardSet(file);
 		EditView editView = new EditView(iCardSet);
 		editView.Show();
 	}
