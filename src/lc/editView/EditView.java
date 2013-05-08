@@ -153,10 +153,10 @@ public class EditView implements ActionListener {
 			langListModel = LCutils.supportedUILanguages();
 		} catch (IOException e1) { // ignore all exceptions, create empty langListModel
 			e1.printStackTrace();
-            langListModel = new Vector<LanguageResourceItem>();
-        } catch (URISyntaxException e) { // ignore all exceptions, create empty langListModel
+			langListModel = new Vector<LanguageResourceItem>();
+		} catch (URISyntaxException e) { // ignore all exceptions, create empty langListModel
 			e.printStackTrace();
-            langListModel = new Vector<LanguageResourceItem>();
+			langListModel = new Vector<LanguageResourceItem>();
 		}
 		
 		int currentLangInd = 0;

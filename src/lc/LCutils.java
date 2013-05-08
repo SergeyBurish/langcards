@@ -112,7 +112,7 @@ public class LCutils {
 
 	public static Vector<LanguageResourceItem> supportedUILanguages() throws IOException,
 			URISyntaxException {
-        final Vector<LanguageResourceItem> langList = new Vector<LanguageResourceItem>();
+		final Vector<LanguageResourceItem> langList = new Vector<LanguageResourceItem>();
 
 		CodeSource src = LCutils.class.getProtectionDomain().getCodeSource();
 		if (src != null) {
@@ -213,25 +213,25 @@ public class LCutils {
 		final ArrayList<String> resourcesList = new ArrayList<String>();
 		final File[] fileList = directory.listFiles();
 
-        if (fileList != null) {
-            for (final File file : fileList) {
-                if (file.isDirectory()) {
-                    resourcesList.addAll(getResourcesFromDirectory(file, pattern,
-                            listener));
-                } else {
-                    final String fileName = file.getCanonicalPath();
-                    final boolean accept = pattern.matcher(fileName).matches();
+		if (fileList != null) {
+			for (final File file : fileList) {
+				if (file.isDirectory()) {
+					resourcesList.addAll(getResourcesFromDirectory(file, pattern,
+							listener));
+				} else {
+					final String fileName = file.getCanonicalPath();
+					final boolean accept = pattern.matcher(fileName).matches();
 
-                    if (accept) {
-                        resourcesList.add(fileName);
+					if (accept) {
+						resourcesList.add(fileName);
 
-                        if (listener != null) {
-                            listener.OnFind(fileName);
-                        }
-                    }
-                }
-            }
-        }
+						if (listener != null) {
+							listener.OnFind(fileName);
+						}
+					}
+				}
+			}
+		}
 
 		return resourcesList;
 	}
