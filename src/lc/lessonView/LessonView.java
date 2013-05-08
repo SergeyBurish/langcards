@@ -10,7 +10,7 @@ import lc.controls.TextPaneWithDefault;
 import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
 import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
-import lc.langCardsExeption.LangCardsExeption;
+import lc.langCardsException.LangCardsException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -44,7 +44,7 @@ public class LessonView {
 		iPositive = LCutils.Image("Positive.png");
 	}
 	
-	public void Show() throws LangCardsExeption, XPathExpressionException {
+	public void Show() throws LangCardsException, XPathExpressionException {
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
@@ -69,7 +69,7 @@ public class LessonView {
 					NextCard();
 				}
 				catch (XPathExpressionException e) {LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsExeption e) {LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e) {LCmain.mainFrame.ShowErr(e);}
 
 				switch (z) {
 					case 0:
@@ -147,10 +147,10 @@ public class LessonView {
 		LCmain.mainFrame.pack();
 	}
 
-	private void NextCard() throws XPathExpressionException, LangCardsExeption {
+	private void NextCard() throws XPathExpressionException, LangCardsException {
 		LngCard nextCard = iLesson.NextCard();
 		if (nextCard == null) {
-			throw new LangCardsExeption("No lesson cards");
+			throw new LangCardsException("No lesson cards");
 		}
 		
 		iCardNode.setUserObject(LCutils.String("Card") + " " + iLesson.CurrentCardPos());

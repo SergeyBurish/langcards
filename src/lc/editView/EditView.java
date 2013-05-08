@@ -28,7 +28,7 @@ import lc.LCutils.LanguageResourceItem;
 import lc.cardSet.CardSet;
 import lc.cardSet.lngCard.LngCard;
 import lc.editView.editCardDlg.EditCardDlg;
-import lc.langCardsExeption.LangCardsExeption;
+import lc.langCardsException.LangCardsException;
 import lc.lessonView.LessonView;
 
 public class EditView {
@@ -72,7 +72,7 @@ public class EditView {
 
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsExeption e)			{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)			{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 
@@ -102,12 +102,12 @@ public class EditView {
 					lessonView.Show();
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsExeption e)			{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)			{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 	}
 	
-	public void Show() throws XPathExpressionException, LangCardsExeption {
+	public void Show() throws XPathExpressionException, LangCardsException {
 		LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
@@ -153,7 +153,7 @@ public class EditView {
 		return panel;
 	}
 	
-	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsExeption {
+	private JPanel makeCardsPanel() throws XPathExpressionException, LangCardsException {
 		JPanel panel = new JPanel(false);
 		
 		iTable = new JTable(iTableModel);
@@ -272,7 +272,7 @@ public class EditView {
 		iTableModelState.setDataVector(rows, columns);		
 	}
 	
-	private void UpdateTable() throws XPathExpressionException, LangCardsExeption {
+	private void UpdateTable() throws XPathExpressionException, LangCardsException {
 		
 		Vector<Vector<String>> rows = iSet.GetAllCardsIdFrstScnd();
 		Vector<String> columns= new Vector<String>();
