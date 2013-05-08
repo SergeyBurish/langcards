@@ -95,7 +95,7 @@ public class CardSet {
 		// Languages
 		Element languages = iDoc.createElement(XML_LANGUAGES);
 		languages.setAttribute(XML_FRST, "English");
-		languages.setAttribute(XML_SCND, "Русский");
+		languages.setAttribute(XML_SCND, "Р СѓСЃСЃРєРёР№");
 		settings.appendChild(languages);
 		
 		TestFilling();
