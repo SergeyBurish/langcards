@@ -3,7 +3,7 @@ package lc.cardSet;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.cardSet.lngCard.LngCard;
-import lc.langCardsExeption.LangCardsExeption;
+import lc.langCardsException.LangCardsException;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -18,7 +18,7 @@ public class Lesson {
 		iCards = iSet.LessonCardsList();
 	}
 	
-	public LngCard NextCard() throws XPathExpressionException, LangCardsExeption {
+	public LngCard NextCard() throws XPathExpressionException, LangCardsException {
 		Node nextNode = iCards.item(iPos++);
 		return iSet.XmlNodeToLngCard(nextNode);
 	}

@@ -34,8 +34,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import lc.cardSet.CardSet;
 import lc.editView.EditView;
-import lc.langCardsExeption.LangCardsExeption;
-import lc.lessonView.LessonView;
+import lc.langCardsException.LangCardsException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
@@ -105,7 +104,7 @@ public class LCmain extends JFrame {
 			NewOpen(null);
 		}
 		catch (XPathExpressionException e)	{ShowErr(e);return;}
-		catch (LangCardsExeption e)			{ShowErr(e);return;}
+		catch (LangCardsException e)			{ShowErr(e);return;}
 		catch (SAXException e)				{ShowErr(e);return;}
 		catch (IOException e)				{ShowErr(e);return;}
 
@@ -175,7 +174,7 @@ public class LCmain extends JFrame {
 				}
 				catch (SAXException e)				{ShowErr(e);}
 				catch (IOException e)				{ShowErr(e);}
-				catch (LangCardsExeption e)			{ShowErr(e);}
+				catch (LangCardsException e)			{ShowErr(e);}
 				catch (XPathExpressionException e)	{ShowErr(e);}
 			}
 		});
@@ -193,7 +192,7 @@ public class LCmain extends JFrame {
 					}
 					catch (SAXException e)				{ShowErr(e);}
 					catch (IOException e)				{ShowErr(e);}
-					catch (LangCardsExeption e)			{ShowErr(e);}
+					catch (LangCardsException e)			{ShowErr(e);}
 					catch (XPathExpressionException e)	{ShowErr(e);}
 				}
 			}
@@ -256,7 +255,7 @@ public class LCmain extends JFrame {
 		iCloseArray.remove(dlg);
 	}
 
-	private void NewOpen(File file) throws XPathExpressionException, LangCardsExeption, IOException, SAXException {
+	private void NewOpen(File file) throws XPathExpressionException, LangCardsException, IOException, SAXException {
 		iCardSet = (file == null) ? new CardSet() : new CardSet(file);
 		EditView editView = new EditView(iCardSet);
 		editView.Show();

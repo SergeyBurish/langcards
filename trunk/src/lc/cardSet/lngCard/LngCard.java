@@ -2,7 +2,7 @@ package lc.cardSet.lngCard;
 
 import java.util.ArrayList;
 
-import lc.langCardsExeption.LangCardsExeption;
+import lc.langCardsException.LangCardsException;
 import lc.cardSet.lngPhrase.LngPhrase;
 
 public class LngCard {
@@ -30,19 +30,19 @@ public class LngCard {
 		return iScndPrases.size();
 	}
 	
-	public LngPhrase GetFrstPhrase(int i) throws LangCardsExeption {
+	public LngPhrase GetFrstPhrase(int i) throws LangCardsException {
 		if (i >= 0 && i < iFrstPrases.size()) {
 			return iFrstPrases.get(i);
 		}
 		
-		throw new LangCardsExeption("GetFrstPhrase: out of bounds");
+		throw new LangCardsException("GetFrstPhrase: out of bounds");
 	}
 	
-	public LngPhrase GetScndPhrase(int i) throws LangCardsExeption {
+	public LngPhrase GetScndPhrase(int i) throws LangCardsException {
 		if (i < iScndPrases.size()) {
 			return iScndPrases.get(i);
 		}
 		
-		throw new LangCardsExeption("GetScndPhrase: out of bounds");
+		throw new LangCardsException("GetScndPhrase: out of bounds");
 	}
 }

@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 
 import lc.LCmain;
 import lc.LCutils;
-import lc.langCardsExeption.LangCardsExeption;
+import lc.langCardsException.LangCardsException;
 import lc.cardSet.lngCard.LngCard;
 import lc.cardSet.lngPhrase.LngPhrase;
 
@@ -154,7 +154,7 @@ public class CardSet {
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (LangCardsExeption e) {
+		} catch (LangCardsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -198,7 +198,7 @@ public class CardSet {
 		return  LessonCardsList().getLength();
 	}
 	
-	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsExeption {
+	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
 		Node cards = CardsNode();
 		
 		// new card
@@ -248,7 +248,7 @@ public class CardSet {
 	}
 	
 	// get all cards, use "ID-Frst-Scnd" format
-	public Vector<Vector<String>> GetAllCardsIdFrstScnd() throws XPathExpressionException, LangCardsExeption {
+	public Vector<Vector<String>> GetAllCardsIdFrstScnd() throws XPathExpressionException, LangCardsException {
 		Vector<Vector<String>> rowsVect=new Vector<Vector<String>>();
 		
 		NodeList cardList = CardsList();
@@ -260,7 +260,7 @@ public class CardSet {
 			Vector<String> rowVect=new Vector<String>();
 			
 			Node card = cardList.item(i);
-			if (card == null) throw new LangCardsExeption("xml error: fail to get next \"Card\" node");
+			if (card == null) throw new LangCardsException("xml error: fail to get next \"Card\" node");
 			
 			rowVect.addElement(CardId(card));
 			
@@ -285,7 +285,7 @@ public class CardSet {
 		return new Lesson(this);
 	}
 	
-	public LngCard XmlNodeToLngCard(Node node) throws XPathExpressionException, LangCardsExeption {
+	public LngCard XmlNodeToLngCard(Node node) throws XPathExpressionException, LangCardsException {
 		if (node == null) return null;
 		
 		LngCard lc = new LngCard();
@@ -363,24 +363,24 @@ public class CardSet {
 		return iIdExpr.evaluate(card);
 	}
 	
-	private NodeList FrstPhrasesOfCard(Node card, String frstLanguage) throws XPathExpressionException, LangCardsExeption {
+	private NodeList FrstPhrasesOfCard(Node card, String frstLanguage) throws XPathExpressionException, LangCardsException {
 		if (iPhraseLanguageFrst == null) {
 			iPhraseLanguageFrst = iXpath.compile(String.format(XML_PHRASE + "[@" + XML_LANGUAGE + "='%s']", frstLanguage));
 		}
 		
 		NodeList frstPhraseList = (NodeList)iPhraseLanguageFrst.evaluate(card, XPathConstants.NODESET);
-		if (frstPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", frstLanguage, CardId(card)));
+		if (frstPhraseList.getLength() < 1) throw new LangCardsException(String.format("invalid xml structure: no %s Phrases in the %S card", frstLanguage, CardId(card)));
 		
 		return frstPhraseList;
 	}
 	
-	private NodeList ScndPhrasesOfCard(Node card, String scndLanguage) throws XPathExpressionException, LangCardsExeption {
+	private NodeList ScndPhrasesOfCard(Node card, String scndLanguage) throws XPathExpressionException, LangCardsException {
 		if (iPhraseLanguageScnd == null) {
 			iPhraseLanguageScnd = iXpath.compile(String.format(XML_PHRASE + "[@" + XML_LANGUAGE + "='%s']", scndLanguage));
 		}
 		
 		NodeList scndPhraseList = (NodeList)iPhraseLanguageScnd.evaluate(card, XPathConstants.NODESET);
-		if (scndPhraseList.getLength() < 1) throw new LangCardsExeption(String.format("invalid xml structure: no %s Phrases in the %S card", scndLanguage, CardId(card)));
+		if (scndPhraseList.getLength() < 1) throw new LangCardsException(String.format("invalid xml structure: no %s Phrases in the %S card", scndLanguage, CardId(card)));
 		
 		return scndPhraseList;
 	}
