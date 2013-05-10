@@ -13,8 +13,16 @@ public class TextPaneWithDefault extends JTextPane {
 	private boolean typing = false;
 	private AttributeSet attributeSet = null;
 
-	public TextPaneWithDefault(String defaultString) {
+	public interface TypingStateListener {
+		public void typingStarted();
+		public void typingStopped();
+	}
+
+	TypingStateListener listener = null;
+
+	public TextPaneWithDefault(String defaultString, TypingStateListener l) {
 		if (defaultString != null) this.defaultString = defaultString;
+		this.listener = l;
 
 		setText(this.defaultString);
 		setForeground(getDisabledTextColor());
@@ -38,11 +46,13 @@ public class TextPaneWithDefault extends JTextPane {
 				public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
 					if (!typing) {
 						attributeSet = attrs;
-						typing = true;
 
 						super.remove(fb, 0, self.getText().length());
 						super.insertString(fb, 0, text, attrs);
 						self.setForeground(self.getSelectedTextColor());
+
+						typing = true;
+						if (listener != null) listener.typingStarted();
 					}
 					else {
 						super.replace(fb, offset, length, text, attrs);
@@ -58,7 +68,9 @@ public class TextPaneWithDefault extends JTextPane {
 							super.insertString(fb, 0, self.defaultString, self.attributeSet);
 							self.setForeground(self.getDisabledTextColor());
 							self.setCaretPosition(0);
+
 							typing = false;
+							if (listener != null) listener.typingStopped();
 						}
 					}
 				}
