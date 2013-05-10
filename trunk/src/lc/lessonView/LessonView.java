@@ -59,17 +59,15 @@ public class LessonView {
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-		TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"));
-
-		JButton checkNextBtn = new JButton(LCutils.String("Next_Card"));
-		checkNextBtn.addActionListener(new ActionListener() {
+		final JButton verifyNextBtn = new JButton(LCutils.String("Next_Card"));
+		verifyNextBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
 					NextCard();
 				}
-				catch (XPathExpressionException e) {LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e) {LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
 
 				switch (z) {
 					case 0:
@@ -98,6 +96,19 @@ public class LessonView {
 			}
 		});
 
+		TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"),
+				new TextPaneWithDefault.TypingStateListener() {
+					@Override
+					public void typingStarted() {
+						verifyNextBtn.setText(LCutils.String("Verify"));
+					}
+
+					@Override
+					public void typingStopped() {
+						verifyNextBtn.setText(LCutils.String("Next_Card"));
+					}
+				});
+
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
 		
 		iLabel1 = new JLabel("Test1", iNegative, JLabel.CENTER);
@@ -111,7 +122,7 @@ public class LessonView {
 						.addComponent(iTreeScrollPane)
 						.addComponent(textPane)
 						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-								.addComponent(checkNextBtn)
+								.addComponent(verifyNextBtn)
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(finishLessonBtn)
 								)
@@ -131,7 +142,7 @@ public class LessonView {
 						.addComponent(textPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(checkNextBtn)
+								.addComponent(verifyNextBtn)
 								.addComponent(finishLessonBtn)
 								)
 						)
