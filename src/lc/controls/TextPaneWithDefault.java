@@ -45,13 +45,13 @@ public class TextPaneWithDefault extends JTextPane {
 				@Override
 				public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
 					if (!typing) {
+						typing = true;
 						attributeSet = attrs;
 
 						super.remove(fb, 0, self.getText().length());
 						super.insertString(fb, 0, text, attrs);
 						self.setForeground(self.getSelectedTextColor());
 
-						typing = true;
 						if (listener != null) listener.typingStarted();
 					}
 					else {
