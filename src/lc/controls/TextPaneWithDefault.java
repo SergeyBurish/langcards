@@ -48,8 +48,7 @@ public class TextPaneWithDefault extends JTextPane {
 						typing = true;
 						attributeSet = attrs;
 
-						super.remove(fb, 0, self.getText().length());
-						super.insertString(fb, 0, text, attrs);
+						super.replace(fb, 0, self.getText().length(), text, attrs);
 						self.setForeground(self.getSelectedTextColor());
 
 						if (listener != null) listener.typingStarted();
