@@ -298,11 +298,11 @@ public class CardSet {
 		}
 		
 		
-		NodeList scndPhraseList = FrstPhrasesOfCard(node, LanguageScnd());
+		NodeList scndPhraseList = ScndPhrasesOfCard(node, LanguageScnd());
 		
 		for (int i = 0; i < scndPhraseList.getLength(); i++) {
 			Node scndPhrase = scndPhraseList.item(i);
-			lc.AddScndPhrase(new LngPhrase(ValueOfXmlPhrase(scndPhrase)));
+			lc.AddScndPhrase(XmlNodeToLngPhrase(scndPhrase));
 		}
 		
 		return lc;
