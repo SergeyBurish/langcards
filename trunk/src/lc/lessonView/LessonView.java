@@ -23,7 +23,7 @@ public class LessonView {
 	CardSet iSet;
 	Lesson iLesson;
 	
-	JLabel iLabel1 = null;
+	JLabel iAnswerStatusLabel = null;
 	
 	ImageIcon iNegative = null;
 	ImageIcon iPondering = null;
@@ -32,9 +32,14 @@ public class LessonView {
 	ExTree iTree = null;
 	JScrollPane iTreeScrollPane = null;
 	ExTreeNode iCardNode = new ExTreeNode(null, false);
-	
-	int z = 0;
-	
+
+	private LngCard iCurrentCard = null;
+	private JButton iVerifyNextBtn = null;
+	private TextPaneWithDefault iAnswerTextPane = null;
+
+	enum LessonStatus {NO_ANSWER, ANSWER_TYPING, ANSWERED}
+	private LessonStatus iLessonStatus = LessonStatus.NO_ANSWER;
+
 	public LessonView(CardSet set) throws XPathExpressionException {
 		iSet = set;
 		iLesson = iSet.newLesson();
@@ -59,77 +64,64 @@ public class LessonView {
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-		final JButton verifyNextBtn = new JButton(LCutils.String("Next_Card"));
-		verifyNextBtn.addActionListener(new ActionListener() {
+		iVerifyNextBtn = new JButton(LCutils.String("Next_Card"));
+		iVerifyNextBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
-					NextCard();
+					switch (iLessonStatus) {
+						case ANSWER_TYPING:
+							VerifyAnswer(iAnswerTextPane.getText());
+							break;
+
+						default:
+							NextCard();
+					}
+				} catch (XPathExpressionException e) {
+					LCmain.mainFrame.ShowErr(e);
+				} catch (LangCardsException e) {
+					LCmain.mainFrame.ShowErr(e);
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
-
-				switch (z) {
-					case 0:
-						iLabel1.setText("Pondering");
-						iLabel1.setIcon(iPondering);
-						z = 1;
-						break;
-
-					case 1:
-						iLabel1.setText("Positive");
-						iLabel1.setIcon(iPositive);
-						z = 2;
-						break;
-
-					case 2:
-						iLabel1.setText("Negative");
-						iLabel1.setIcon(iNegative);
-						z = 0;
-						break;
-
-					default:
-						break;
-				}
-
-				LCmain.mainFrame.pack();
 			}
 		});
 
-		TextPaneWithDefault textPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"),
+		iAnswerTextPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"),
 				new TextPaneWithDefault.TypingStateListener() {
 					@Override
 					public void typingStarted() {
-						verifyNextBtn.setText(LCutils.String("Verify"));
+						iVerifyNextBtn.setText(LCutils.String("Verify"));
+						iLessonStatus = LessonStatus.ANSWER_TYPING;
 					}
 
 					@Override
 					public void typingStopped() {
-						verifyNextBtn.setText(LCutils.String("Next_Card"));
+						iVerifyNextBtn.setText(LCutils.String("Next_Card"));
+						iLessonStatus = LessonStatus.NO_ANSWER;
 					}
 				});
 
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
 		
-		iLabel1 = new JLabel("Test1", iNegative, JLabel.CENTER);
-		iLabel1.setVerticalTextPosition(JLabel.TOP);
-		iLabel1.setHorizontalTextPosition(JLabel.CENTER);
+		iAnswerStatusLabel = new JLabel(LCutils.String("Question_mark"), iPondering, JLabel.CENTER);
+		iAnswerStatusLabel.setVerticalTextPosition(JLabel.TOP);
+		iAnswerStatusLabel.setHorizontalTextPosition(JLabel.CENTER);
+
 		JLabel label2 = new JLabel("Test2");
 		
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
 				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(iTreeScrollPane)
-						.addComponent(textPane)
+						.addComponent(iAnswerTextPane)
 						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-								.addComponent(verifyNextBtn)
+								.addComponent(iVerifyNextBtn)
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(finishLessonBtn)
 								)
 						)
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(iLabel1)
+						.addComponent(iAnswerStatusLabel)
 						.addComponent(label2)
 						)
 		);
@@ -139,41 +131,75 @@ public class LessonView {
 				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
 						.addComponent(iTreeScrollPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(textPane)
+						.addComponent(iAnswerTextPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(verifyNextBtn)
+								.addComponent(iVerifyNextBtn)
 								.addComponent(finishLessonBtn)
 								)
 						)
 				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-						.addComponent(iLabel1)
+						.addComponent(iAnswerStatusLabel)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addComponent(label2)
 						)
 		);
 		
 		NextCard();
-		
+	}
+
+	private void VerifyAnswer(String answer) throws LangCardsException {
+		if (iCurrentCard == null) throw new LangCardsException("No lesson cards");
+
+		boolean correct = false;
+		for (int i = 0; i < iCurrentCard.ScndPhraseCount(); i++) {
+			String s = iCurrentCard.GetScndPhrase(i).iValue.toLowerCase().trim();
+			if (s.equals(answer.toLowerCase().trim())) {
+				correct = true;
+				break;
+			}
+		}
+
+		if (correct) {
+			iAnswerStatusLabel.setText(LCutils.String("Correct"));
+			iAnswerStatusLabel.setIcon(iPositive);
+		}
+		else {
+			iAnswerStatusLabel.setText(LCutils.String("Wrong"));
+			iAnswerStatusLabel.setIcon(iNegative);
+		}
+
+		iVerifyNextBtn.setText(LCutils.String("Next_Card"));
+		iLessonStatus = LessonStatus.ANSWERED;
+		iAnswerTextPane.setEditable(false);
+
 		LCmain.mainFrame.pack();
 	}
 
 	private void NextCard() throws XPathExpressionException, LangCardsException {
-		LngCard nextCard = iLesson.NextCard();
-		if (nextCard == null) {
+		iCurrentCard = iLesson.NextCard();
+		if (iCurrentCard == null) {
 			throw new LangCardsException("No lesson cards");
 		}
 		
 		iCardNode.setUserObject(LCutils.String("Card") + " " + iLesson.CurrentCardPos());
 		iCardNode.removeAllChildren();
 		
-		for (int i = 0; i < nextCard.FrstPhraseCount(); i++) {
-			ExTreeNode phraseNode = LngPhraseToTreeNode(nextCard.GetFrstPhrase(i));
+		for (int i = 0; i < iCurrentCard.FrstPhraseCount(); i++) {
+			ExTreeNode phraseNode = LngPhraseToTreeNode(iCurrentCard.GetFrstPhrase(i));
 			iCardNode.add(phraseNode);
 		}
 		
 		iTree.updateUI();
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
+
+		iLessonStatus = LessonStatus.NO_ANSWER;
+		iAnswerTextPane.setEditable(true);
+		iAnswerTextPane.setText("");
+		iAnswerStatusLabel.setText(LCutils.String("Question_mark"));
+		iAnswerStatusLabel.setIcon(iPondering);
+
+		LCmain.mainFrame.pack();
 	}
 	
 	private ExTreeNode LngPhraseToTreeNode(LngPhrase phrase) {
