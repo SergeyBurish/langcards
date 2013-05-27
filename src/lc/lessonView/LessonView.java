@@ -148,7 +148,7 @@ public class LessonView {
 		NextCard();
 	}
 
-	private void VerifyAnswer(String answer) throws LangCardsException {
+	private void VerifyAnswer(String answer) throws LangCardsException, XPathExpressionException {
 		if (iCurrentCard == null) throw new LangCardsException("No lesson cards");
 
 		boolean correct = false;
@@ -163,6 +163,7 @@ public class LessonView {
 		if (correct) {
 			iAnswerStatusLabel.setText(LCutils.String("Correct"));
 			iAnswerStatusLabel.setIcon(iPositive);
+			iLesson.MarkCorrect(iCurrentCard);
 		}
 		else {
 			iAnswerStatusLabel.setText(LCutils.String("Wrong"));

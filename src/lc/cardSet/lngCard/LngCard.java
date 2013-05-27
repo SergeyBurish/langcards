@@ -6,10 +6,16 @@ import lc.langCardsException.LangCardsException;
 import lc.cardSet.lngPhrase.LngPhrase;
 
 public class LngCard {
+	String id = "";
 	ArrayList<LngPhrase> iFrstPrases;
 	ArrayList<LngPhrase> iScndPrases;
-	
+
 	public LngCard() {
+		this("");
+	}
+	
+	public LngCard(String id) {
+		this.id = id;
 		iFrstPrases = new ArrayList<LngPhrase>();
 		iScndPrases = new ArrayList<LngPhrase>();
 	}
@@ -44,5 +50,9 @@ public class LngCard {
 		}
 		
 		throw new LangCardsException("GetScndPhrase: out of bounds");
+	}
+
+	public String id() {
+		return id;
 	}
 }
