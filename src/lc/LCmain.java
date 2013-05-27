@@ -16,14 +16,7 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.swing.GroupLayout;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
@@ -56,7 +49,7 @@ public class LCmain extends JFrame {
 	private static final String LC_FILE_EXT = "lngcards";
 	private static final String LC_LOG_FILE = "langCardsLog.txt";
 	
-	JFileChooser iFileChooser = new JFileChooser();
+	JFileChooser iFileChooser = null;
 	FileFilter iFilefilter = null;
 
 	public DocumentBuilder iParser;
@@ -81,7 +74,29 @@ public class LCmain extends JFrame {
 		
 		// set default locale: "en_EN"
 		LCutils.SetLocale("en_EN");
-		
+
+		iFileChooser = new JFileChooser() {
+			@Override
+			public void approveSelection() {
+				File f = getSelectedFile();
+				if (f.exists() && getDialogType() == SAVE_DIALOG) {
+					int result = JOptionPane.showConfirmDialog(this, "The file exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+					switch (result) {
+						case JOptionPane.YES_OPTION:
+							super.approveSelection();
+							return;
+						case JOptionPane.NO_OPTION:
+							return;
+						case JOptionPane.CLOSED_OPTION:
+							return;
+						case JOptionPane.CANCEL_OPTION:
+							cancelSelection();
+							return;
+					}
+				}
+			}
+		};
+
 		// UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		iContainer = getContentPane();
 		iLayout = new GroupLayout(iContainer);
@@ -208,9 +223,13 @@ public class LCmain extends JFrame {
 					File file = iFileChooser.getSelectedFile();
 
 					String fName = file.toString();
-					fName = FilenameUtils.removeExtension(fName);
+
+					if (!LC_FILE_EXT.equals(FilenameUtils.getExtension(fName).toLowerCase())) {
+						fName = fName + "." + LC_FILE_EXT;
+					}
+
 					try {
-						iCardSet.Save(fName + "." + LC_FILE_EXT);
+						iCardSet.Save(fName);
 					}
 					catch (TransformerException e) {ShowErr(e);}
 				}
