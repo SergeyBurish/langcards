@@ -26,4 +26,8 @@ public class Lesson {
 	public int CurrentCardPos() {
 		return iPos;		
 	}
+
+	public void MarkCorrect(LngCard lngCard) throws XPathExpressionException, LangCardsException {
+		iSet.AddHit(lngCard.id());
+	}
 }

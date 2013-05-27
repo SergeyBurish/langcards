@@ -18,10 +18,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import lc.LCmain;
@@ -40,9 +37,10 @@ public class CardSet {
 	private static final String XML_SET				= "Set";			// <Set name=...>
 	private static final String XML_NAME			= "name";			// |
 	private static final String XML_CARDS			= "Cards";			// |- <Cards>
-	private static final String XML_CARD			= "Card";			// |  |- <Card id=... status=...>
+	private static final String XML_CARD			= "Card";			// |  |- <Card id=... status=... hits=...>
 	private static final String XML_ID				= "id";				// |     |
 	private static final String XML_STATUS			= "status";			// |     |
+	private static final String XML_HITS			= "hits";			// |     |
 	private static final String XML_PHRASE			= "Phrase";			// |     |- <Phrase Language=...> 
 	private static final String XML_LANGUAGE		= "Language";		// |        |
 	private static final String XML_VALUE			= "Value";			// |        |- <Value>...</>
@@ -288,7 +286,7 @@ public class CardSet {
 	public LngCard XmlNodeToLngCard(Node node) throws XPathExpressionException, LangCardsException {
 		if (node == null) return null;
 		
-		LngCard lc = new LngCard();
+		LngCard lc = new LngCard(CardId(node));
 		
 		NodeList frstPhraseList = FrstPhrasesOfCard(node, LanguageFrst());
 		
@@ -412,6 +410,19 @@ public class CardSet {
 	private int FreeCardId() throws XPathExpressionException {
 		return CardsCount() + 1; // temporary
 	}
+
+	private Element cardByID(String cardID) throws XPathExpressionException, LangCardsException {
+		NodeList nl = (NodeList)iXpath.evaluate(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_ID + "=" + cardID + "]", iDoc, XPathConstants.NODESET);
+
+		if (nl.getLength() != 1) throw new LangCardsException("invalid xml file: " + nl.getLength() + " cards with id=" + cardID + " are found");
+		Node cardNode = nl.item(0);
+
+		if(cardNode instanceof Element) {
+			return (Element)cardNode;
+		}
+
+		throw new LangCardsException("invalid xml file: no cards with id=" + cardID + " are found");
+	}
 	
 	public String LanguageFrst() throws XPathExpressionException {
 		if (iSettings_Languages_Frst == null) {
@@ -427,5 +438,18 @@ public class CardSet {
 		}
 		
 		return iSettings_Languages_Scnd.evaluate(iDoc);
+	}
+
+	public void AddHit(String cardID) throws XPathExpressionException, LangCardsException {
+		Element cardElement = cardByID(cardID);
+		String hits = cardElement.getAttribute(XML_HITS);
+
+		if (hits == null || hits.isEmpty()) {
+			hits = "1";
+		} else {
+			hits = "" + (Integer.parseInt(hits) + 1);
+		}
+
+		cardElement.setAttribute(XML_HITS, hits);
 	}
 }
