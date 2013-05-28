@@ -94,6 +94,9 @@ public class LCmain extends JFrame {
 							return;
 					}
 				}
+				else {
+					super.approveSelection();
+				}
 			}
 		};
 
