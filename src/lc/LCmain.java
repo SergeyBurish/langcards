@@ -78,9 +78,11 @@ public class LCmain extends JFrame {
 		iFileChooser = new JFileChooser() {
 			@Override
 			public void approveSelection() {
-				File f = getSelectedFile();
-				if (f.exists() && getDialogType() == SAVE_DIALOG) {
-					int result = JOptionPane.showConfirmDialog(this, "The file exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+				String filePath = filePathWithLcExt(getSelectedFile());
+				File file = new File(filePath);
+				if (file.exists() && getDialogType() == SAVE_DIALOG) {
+					String fName = FilenameUtils.getName(filePath);
+					int result = JOptionPane.showConfirmDialog(this, "The file " + fName + " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
 					switch (result) {
 						case JOptionPane.YES_OPTION:
 							super.approveSelection();
@@ -223,13 +225,7 @@ public class LCmain extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				if (iFileChooser.showSaveDialog(self) == JFileChooser.APPROVE_OPTION) {
-					File file = iFileChooser.getSelectedFile();
-
-					String fName = file.toString();
-
-					if (!LC_FILE_EXT.equals(FilenameUtils.getExtension(fName).toLowerCase())) {
-						fName = fName + "." + LC_FILE_EXT;
-					}
+					String fName = filePathWithLcExt(iFileChooser.getSelectedFile());
 
 					try {
 						iCardSet.Save(fName);
@@ -241,6 +237,16 @@ public class LCmain extends JFrame {
 		menu.add(menuItem);
 		
 		this.setJMenuBar(menuBar);
+	}
+
+	private String filePathWithLcExt(File file) {
+		String fName = file.toString();
+
+		if (!LC_FILE_EXT.equals(FilenameUtils.getExtension(fName).toLowerCase())) {
+			fName = fName + "." + LC_FILE_EXT;
+		}
+
+		return fName;
 	}
 	
 	public void ShowErr(Exception e) {
