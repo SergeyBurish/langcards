@@ -1,5 +1,6 @@
 package lc.cardSet;
 
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.cardSet.lngCard.LngCard;
@@ -27,7 +28,7 @@ public class Lesson {
 		return iPos;		
 	}
 
-	public void MarkCorrect(LngCard lngCard) throws XPathExpressionException, LangCardsException {
+	public void MarkCorrect(LngCard lngCard) throws XPathExpressionException, LangCardsException, TransformerException {
 		iSet.AddHit(lngCard.id());
 	}
 }

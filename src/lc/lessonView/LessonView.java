@@ -15,6 +15,7 @@ import lc.langCardsException.LangCardsException;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,11 +78,10 @@ public class LessonView {
 						default:
 							NextCard();
 					}
-				} catch (XPathExpressionException e) {
-					LCmain.mainFrame.ShowErr(e);
-				} catch (LangCardsException e) {
-					LCmain.mainFrame.ShowErr(e);
 				}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (TransformerException e)		{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 
@@ -148,7 +148,7 @@ public class LessonView {
 		NextCard();
 	}
 
-	private void VerifyAnswer(String answer) throws LangCardsException, XPathExpressionException {
+	private void VerifyAnswer(String answer) throws LangCardsException, XPathExpressionException, TransformerException {
 		if (iCurrentCard == null) throw new LangCardsException("No lesson cards");
 
 		boolean correct = false;

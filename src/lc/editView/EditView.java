@@ -10,16 +10,9 @@ import java.net.URISyntaxException;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.LayoutStyle;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.LCmain;
@@ -95,18 +88,43 @@ public class EditView {
 		//----------------------Start_lesson----------------------
 		iBtStart.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent vent) {
-				LessonView lessonView = null;
+			public void actionPerformed(ActionEvent event) {
+				if (!iSet.isSaved()) {
+
+					Object[] options = {LCutils.String("Save_and_start_lesson"),
+							LCutils.String("Cancel_and_continue_edit")};
+					int result = JOptionPane.showOptionDialog(LCmain.mainFrame,
+							LCutils.String("All_changes_should_be_saved_before_the_start_of_the_lesson"),
+							LCutils.String("Unsaved_changes_in_the_set"),
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE,
+							null,
+							options,
+							options[0]);
+
+					switch (result) {
+						case JOptionPane.YES_OPTION:
+							if (!iSet.save() && !LCmain.mainFrame.saveAs()) {
+								return;
+							}
+							break;
+
+						case JOptionPane.NO_OPTION:
+						case JOptionPane.CLOSED_OPTION:
+							return;
+					}
+				}
+
 				try {
-					lessonView = new LessonView(iSet);
+					LessonView lessonView = new LessonView(iSet);
 					lessonView.Show();
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)			{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 	}
-	
+
 	public void Show() throws XPathExpressionException, LangCardsException {
 		LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
 		

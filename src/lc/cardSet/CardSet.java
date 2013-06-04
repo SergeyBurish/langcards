@@ -4,12 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -30,6 +25,8 @@ import lc.cardSet.lngPhrase.LngPhrase;
 public class CardSet {
 	private Document iDoc;
 	private String iName;
+	private File iFile = new File("");
+	boolean iChanged = false;
 	
 	XPath iXpath = XPathFactory.newInstance().newXPath();
 	
@@ -72,11 +69,12 @@ public class CardSet {
 	}
 	
 	public CardSet(File file) throws SAXException, IOException {
+		iFile = file;
 		iName = file.getName();
 		iDoc = LCmain.mainFrame.iParser.parse(file);
 	}
 	
-	public void InitDoc() {
+	private void InitDoc() {
 		// Set
 		Element root = iDoc.createElement(XML_SET);
 		root.setAttribute(XML_NAME, iName);
@@ -157,18 +155,35 @@ public class CardSet {
 			e.printStackTrace();
 		}
 	}
-	
-	public void Save(String fileName) throws TransformerException {
+
+	public void save(String fileName) throws TransformerException {
+		iFile = new File(fileName);
+		doSave();
+	}
+
+	public boolean save() {
+		try {
+			doSave();
+		} catch (TransformerException e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private void doSave() throws TransformerException {
 		//  Create transformer
 		Transformer tFormer = TransformerFactory.newInstance().newTransformer();
-		
+
 		//  Output Types (text/xml/html)
 		tFormer.setOutputProperty(OutputKeys.METHOD, "xml");
-		
+
 		//  Write the document to a file
 		Source source = new DOMSource(iDoc);
-		Result result = new StreamResult(new File(fileName));
+		Result result = new StreamResult(iFile);
 		tFormer.transform(source, result);
+
+		iChanged = false;
 	}
 	
 	public String Name() {
@@ -184,6 +199,7 @@ public class CardSet {
 			if (nameString != null && !nameString.isEmpty()) {
 				root.removeAttribute(XML_NAME);
 				root.setAttribute(XML_NAME, name);
+				iChanged = true;
 			}
 		}
 	}
@@ -218,6 +234,8 @@ public class CardSet {
 			phrase.setAttribute(XML_LANGUAGE, LanguageScnd());
 			card.appendChild(phrase);
 		}
+
+		iChanged = true;
 	}
 	
 	private Element LngPhraseToXmlElement(LngPhrase lngPhrase) {
@@ -440,7 +458,7 @@ public class CardSet {
 		return iSettings_Languages_Scnd.evaluate(iDoc);
 	}
 
-	public void AddHit(String cardID) throws XPathExpressionException, LangCardsException {
+	public void AddHit(String cardID) throws XPathExpressionException, LangCardsException, TransformerException {
 		Element cardElement = cardByID(cardID);
 		String hits = cardElement.getAttribute(XML_HITS);
 
@@ -451,5 +469,10 @@ public class CardSet {
 		}
 
 		cardElement.setAttribute(XML_HITS, hits);
+		doSave();
+	}
+
+	public boolean isSaved() {
+		return iFile.isFile() && !iChanged;
 	}
 }
