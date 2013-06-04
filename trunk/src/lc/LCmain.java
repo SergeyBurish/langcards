@@ -69,7 +69,7 @@ public class LCmain extends JFrame {
 		// setDefaultLookAndFeelDecorated(true);
 	}
 	
-	public void Init() {
+	private void Init() {
 		initLogger();
 		
 		// set default locale: "en_EN"
@@ -178,8 +178,7 @@ public class LCmain extends JFrame {
 
 	public void CreateMenu() {
 		this.setJMenuBar(null); // remove menu
-		final LCmain self = this;
-		
+
 		menuBar = new JMenuBar();
 		menu = new JMenu(LCutils.String("Set"));
 		menuBar.add(menu);
@@ -205,7 +204,7 @@ public class LCmain extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if (iFileChooser.showOpenDialog(self) == JFileChooser.APPROVE_OPTION) {
+				if (iFileChooser.showOpenDialog(LCmain.this) == JFileChooser.APPROVE_OPTION) {
 					File file = iFileChooser.getSelectedFile();
 					try {
 						NewOpen(file);
@@ -224,19 +223,30 @@ public class LCmain extends JFrame {
 		menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if (iFileChooser.showSaveDialog(self) == JFileChooser.APPROVE_OPTION) {
-					String fName = filePathWithLcExt(iFileChooser.getSelectedFile());
-
-					try {
-						iCardSet.Save(fName);
-					}
-					catch (TransformerException e) {ShowErr(e);}
-				}
+				saveAs();
 			}
 		});
 		menu.add(menuItem);
 		
 		this.setJMenuBar(menuBar);
+	}
+
+	public boolean saveAs() {
+		if (iFileChooser.showSaveDialog(LCmain.this) == JFileChooser.APPROVE_OPTION) {
+			String fName = filePathWithLcExt(iFileChooser.getSelectedFile());
+
+			try {
+				iCardSet.save(fName);
+			}
+			catch (TransformerException e) {
+				ShowErr(e);
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private String filePathWithLcExt(File file) {
