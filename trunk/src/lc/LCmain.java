@@ -81,8 +81,23 @@ public class LCmain extends JFrame {
 				String filePath = filePathWithLcExt(getSelectedFile());
 				File file = new File(filePath);
 				if (file.exists() && getDialogType() == SAVE_DIALOG) {
+
 					String fName = FilenameUtils.getName(filePath);
-					int result = JOptionPane.showConfirmDialog(this, "The file " + fName + " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+
+					Object[] options = {
+							LCutils.String("Yes"),
+							LCutils.String("No"),
+							LCutils.String("Cancel")};
+
+					int result = JOptionPane.showOptionDialog(LCmain.mainFrame,
+							String.format(LCutils.String("The_file_F_exists_overwrite"), fName),
+							LCutils.String("Existing_file"),
+							JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
+							null,
+							options,
+							options[0]);
+
 					switch (result) {
 						case JOptionPane.YES_OPTION:
 							super.approveSelection();
