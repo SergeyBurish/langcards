@@ -318,9 +318,13 @@ public class LCmain extends JFrame {
 		if (iFilefilter != null) {
 			iFileChooser.removeChoosableFileFilter(iFilefilter);
 		}
-		
+
+		iFileChooser.setAcceptAllFileFilterUsed(false);
+
 		iFilefilter = new FileNameExtensionFilter(ffPrompt + " (*." + LC_FILE_EXT + ")", LC_FILE_EXT);
 		iFileChooser.addChoosableFileFilter(iFilefilter);
+
+		iFileChooser.setAcceptAllFileFilterUsed(true);
 	}
 	
 	public void ChangeSetNameInTitle(String setName) {
