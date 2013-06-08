@@ -258,6 +258,7 @@ public class LCmain extends JFrame {
 				return false;
 			}
 
+			ChangeSetNameInTitle(iCardSet.Name());
 			return true;
 		}
 
@@ -310,6 +311,8 @@ public class LCmain extends JFrame {
 
 	private void NewOpen(File file) throws XPathExpressionException, LangCardsException, IOException, SAXException {
 		iCardSet = (file == null) ? new CardSet() : new CardSet(file);
+		ChangeSetNameInTitle(iCardSet.Name());
+
 		EditView editView = new EditView(iCardSet);
 		editView.Show();
 	}

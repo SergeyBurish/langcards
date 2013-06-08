@@ -172,6 +172,8 @@ public class CardSet {
 	}
 
 	private void doSave() throws TransformerException {
+		SetName(iFile.getName());
+
 		//  Create transformer
 		Transformer tFormer = TransformerFactory.newInstance().newTransformer();
 
@@ -474,5 +476,9 @@ public class CardSet {
 
 	public boolean isSaved() {
 		return iFile.isFile() && !iChanged;
+	}
+
+	public boolean unnamed() {
+		return !iFile.isFile();
 	}
 }
