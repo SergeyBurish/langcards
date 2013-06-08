@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
 import lc.LCmain;
@@ -126,8 +125,6 @@ public class EditView {
 	}
 
 	public void Show() throws XPathExpressionException, LangCardsException {
-		LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
-		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
 		JPanel panState = makeStatePanel();
@@ -322,9 +319,11 @@ public class EditView {
 		
 		// rename all visible elements
 		// if unnamed - translate
-		iSet.SetName(LCutils.String("Unnamed"));
-		LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
-		
+		if (iSet.unnamed()) {
+			iSet.SetName(LCutils.String("Unnamed"));
+			LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
+		}
+
 		LCmain.mainFrame.SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
 		LCmain.mainFrame.CreateMenu();
 		
