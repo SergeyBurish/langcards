@@ -239,7 +239,14 @@ public class CardSet {
 
 		iChanged = true;
 	}
-	
+
+	public void deleteCard(String cardId) throws XPathExpressionException, LangCardsException {
+		Node cards = CardsNode();
+		cards.removeChild(cardByID(cardId));
+
+		iChanged = true;
+	}
+
 	private Element LngPhraseToXmlElement(LngPhrase lngPhrase) {
 		Element phrase = iDoc.createElement(XML_PHRASE);
 		
