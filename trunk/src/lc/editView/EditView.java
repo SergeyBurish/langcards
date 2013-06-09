@@ -71,8 +71,18 @@ public class EditView {
 		//----------------------Delete----------------------
 		iBtDel.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				iTableModel.addColumn("Delete");
+			public void actionPerformed(ActionEvent event) {
+				try {
+					int selectedRow = iTable.getSelectedRow();
+					if (selectedRow >= 0) {
+						String cardId = (String) iTableModel.getValueAt(selectedRow, 0);
+						iSet.deleteCard(cardId);
+						UpdateTable();
+						UpdateStateTable();
+					}
+				}
+				catch (LangCardsException e) {LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e) {LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 
@@ -318,7 +328,6 @@ public class EditView {
 		}
 		
 		// rename all visible elements
-		// if unnamed - translate
 		if (iSet.unnamed()) {
 			iSet.SetName(LCutils.String("Unnamed"));
 			LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
