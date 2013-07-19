@@ -219,7 +219,11 @@ public class CardSet {
 		
 		// new card
 		Element card = iDoc.createElement(XML_CARD);
-		card.setAttribute(XML_ID, "" + FreeCardId());
+
+		String cardId = lngCard.id();
+		if (cardId.isEmpty()) cardId = FreeCardId();
+		card.setAttribute(XML_ID, cardId);
+
 		card.setAttribute(XML_STATUS, "lesson");
 		cards.appendChild(card);
 		
@@ -238,6 +242,11 @@ public class CardSet {
 		}
 
 		iChanged = true;
+	}
+
+	public void saveCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
+		deleteCard(lngCard.id());
+		AddNewCard(lngCard);
 	}
 
 	public void deleteCard(String cardId) throws XPathExpressionException, LangCardsException {
@@ -434,8 +443,8 @@ public class CardSet {
 		return (NodeList)iExampleExpr.evaluate(phrase, XPathConstants.NODESET);
 	}
 	
-	private int FreeCardId() throws XPathExpressionException {
-		return CardsCount() + 1; // temporary
+	private String FreeCardId() throws XPathExpressionException {
+		return String.valueOf(CardsCount() + 1); // temporary
 	}
 
 	private Element cardByID(String cardID) throws XPathExpressionException, LangCardsException {
@@ -450,7 +459,11 @@ public class CardSet {
 
 		throw new LangCardsException("invalid xml file: no cards with id=" + cardID + " are found");
 	}
-	
+
+	public LngCard getCard(String cardId) throws XPathExpressionException, LangCardsException {
+		return XmlNodeToLngCard(cardByID(cardId));
+	}
+
 	public String LanguageFrst() throws XPathExpressionException {
 		if (iSettings_Languages_Frst == null) {
 			iSettings_Languages_Frst = iXpath.compile(XML_SET + "/" + XML_SETTINGS + "/" + XML_LANGUAGES + "/@" + XML_FRST);

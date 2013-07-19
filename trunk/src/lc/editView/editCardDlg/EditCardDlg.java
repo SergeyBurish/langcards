@@ -26,6 +26,7 @@ import lc.editView.editCardDlg.exTree.ExTree;
 import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
 import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
+import lc.langCardsException.LangCardsException;
 
 public class EditCardDlg extends JDialog implements TreeSelectionListener {
 	ExTreeNode rootNode = new ExTreeNode(LCutils.String("New_Card"), false);
@@ -46,7 +47,7 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener {
 	Boolean iAccepted = false;
 	
 	public EditCardDlg(JFrame parent, LngCard lngCard) {
-		super(parent, LCutils.String("New_Card"), true);
+		super(parent, lngCard.id().isEmpty() ? LCutils.String("New_Card") : "card " + lngCard.id(), true);
 		iLngCard = lngCard;
 		
 		LCmain.mainFrame.AddToCloseArray(this);
@@ -57,12 +58,33 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener {
 		iLangScnd = langScnd;
 	}
 	
-	private void InitControls() {
+	private void InitControls() throws LangCardsException {
 		iLngFrstNode = new ExTreeNode(iLangFrst, false);
+
+		int frstPhraseCount = iLngCard.FrstPhraseCount();
+		if (frstPhraseCount > 0) {
+			for (int i = 0; i < frstPhraseCount; i++) {
+				LngPhrase lngPhrase = iLngCard.GetFrstPhrase(i);
+				iLngFrstNode.add(new ExTreeNode(lngPhrase.iValue, true));
+			}
+		}
+		else {
 		iLngFrstNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true)); // \n" + "3333\n"  + "4444
+		}
+
 		
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
+
+		int scndPhraseCount = iLngCard.ScndPhraseCount();
+		if (scndPhraseCount > 0) {
+			for (int i = 0; i < scndPhraseCount; i++) {
+				LngPhrase lngPhrase = iLngCard.GetScndPhrase(i);
+				iLngScndNode.add(new ExTreeNode(lngPhrase.iValue, true));
+			}
+		}
+		else {
 		iLngScndNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
+		}
 		
 		rootNode.add(iLngFrstNode);
 		rootNode.add(iLngScndNode);
@@ -119,8 +141,9 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Verify(); // - check, display corresponding error;
-				ExTreeNode node;
+				iLngCard.clear();
 
+				ExTreeNode node;
 				for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngFrstNode.getChildAt(i);
 					iLngCard.AddFrstPhrase(new LngPhrase(node.toString()));
@@ -143,9 +166,13 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener {
 	// JDialog
 	@Override
 	public void setVisible(boolean b) {
-		InitControls();
-		InitLayout();
-		super.setVisible(b);
+		try {
+			InitControls();
+			InitLayout();
+			super.setVisible(b);
+		} catch (LangCardsException e) {
+			LCmain.mainFrame.ShowErr(e);
+		}
 	}
 	
 	public Boolean Accepted() {

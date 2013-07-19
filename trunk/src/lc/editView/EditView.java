@@ -64,7 +64,7 @@ public class EditView {
 
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)			{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 
@@ -81,16 +81,33 @@ public class EditView {
 						UpdateStateTable();
 					}
 				}
-				catch (LangCardsException e) {LCmain.mainFrame.ShowErr(e);}
-				catch (XPathExpressionException e) {LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 
 		//----------------------Edit----------------------
 		iBtEd.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				iTableModel.addColumn("Edit");
+			public void actionPerformed(ActionEvent event) {
+				try {
+					int selectedRow = iTable.getSelectedRow();
+					if (selectedRow >= 0) {
+						String cardId = (String) iTableModel.getValueAt(selectedRow, 0);
+						LngCard lngCard = iSet.getCard(cardId);
+
+						EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
+						newCardDlg.SetLanguages(iSet.LanguageFrst(), iSet.LanguageScnd());
+						newCardDlg.setVisible(true);
+
+						if (newCardDlg.Accepted()) {
+							iSet.saveCard(lngCard);
+							UpdateTable();
+						}
+					}
+				}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
 			}
 		});
 
