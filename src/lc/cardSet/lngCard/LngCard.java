@@ -55,4 +55,9 @@ public class LngCard {
 	public String id() {
 		return id;
 	}
+
+	public void clear() {
+		iFrstPrases.clear();
+		iScndPrases.clear();
+	}
 }
