@@ -56,7 +56,7 @@ public class EditView {
 					newCardDlg.setVisible(true);
 
 					if (newCardDlg.Accepted()) {
-						iSet.AddNewCard(lngCard);
+						iSet.addNewCard(lngCard);
 						UpdateTable();
 						UpdateStateTable();
 						ScrollTableToShowRaw(iTableModel.getRowCount() - 1);

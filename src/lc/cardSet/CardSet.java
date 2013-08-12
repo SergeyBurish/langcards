@@ -2,6 +2,7 @@ package lc.cardSet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.xml.transform.*;
@@ -103,7 +104,7 @@ public class CardSet {
 			lc.AddFrstPhrase(new LngPhrase("F111-1@ "));
 			lc.AddFrstPhrase(new LngPhrase("F111-2@ "));
 			lc.AddScndPhrase(new LngPhrase("T111@ "));
-			AddNewCard(lc);
+			addNewCard(lc);
 			
 			lc = new LngCard();
 			LngPhrase lngPhrase = new LngPhrase("F222-1@ ");
@@ -117,7 +118,7 @@ public class CardSet {
 			lc.AddFrstPhrase(lngPhrase);
 			
 			lc.AddScndPhrase(new LngPhrase("T2@ "));
-			AddNewCard(lc);
+			addNewCard(lc);
 			
 			lc = new LngCard();
 			lc.AddFrstPhrase(new LngPhrase("F3-1@ "));
@@ -128,12 +129,12 @@ public class CardSet {
 			lngPhrase.iTranscription = "[trans T333-2]";
 			lngPhrase.iExamples.add("Examp1 T333-2");
 			lc.AddScndPhrase(lngPhrase);
-			AddNewCard(lc);
+			addNewCard(lc);
 			
 			lc = new LngCard();
 			lc.AddFrstPhrase(new LngPhrase("F44@ "));
 			lc.AddScndPhrase(new LngPhrase("T44444@ "));
-			AddNewCard(lc);
+			addNewCard(lc);
 			
 			lc = new LngCard();
 			lc.AddFrstPhrase(new LngPhrase("F5-1@ "));
@@ -146,7 +147,7 @@ public class CardSet {
 			lc.AddFrstPhrase(new LngPhrase("F5-4@ "));
 			lc.AddFrstPhrase(new LngPhrase("F5-5@ "));
 			lc.AddScndPhrase(new LngPhrase("T5@ "));
-			AddNewCard(lc);
+			addNewCard(lc);
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -214,46 +215,53 @@ public class CardSet {
 		return  LessonCardsList().getLength();
 	}
 	
-	public void AddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
+	public void addNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
+		doAddNewCard(lngCard);
+		iChanged = true;
+	}
+
+	public void saveCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
+		doDeleteCard(lngCard.id());
+		doAddNewCard(lngCard);
+		iChanged = true;
+	}
+
+	public void deleteCard(String cardId) throws XPathExpressionException, LangCardsException {
+		doDeleteCard(cardId);
+		iChanged = true;
+	}
+
+	private void doAddNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
 		Node cards = CardsNode();
-		
+
 		// new card
 		Element card = iDoc.createElement(XML_CARD);
 
 		String cardId = lngCard.id();
-		if (cardId.isEmpty()) cardId = FreeCardId();
+		if (cardId.isEmpty()) cardId = newCardId();
 		card.setAttribute(XML_ID, cardId);
 
 		card.setAttribute(XML_STATUS, "lesson");
 		cards.appendChild(card);
-		
+
 		// Frst Language phrases
 		for (int i = 0; i < lngCard.FrstPhraseCount(); i++) {
 			Element phrase = LngPhraseToXmlElement(lngCard.GetFrstPhrase(i));
 			phrase.setAttribute(XML_LANGUAGE, LanguageFrst());
 			card.appendChild(phrase);
 		}
-		
+
 		// Scnd Language phrases
 		for (int i = 0; i < lngCard.ScndPhraseCount(); i++) {
 			Element phrase = LngPhraseToXmlElement(lngCard.GetScndPhrase(i));
 			phrase.setAttribute(XML_LANGUAGE, LanguageScnd());
 			card.appendChild(phrase);
 		}
-
-		iChanged = true;
 	}
 
-	public void saveCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
-		deleteCard(lngCard.id());
-		AddNewCard(lngCard);
-	}
-
-	public void deleteCard(String cardId) throws XPathExpressionException, LangCardsException {
+	private void doDeleteCard(String cardId) throws XPathExpressionException, LangCardsException {
 		Node cards = CardsNode();
 		cards.removeChild(cardByID(cardId));
-
-		iChanged = true;
 	}
 
 	private Element LngPhraseToXmlElement(LngPhrase lngPhrase) {
@@ -443,12 +451,13 @@ public class CardSet {
 		return (NodeList)iExampleExpr.evaluate(phrase, XPathConstants.NODESET);
 	}
 	
-	private String FreeCardId() throws XPathExpressionException {
-		return String.valueOf(CardsCount() + 1); // temporary
+	private String newCardId() throws XPathExpressionException {
+		UUID id = UUID.randomUUID();
+		return id.toString();
 	}
 
 	private Element cardByID(String cardID) throws XPathExpressionException, LangCardsException {
-		NodeList nl = (NodeList)iXpath.evaluate(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_ID + "=" + cardID + "]", iDoc, XPathConstants.NODESET);
+		NodeList nl = (NodeList)iXpath.evaluate(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_ID + "='" + cardID + "']", iDoc, XPathConstants.NODESET);
 
 		if (nl.getLength() != 1) throw new LangCardsException("invalid xml file: " + nl.getLength() + " cards with id=" + cardID + " are found");
 		Node cardNode = nl.item(0);
