@@ -71,11 +71,16 @@ public class LessonView {
 			public void actionPerformed(ActionEvent event) {
 				try {
 					switch (iLessonStatus) {
+						case NO_ANSWER:
+							iLesson.markWrong(iCurrentCard);
+							NextCard();
+							break;
+
 						case ANSWER_TYPING:
 							VerifyAnswer(iAnswerTextPane.getText());
 							break;
 
-						default:
+						default: // ANSWERED
 							NextCard();
 					}
 				}
@@ -163,11 +168,12 @@ public class LessonView {
 		if (correct) {
 			iAnswerStatusLabel.setText(LCutils.String("Correct"));
 			iAnswerStatusLabel.setIcon(iPositive);
-			iLesson.MarkCorrect(iCurrentCard);
+			iLesson.markCorrect(iCurrentCard);
 		}
 		else {
 			iAnswerStatusLabel.setText(LCutils.String("Wrong"));
 			iAnswerStatusLabel.setIcon(iNegative);
+			iLesson.markWrong(iCurrentCard);
 		}
 
 		iVerifyNextBtn.setText(LCutils.String("Next_Card"));
