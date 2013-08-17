@@ -28,7 +28,11 @@ public class Lesson {
 		return iPos;		
 	}
 
-	public void MarkCorrect(LngCard lngCard) throws XPathExpressionException, LangCardsException, TransformerException {
-		iSet.AddHit(lngCard.id());
+	public void markCorrect(LngCard lngCard) throws XPathExpressionException, LangCardsException, TransformerException {
+		iSet.increaseHits(lngCard.id());
+	}
+
+	public void markWrong(LngCard lngCard) throws TransformerException, XPathExpressionException, LangCardsException {
+		iSet.decreaseHits(lngCard.id());
 	}
 }

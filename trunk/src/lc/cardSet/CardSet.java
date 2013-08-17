@@ -103,7 +103,7 @@ public class CardSet {
 			LngCard lc = new LngCard();
 			lc.AddFrstPhrase(new LngPhrase("F111-1@ "));
 			lc.AddFrstPhrase(new LngPhrase("F111-2@ "));
-			lc.AddScndPhrase(new LngPhrase("T111@ "));
+			lc.AddScndPhrase(new LngPhrase("111"));
 			addNewCard(lc);
 			
 			lc = new LngCard();
@@ -117,13 +117,13 @@ public class CardSet {
 			lngPhrase.iTranscription = "[trans F222-222]";
 			lc.AddFrstPhrase(lngPhrase);
 			
-			lc.AddScndPhrase(new LngPhrase("T2@ "));
+			lc.AddScndPhrase(new LngPhrase("222"));
 			addNewCard(lc);
 			
 			lc = new LngCard();
 			lc.AddFrstPhrase(new LngPhrase("F3-1@ "));
 			lc.AddFrstPhrase(new LngPhrase("F3-2@ "));
-			lc.AddScndPhrase(new LngPhrase("T333-1@ "));
+			lc.AddScndPhrase(new LngPhrase("333"));
 			
 			lngPhrase = new LngPhrase("T333-2@ ");
 			lngPhrase.iTranscription = "[trans T333-2]";
@@ -133,7 +133,7 @@ public class CardSet {
 			
 			lc = new LngCard();
 			lc.AddFrstPhrase(new LngPhrase("F44@ "));
-			lc.AddScndPhrase(new LngPhrase("T44444@ "));
+			lc.AddScndPhrase(new LngPhrase("444"));
 			addNewCard(lc);
 			
 			lc = new LngCard();
@@ -146,7 +146,7 @@ public class CardSet {
 			
 			lc.AddFrstPhrase(new LngPhrase("F5-4@ "));
 			lc.AddFrstPhrase(new LngPhrase("F5-5@ "));
-			lc.AddScndPhrase(new LngPhrase("T5@ "));
+			lc.AddScndPhrase(new LngPhrase("555"));
 			addNewCard(lc);
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
@@ -489,15 +489,29 @@ public class CardSet {
 		return iSettings_Languages_Scnd.evaluate(iDoc);
 	}
 
-	public void AddHit(String cardID) throws XPathExpressionException, LangCardsException, TransformerException {
+	public void increaseHits(String cardID) throws XPathExpressionException, LangCardsException, TransformerException {
 		Element cardElement = cardByID(cardID);
 		String hits = cardElement.getAttribute(XML_HITS);
 
 		if (hits == null || hits.isEmpty()) {
 			hits = "1";
 		} else {
-			hits = "" + (Integer.parseInt(hits) + 1);
+			hits = String.valueOf(Integer.parseInt(hits) + 1);
 		}
+
+		cardElement.setAttribute(XML_HITS, hits);
+		doSave();
+	}
+
+	public void decreaseHits(String cardID) throws XPathExpressionException, LangCardsException, TransformerException {
+		Element cardElement = cardByID(cardID);
+		String hits = cardElement.getAttribute(XML_HITS);
+
+		if (hits == null || hits.isEmpty() || Integer.parseInt(hits) == 0) {
+			return;
+		}
+
+		hits = String.valueOf(Integer.parseInt(hits) - 1);
 
 		cardElement.setAttribute(XML_HITS, hits);
 		doSave();
