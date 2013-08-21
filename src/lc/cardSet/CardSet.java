@@ -48,7 +48,12 @@ public class CardSet {
 	private static final String XML_LANGUAGES		= "Languages";		//    |- <Languages Frst=... Scnd=...>
 	private static final String XML_FRST			= "Frst";
 	private static final String XML_SCND			= "Scnd";
-	
+
+	// XML_STATUS values
+	private static final String STATUS_IDLE = "idle";
+	private static final String STATUS_LESSON = "lesson";
+	private static final String STATUS_LEARNED = "learned";
+
 	// Path Expressions of frequent operations
 	XPathExpression iSetCards = null;                // Set/Cards
 	XPathExpression iCardsCard = null;               // Set/Cards/Card
@@ -241,7 +246,7 @@ public class CardSet {
 		if (cardId.isEmpty()) cardId = newCardId();
 		card.setAttribute(XML_ID, cardId);
 
-		card.setAttribute(XML_STATUS, "lesson");
+		card.setAttribute(XML_STATUS, STATUS_LESSON);
 		cards.appendChild(card);
 
 		// Frst Language phrases
@@ -391,7 +396,7 @@ public class CardSet {
 	
 	public NodeList LessonCardsList() throws XPathExpressionException {
 		if (iLessonCards == null) {
-			iLessonCards = iXpath.compile(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_STATUS + "='lesson']");
+			iLessonCards = iXpath.compile(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_STATUS + "='" + STATUS_LESSON + "']");
 		}
 		
 		return (NodeList) iLessonCards.evaluate(iDoc, XPathConstants.NODESET);
@@ -492,11 +497,19 @@ public class CardSet {
 	public void increaseHits(String cardID) throws XPathExpressionException, LangCardsException, TransformerException {
 		Element cardElement = cardByID(cardID);
 		String hits = cardElement.getAttribute(XML_HITS);
+		int hitsInt = 0;
 
 		if (hits == null || hits.isEmpty()) {
+			hitsInt = 1;
 			hits = "1";
 		} else {
-			hits = String.valueOf(Integer.parseInt(hits) + 1);
+			hitsInt = Integer.parseInt(hits) + 1;
+			hits = String.valueOf(hitsInt);
+		}
+
+		int hitsThreshold = 10; // TODO get from settings
+		if (hitsInt >= hitsThreshold) {
+			cardElement.setAttribute(XML_STATUS, STATUS_LEARNED);
 		}
 
 		cardElement.setAttribute(XML_HITS, hits);
