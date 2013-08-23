@@ -16,7 +16,7 @@ public class Lesson {
 	
 	public Lesson(CardSet set) throws XPathExpressionException {
 		iSet = set;
-		iCards = iSet.LessonCardsList();
+		iCards = iSet.getLessonCardsList();
 	}
 	
 	public LngCard NextCard() throws XPathExpressionException, LangCardsException {
