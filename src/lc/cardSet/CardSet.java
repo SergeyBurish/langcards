@@ -2,8 +2,7 @@ package lc.cardSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -30,6 +29,7 @@ public class CardSet {
 	boolean iChanged = false;
 	
 	XPath iXpath = XPathFactory.newInstance().newXPath();
+	Random random = null;
 	
 	// xml structure elements
 	private static final String XML_SET				= "Set";			// <Set name=...>
@@ -57,7 +57,9 @@ public class CardSet {
 	// Path Expressions of frequent operations
 	XPathExpression iSetCards = null;                // Set/Cards
 	XPathExpression iCardsCard = null;               // Set/Cards/Card
-	XPathExpression iLessonCards = null;             // Set/Cards/Card[@status='lesson']
+	XPathExpression iLessonCards = null;             // //Card[@status='lesson']
+	XPathExpression iIdleCards = null;               // //Card[@status='idle']
+	XPathExpression iLessonCardsCount = null;        // "count(//Card[@status='lesson'])"
 	XPathExpression iIdExpr = null;                  // @id
 	XPathExpression iValueExpr = null;               // Value
 	XPathExpression iTranscriptionExpr = null;       // Transcription
@@ -215,11 +217,7 @@ public class CardSet {
 	public int CardsCount() throws XPathExpressionException{
 		return  CardsList().getLength();
 	}
-	
-	public int  LessonCardsCount() throws XPathExpressionException {
-		return  LessonCardsList().getLength();
-	}
-	
+
 	public void addNewCard(LngCard lngCard) throws XPathExpressionException, LangCardsException {
 		doAddNewCard(lngCard);
 		iChanged = true;
@@ -246,7 +244,13 @@ public class CardSet {
 		if (cardId.isEmpty()) cardId = newCardId();
 		card.setAttribute(XML_ID, cardId);
 
-		card.setAttribute(XML_STATUS, STATUS_LESSON);
+		int cardsInLesson = 50; // TODO get from settings
+		if (lessonCardsCount() < cardsInLesson) {
+			card.setAttribute(XML_STATUS, STATUS_LESSON);
+		} else {
+			card.setAttribute(XML_STATUS, STATUS_IDLE);
+		}
+
 		cards.appendChild(card);
 
 		// Frst Language phrases
@@ -393,15 +397,84 @@ public class CardSet {
 		
 		return (NodeList) iCardsCard.evaluate(iDoc, XPathConstants.NODESET);
 	}
-	
-	public NodeList LessonCardsList() throws XPathExpressionException {
+
+	public int  lessonCardsCount() throws XPathExpressionException {
+		if (iLessonCardsCount == null) {
+			iLessonCardsCount = iXpath.compile("count(//" + XML_CARD + "[@" + XML_STATUS + "='" + STATUS_LESSON + "'])");
+		}
+
+		return (int)(double)(Double) iLessonCardsCount.evaluate(iDoc, XPathConstants.NUMBER);
+	}
+
+	public NodeList getLessonCardsList() throws XPathExpressionException {
+		int cardsInLesson = 50; // TODO get from settings
+		int cardsCount = lessonCardsCount();
+
+		addRandomIdleCardsToLesson(cardsInLesson - cardsCount);
+
 		if (iLessonCards == null) {
-			iLessonCards = iXpath.compile(XML_SET + "/" + XML_CARDS + "/" + XML_CARD + "[@" + XML_STATUS + "='" + STATUS_LESSON + "']");
+			iLessonCards = iXpath.compile("//" + XML_CARD + "[@" + XML_STATUS + "='" + STATUS_LESSON + "']");
 		}
 		
 		return (NodeList) iLessonCards.evaluate(iDoc, XPathConstants.NODESET);
 	}
-	
+
+	private void addRandomIdleCardsToLesson(int count) throws XPathExpressionException {
+		if (count > 0) {
+			if (iIdleCards == null) {
+				iIdleCards = iXpath.compile("//" + XML_CARD + "[@" + XML_STATUS + "='" + STATUS_IDLE + "']");
+			}
+			NodeList idleCardsList = (NodeList) iIdleCards.evaluate(iDoc, XPathConstants.NODESET);
+
+			int idleCount = idleCardsList.getLength();
+
+			if (count >= idleCount) {				// all idles to lesson
+				for (int i = 0; i < idleCount; i++) {
+					Node cardNode = idleCardsList.item(i);
+					addCardToLesson(cardNode);
+				}
+			} else {								// random subset of idles to lesson
+				if (0.5 > (double)count / (double)idleCount) { // Random.nextInt() is more effective than Collections.shuffle()
+					if (random == null) {
+						random = new Random();
+					}
+
+					HashSet<Integer> indexSet = new HashSet<Integer>();
+
+					while (indexSet.size() < count) {
+						Integer next = random.nextInt(idleCount);
+						indexSet.add(next);
+					}
+
+					for (Iterator<Integer> iterator = indexSet.iterator(); iterator.hasNext();) {
+						int index = iterator.next();
+						Node cardNode = idleCardsList.item(index);
+						addCardToLesson(cardNode);
+					}
+				} else {  // Collections.shuffle() is more effective than Random.nextInt()
+					Vector<Integer> vector = new Vector<Integer>(); // vector of all indexes of idle card list;
+					for (int i = 0; i < idleCount; i++) {
+						vector.add(i);
+					}
+					Collections.shuffle(vector);
+
+					for (int i = 0; i < count; i++) { // first count elements of vector (count < vector.size())
+						int index = vector.elementAt(i);
+						Node cardNode = idleCardsList.item(index);
+						addCardToLesson(cardNode);
+					}
+				}
+			}
+		}
+	}
+
+	private void addCardToLesson(Node cardNode) {
+		if(cardNode instanceof Element) {
+			Element el = (Element) cardNode;
+			el.setAttribute(XML_STATUS, STATUS_LESSON);
+		}
+	}
+
 	private String CardId(Node card) throws XPathExpressionException {
 		if (iIdExpr == null) {
 			iIdExpr = iXpath.compile("@" + XML_ID);
