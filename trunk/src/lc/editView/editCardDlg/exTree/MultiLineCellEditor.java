@@ -1,63 +1,74 @@
 package lc.editView.editCardDlg.exTree;
 
 import java.awt.Component;
+import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultTreeModel;
 
 import lc.LCmain;
+import lc.LCutils;
 
-public class MultiLineCellEditor extends DefaultCellEditor implements DocumentListener, CaretListener, ExTextPaneListener{
+public class MultiLineCellEditor extends DefaultCellEditor {
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	static ExTextPane iTextPane;
 	DefaultTreeModel iModel;
 	ExTreeNode iNode = null;
 
 	public MultiLineCellEditor(DefaultTreeModel model) {
 		super(new JTextField());
-		iTextPane = new ExTextPane(this);
-		iTextPane.addCaretListener(this);
-		iTextPane.getDocument().addDocumentListener(this);
-		
+		iTextPane = createTextPane(LCutils.String("Type_new_word_or_phrase_here"), null);
 		iModel = model;
 	}
-	
+
+	private ExTextPane createTextPane(String defaultString, String currentValue) {
+		ExTextPane textPane =
+		new ExTextPane(new ExTextPaneListener() {
+			@Override
+			public void enterTyped() {
+				stopCellEditing();
+			}
+
+			@Override
+			public void ctrlEnterTyped() {
+				try {
+					iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
+				} catch (BadLocationException e) {
+					LCmain.mainFrame.ShowErr(e);
+				}
+			}
+		}, defaultString, currentValue, null);
+
+		textPane.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent documentEvent) {
+				UpdateSizes();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent documentEvent) {
+				UpdateSizes();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent documentEvent) {
+				UpdateSizes();
+			}
+		});
+
+		return textPane;
+	}
+
 	private void UpdateSizes() {
 		iTextPane.UpdateSize();
 		
 		if (iModel != null && iNode != null) {
 			iModel.nodeChanged(iNode);
 		}
-	}
-
-	@Override
-	// DocumentListener
-	public void changedUpdate(DocumentEvent e) {
-		UpdateSizes();
-	}
-
-	@Override
-	// DocumentListener
-	public void insertUpdate(DocumentEvent e) {
-		UpdateSizes();
-	}
-
-	@Override
-	// DocumentListener
-	public void removeUpdate(DocumentEvent e) {
-		UpdateSizes();
-	}
-
-	@Override
-	// CaretListener
-	public void caretUpdate(CaretEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -69,29 +80,20 @@ public class MultiLineCellEditor extends DefaultCellEditor implements DocumentLi
 	@Override
 	// TreeCellEditor
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
+
 		String stringValue = tree.convertValueToText(value, isSelected, expanded, leaf, row, true);
-		iTextPane.setText(stringValue);
-		
+		String defaultString = LCutils.String("Type_new_word_or_phrase_here");
+
+		if (defaultString.contentEquals(stringValue)) {
+			iTextPane = createTextPane(defaultString, null);
+		} else {
+			iTextPane = createTextPane(defaultString, stringValue);
+		}
+
 		if (value instanceof ExTreeNode) {
 			iNode = (ExTreeNode)value;
 		}
 		
 		return iTextPane;
-	}
-
-	@Override
-	// ExTextPaneListener
-	public void enterTyped() {
-		stopCellEditing();
-	}
-
-	@Override
-	// ExTextPaneListener
-	public void ctrlEnterTyped(){
-		try {
-			iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
-		} catch (BadLocationException e) {
-			LCmain.mainFrame.ShowErr(e);
-		}
 	}
 }

@@ -1,22 +1,12 @@
 package lc.editView.editCardDlg.exTree;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.JTree;
-import javax.swing.UIManager;
-import javax.swing.tree.TreeCellRenderer;
-
+import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.*;
 
 public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
+	private static final int GAP_WIDTH = 4;
 	protected JLabel icon;
 	protected TreeTextArea text;
 	
@@ -30,7 +20,7 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 			}
 		};
 		add(icon);
-		add(Box.createHorizontalStrut(4));
+		add(Box.createHorizontalStrut(GAP_WIDTH));
 		add(text = new TreeTextArea());
 	}
 
@@ -42,6 +32,7 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 		String stringValue = tree.convertValueToText(value, isSelected,
 				expanded, leaf, row, hasFocus);
 		setEnabled(tree.isEnabled());
+
 		text.setText(stringValue);
 		text.setSelect(isSelected);
 		text.setFocus(hasFocus);
@@ -68,15 +59,9 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 		super.setBackground(color);
 	}
 
-	class TreeTextArea extends JTextArea {
-		Dimension preferredSize;
+	class TreeTextArea extends JTextPane {
+		Dimension preferredSize = null;
 		JTextPane iDummy = new JTextPane(); // to recalculate text size only
-
-		TreeTextArea() {
-			setLineWrap(true);
-			setWrapStyleWord(true);
-			setOpaque(true);
-		}
 
 		public void setBackground(Color color) {
 			if (color instanceof ColorUIResource)
