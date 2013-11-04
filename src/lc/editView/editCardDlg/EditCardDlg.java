@@ -28,7 +28,7 @@ import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
 import lc.editView.editCardDlg.exTree.ExTreeNode;
 import lc.langCardsException.LangCardsException;
 
-public class EditCardDlg extends JDialog implements TreeSelectionListener {
+public class EditCardDlg extends JDialog {
 	ExTreeNode rootNode = new ExTreeNode(LCutils.String("New_Card"), false);
 	DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
 	ExTree iTree = new ExTree(iModel);
@@ -99,7 +99,24 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener {
 		//iTree.setToggleClickCount(1);
 		iTree.setEditable(true);
 		iTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		iTree.addTreeSelectionListener(this);
+		iTree.addTreeSelectionListener(new TreeSelectionListener() {
+			@Override
+			public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+				Object selectedComponent = iTree.getLastSelectedPathComponent();
+
+				if (selectedComponent instanceof ExTreeNode) {
+					ExTreeNode node = (ExTreeNode)selectedComponent;
+
+					if (node.isEditable()) {
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								iTree.startEditingAtPath(iTree.getSelectionPath());
+							}
+						});
+					}
+				}
+			}
+		});
 		iTree.setInvokesStopCellEditing(true);
 		
 		iTreeScrollPane = new JScrollPane(iTree);
@@ -177,23 +194,5 @@ public class EditCardDlg extends JDialog implements TreeSelectionListener {
 	
 	public Boolean Accepted() {
 		return iAccepted;
-	}
-
-	// TreeSelectionListener
-	@Override
-	public void valueChanged(TreeSelectionEvent arg0) {
-		Object selectedComponent = iTree.getLastSelectedPathComponent();
-		
-		if (selectedComponent instanceof ExTreeNode) {
-			ExTreeNode node = (ExTreeNode)selectedComponent;
-			
-			if (node.isEditable()) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						iTree.startEditingAtPath(iTree.getSelectionPath());
-					}
-				});
-			}
-		}
 	}
 }

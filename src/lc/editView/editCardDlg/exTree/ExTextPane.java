@@ -1,15 +1,18 @@
 package lc.editView.editCardDlg.exTree;
 
+import lc.controls.TextPaneWithDefault;
+
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextPane;
 
-public class ExTextPane extends JTextPane {
-	ExTextPaneListener listener;
+public class ExTextPane extends TextPaneWithDefault {
+	ExTextPaneListener exTextPaneListener;
 	JTextPane iDummy = new JTextPane(); // to recalculate text size only 
 	
-	public ExTextPane(ExTextPaneListener tpListener) {
-		listener = tpListener;
+	public ExTextPane(ExTextPaneListener tpListener, String defaultString, String currentValue, TypingStateListener typingStateListener) {
+		super(defaultString, currentValue, typingStateListener);
+		exTextPaneListener = tpListener;
 	}
 	
 	public void UpdateSize() {
@@ -24,14 +27,14 @@ public class ExTextPane extends JTextPane {
 	@Override
 	// JTextPane
 	protected void processKeyEvent(KeyEvent event) {
-		if (listener != null &&
+		if (exTextPaneListener != null &&
 			event.getKeyCode() == KeyEvent.VK_ENTER && 
 			event.getID() == KeyEvent.KEY_PRESSED) {
 			
 			if (event.isControlDown()) {
-				listener.ctrlEnterTyped();
+				exTextPaneListener.ctrlEnterTyped();
 			} else if (event.getID() == KeyEvent.KEY_PRESSED) {
-				listener.enterTyped();
+				exTextPaneListener.enterTyped();
 			}
 		} else {
 			super.processKeyEvent(event);

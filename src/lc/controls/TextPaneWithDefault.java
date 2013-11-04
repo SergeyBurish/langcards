@@ -18,15 +18,26 @@ public class TextPaneWithDefault extends JTextPane {
 		public void typingStopped();
 	}
 
-	TypingStateListener listener = null;
+	TypingStateListener typingStateListener = null;
 
-	public TextPaneWithDefault(String defaultString, TypingStateListener l) {
+	public TextPaneWithDefault(String defaultString, TypingStateListener listener) {
+		this(defaultString, null, listener);
+	}
+
+	public TextPaneWithDefault(String defaultString, String currentValue, TypingStateListener listener) {
 		if (defaultString != null) this.defaultString = defaultString;
-		this.listener = l;
+		this.typingStateListener = listener;
 
-		setText(this.defaultString);
-		setForeground(getDisabledTextColor());
-		setCaretPosition(0);
+		if (currentValue != null && currentValue.length() > 0) {
+			setText(currentValue);
+			typing = true;
+			setForeground(getSelectedTextColor());
+		} else {
+			setText(this.defaultString);
+			typing = false;
+			setForeground(getDisabledTextColor());
+			setCaretPosition(0);
+		}
 
 		addCaretListener(new CaretListener() {
 			@Override
@@ -37,8 +48,6 @@ public class TextPaneWithDefault extends JTextPane {
 			}
 		});
 
-		final TextPaneWithDefault self = this;
-
 		Document doc = getDocument();
 		if (doc instanceof AbstractDocument) {
 			((AbstractDocument)doc).setDocumentFilter(new DocumentFilter(){
@@ -48,10 +57,10 @@ public class TextPaneWithDefault extends JTextPane {
 						typing = true;
 						attributeSet = attrs;
 
-						super.replace(fb, 0, self.getText().length(), text, attrs);
-						self.setForeground(self.getSelectedTextColor());
+						super.replace(fb, 0, TextPaneWithDefault.this.getText().length(), text, attrs);
+						TextPaneWithDefault.this.setForeground(TextPaneWithDefault.this.getSelectedTextColor());
 
-						if (listener != null) listener.typingStarted();
+						if (typingStateListener != null) typingStateListener.typingStarted();
 					}
 					else {
 						super.replace(fb, offset, length, text, attrs);
@@ -63,13 +72,13 @@ public class TextPaneWithDefault extends JTextPane {
 					if (typing) {
 						super.remove(fb, offset, length);
 
-						if (self.getText().isEmpty()) {
-							super.insertString(fb, 0, self.defaultString, self.attributeSet);
-							self.setForeground(self.getDisabledTextColor());
-							self.setCaretPosition(0);
+						if (TextPaneWithDefault.this.getText().isEmpty()) {
+							super.insertString(fb, 0, TextPaneWithDefault.this.defaultString, TextPaneWithDefault.this.attributeSet);
+							TextPaneWithDefault.this.setForeground(TextPaneWithDefault.this.getDisabledTextColor());
+							TextPaneWithDefault.this.setCaretPosition(0);
 
 							typing = false;
-							if (listener != null) listener.typingStopped();
+							if (typingStateListener != null) typingStateListener.typingStopped();
 						}
 					}
 				}
