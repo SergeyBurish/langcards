@@ -1,17 +1,29 @@
 package lc.editView.editCardDlg.exTree;
 
+import lc.LCutils;
+
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
+import java.util.logging.Logger;
 
-public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
+public class MultiLineCellRenderer implements TreeCellRenderer {
 	private static final int GAP_WIDTH = 4;
+
+	private JPanel panel;
 	protected JLabel icon;
 	protected TreeTextArea text;
+
+	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	public MultiLineCellRenderer() {
-		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+	}
+
+	private JPanel createPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
 		icon = new JLabel() {
 			public void setBackground(Color color) {
 				if (color instanceof ColorUIResource)
@@ -19,9 +31,11 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 				super.setBackground(color);
 			}
 		};
-		add(icon);
-		add(Box.createHorizontalStrut(GAP_WIDTH));
-		add(text = new TreeTextArea());
+		panel.add(icon);
+		panel.add(Box.createHorizontalStrut(GAP_WIDTH));
+		panel.add(text = new TreeTextArea());
+
+		return panel;
 	}
 
 	@Override
@@ -31,11 +45,15 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 			boolean hasFocus) {
 		String stringValue = tree.convertValueToText(value, isSelected,
 				expanded, leaf, row, hasFocus);
-		setEnabled(tree.isEnabled());
+
+		panel = createPanel();
+
+		panel.setEnabled(tree.isEnabled());
 
 		text.setText(stringValue);
 		text.setSelect(isSelected);
 		text.setFocus(hasFocus);
+
 		if (leaf) {
 			icon.setIcon(UIManager.getIcon("Tree.leafIcon"));
 		} else if (expanded) {
@@ -43,7 +61,14 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 		} else {
 			icon.setIcon(UIManager.getIcon("Tree.closedIcon"));
 		}
-		return this;
+
+		if (LCutils.String("Type_new_word_or_phrase_here").contentEquals(stringValue)) {
+			text.setForeground(text.getDisabledTextColor());
+		} else {
+			text.setForeground(text.getSelectedTextColor());
+		}
+
+		return panel;
 	}
 
 	public Dimension getPreferredSize() {
@@ -56,7 +81,8 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 	public void setBackground(Color color) {
 		if (color instanceof ColorUIResource)
 			color = null;
-		super.setBackground(color);
+
+		panel.setBackground(color);
 	}
 
 	class TreeTextArea extends JTextPane {
@@ -83,7 +109,7 @@ public class MultiLineCellRenderer extends JPanel implements TreeCellRenderer {
 			iDummy.setText(str);
 			Dimension d = iDummy.getPreferredSize();
 			setPreferredSize(d);
-			
+
 			super.setText(str);
 		}
 
