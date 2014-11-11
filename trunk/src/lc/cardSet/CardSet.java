@@ -98,8 +98,8 @@ public class CardSet {
 		
 		// Languages
 		Element languages = iDoc.createElement(XML_LANGUAGES);
-		languages.setAttribute(XML_FRST, "English");
-		languages.setAttribute(XML_SCND, "Русский");
+		languages.setAttribute(XML_FRST, LCutils.String("LanguageEnglish"));
+		languages.setAttribute(XML_SCND, LCutils.String("LanguageRussian"));
 		settings.appendChild(languages);
 		
 		TestFilling();
