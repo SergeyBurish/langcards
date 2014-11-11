@@ -311,7 +311,7 @@ public class EditView {
 		columns.addElement(LCutils.String("Status"));
 		columns.addElement(LCutils.String("Quantity"));
 		
-		iTableModelState.setDataVector(rows, columns);		
+		iTableModelState.setDataVector(rows, columns);
 	}
 	
 	private void UpdateTable() throws XPathExpressionException, LangCardsException {
@@ -328,7 +328,7 @@ public class EditView {
 	
 	private void ScrollTableToShowRaw(int row) {
 		Rectangle r = iTable.getCellRect(row, 0, true);
-		iTable.scrollRectToVisible(r);		
+		iTable.scrollRectToVisible(r);
 	}
 	
 	private void ChangeUiLanguage(String localeString) {
