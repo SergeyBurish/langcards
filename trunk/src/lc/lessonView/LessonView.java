@@ -105,48 +105,55 @@ public class LessonView {
 					}
 				});
 
+		JTextPane correctAnswerTextPane = new JTextPane();
+		correctAnswerTextPane.setText("Correct Answer:\n");
+		correctAnswerTextPane.setEditable(false);
+
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
 		
 		iAnswerStatusLabel = new JLabel(LCutils.String("Question_mark"), iPondering, JLabel.CENTER);
 		iAnswerStatusLabel.setVerticalTextPosition(JLabel.TOP);
 		iAnswerStatusLabel.setHorizontalTextPosition(JLabel.CENTER);
 
-		JLabel label2 = new JLabel("Test2");
-		
+		JLabel label2 = new JLabel("N cards left in lesson");
+
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
-				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(iTreeScrollPane)
-						.addComponent(iAnswerTextPane)
-						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-								.addComponent(iVerifyNextBtn)
-								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-								.addComponent(finishLessonBtn)
-								)
+						.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+										.addComponent(iTreeScrollPane)
+										.addComponent(iAnswerTextPane)
+										.addComponent(correctAnswerTextPane)
+										.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
+														.addComponent(iVerifyNextBtn)
+														.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+														.addComponent(finishLessonBtn)
+										)
 						)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(iAnswerStatusLabel)
-						.addComponent(label2)
-						)
-		);
-				
-		LCmain.mainFrame.iLayout.setVerticalGroup(
-				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-						.addComponent(iTreeScrollPane)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(iAnswerTextPane)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 						.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(iVerifyNextBtn)
-								.addComponent(finishLessonBtn)
-								)
+										.addComponent(iAnswerStatusLabel)
+										.addComponent(label2)
 						)
-				.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
-						.addComponent(iAnswerStatusLabel)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(label2)
+		);
+
+		LCmain.mainFrame.iLayout.setVerticalGroup(
+				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
+										.addComponent(iTreeScrollPane)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(iAnswerTextPane)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(correctAnswerTextPane)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+														.addComponent(iVerifyNextBtn)
+														.addComponent(finishLessonBtn)
+										)
+						)
+						.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
+										.addComponent(iAnswerStatusLabel)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(label2)
 						)
 		);
 		
