@@ -88,4 +88,17 @@ public class TextPaneWithDefault extends JTextPane {
 			LOGGER.warning("fail to properly initialize TextPaneWithDefault");
 		}
 	}
+
+	public void hideDefaultString() {
+		if (!typing) {
+			Document doc = getDocument();
+			if (doc instanceof AbstractDocument) {
+				try {
+					((AbstractDocument) doc).replace(0, TextPaneWithDefault.this.defaultString.length(), "", TextPaneWithDefault.this.attributeSet);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }
