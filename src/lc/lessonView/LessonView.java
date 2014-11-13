@@ -37,9 +37,10 @@ public class LessonView {
 	private LngCard iCurrentCard = null;
 	private JButton iVerifyNextBtn = null;
 	private TextPaneWithDefault iAnswerTextPane = null;
+	private JTextPane iCorrectAnswersTextPane;
 
-	enum LessonStatus {NO_ANSWER, ANSWER_TYPING, ANSWERED}
-	private LessonStatus iLessonStatus = LessonStatus.NO_ANSWER;
+	enum LessonStatus {ANSWER_TYPING, ANSWERED}
+	private LessonStatus iLessonStatus = LessonStatus.ANSWER_TYPING;
 
 	public LessonView(CardSet set) throws XPathExpressionException {
 		iSet = set;
@@ -65,17 +66,12 @@ public class LessonView {
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-		iVerifyNextBtn = new JButton(LCutils.String("Next_Card"));
+		iVerifyNextBtn = new JButton(LCutils.String("Verify"));
 		iVerifyNextBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
 					switch (iLessonStatus) {
-						case NO_ANSWER:
-							iLesson.markWrong(iCurrentCard);
-							NextCard();
-							break;
-
 						case ANSWER_TYPING:
 							VerifyAnswer(iAnswerTextPane.getText());
 							break;
@@ -90,24 +86,10 @@ public class LessonView {
 			}
 		});
 
-		iAnswerTextPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"),
-				new TextPaneWithDefault.TypingStateListener() {
-					@Override
-					public void typingStarted() {
-						iVerifyNextBtn.setText(LCutils.String("Verify"));
-						iLessonStatus = LessonStatus.ANSWER_TYPING;
-					}
-
-					@Override
-					public void typingStopped() {
-						iVerifyNextBtn.setText(LCutils.String("Next_Card"));
-						iLessonStatus = LessonStatus.NO_ANSWER;
-					}
-				});
-
-		JTextPane correctAnswerTextPane = new JTextPane();
-		correctAnswerTextPane.setText("Correct Answer:\n");
-		correctAnswerTextPane.setEditable(false);
+		iAnswerTextPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"), null);
+		iCorrectAnswersTextPane = new JTextPane();
+		iCorrectAnswersTextPane.setText(LCutils.String("Correct_answers"));
+		iCorrectAnswersTextPane.setEditable(false);
 
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
 		
@@ -122,7 +104,7 @@ public class LessonView {
 						.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 										.addComponent(iTreeScrollPane)
 										.addComponent(iAnswerTextPane)
-										.addComponent(correctAnswerTextPane)
+										.addComponent(iCorrectAnswersTextPane)
 										.addGroup(LCmain.mainFrame.iLayout.createSequentialGroup()
 														.addComponent(iVerifyNextBtn)
 														.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -143,7 +125,7 @@ public class LessonView {
 										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 										.addComponent(iAnswerTextPane)
 										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(correctAnswerTextPane)
+										.addComponent(iCorrectAnswersTextPane)
 										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 										.addGroup(LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 														.addComponent(iVerifyNextBtn)
@@ -163,14 +145,20 @@ public class LessonView {
 	private void VerifyAnswer(String answer) throws LangCardsException, XPathExpressionException, TransformerException {
 		if (iCurrentCard == null) throw new LangCardsException("No lesson cards");
 
+		String correctAnswers = "";
 		boolean correct = false;
 		for (int i = 0; i < iCurrentCard.ScndPhraseCount(); i++) {
-			String s = iCurrentCard.GetScndPhrase(i).iValue.toLowerCase().trim();
+
+			final String value = iCurrentCard.GetScndPhrase(i).iValue;
+			correctAnswers += String.format("%d) %s; ", i+1, value);
+
+			String s = value.toLowerCase().trim();
 			if (s.equals(answer.toLowerCase().trim())) {
 				correct = true;
-				break;
 			}
 		}
+
+		iCorrectAnswersTextPane.setText(LCutils.String("Correct_answers") + correctAnswers);
 
 		if (correct) {
 			iAnswerStatusLabel.setText(LCutils.String("Correct"));
@@ -185,6 +173,7 @@ public class LessonView {
 
 		iVerifyNextBtn.setText(LCutils.String("Next_Card"));
 		iLessonStatus = LessonStatus.ANSWERED;
+		iAnswerTextPane.hideDefaultString();
 		iAnswerTextPane.setEditable(false);
 
 		LCmain.mainFrame.pack();
@@ -207,7 +196,9 @@ public class LessonView {
 		iTree.updateUI();
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-		iLessonStatus = LessonStatus.NO_ANSWER;
+		iCorrectAnswersTextPane.setText(LCutils.String("Correct_answers"));
+		iVerifyNextBtn.setText(LCutils.String("Verify"));
+		iLessonStatus = LessonStatus.ANSWER_TYPING;
 		iAnswerTextPane.setEditable(true);
 		iAnswerTextPane.setText("");
 		iAnswerStatusLabel.setText(LCutils.String("Question_mark"));
@@ -229,7 +220,7 @@ public class LessonView {
 			for (int j = 0; j < phrase.iExamples.size(); j++) {
 				ExTreeNode exampleNode = new ExTreeNode(phrase.iExamples.get(j), false);
 				examples.add(exampleNode);
-			}			
+			}
 			phraseNode.add(examples);
 		}
 		
