@@ -1,17 +1,11 @@
 package lc;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -25,7 +19,8 @@ import org.apache.commons.io.FilenameUtils;
 public class LCutils {
 	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private static final String STRING_RESOURCE_NAME = "NameInLanguageList";
-	
+	private static final String SETTINGS_FILE_NAME = "langCardsSettings";
+
 	private static String iCurrentLocaleString;
 	private static ResourceBundle iResourceBundle;
 	
@@ -50,7 +45,11 @@ public class LCutils {
 			return iLocaleString;
 		}
 	}
-	
+
+	public static class Settings {
+		public int xPos;
+	}
+
 	public static String CurrentLocaleString() {
 		return iCurrentLocaleString;
 	}
@@ -234,5 +233,52 @@ public class LCutils {
 		}
 
 		return resourcesList;
+	}
+
+	public static void saveSettings(Settings settings) {
+		Properties props = new Properties();
+		props.setProperty("xPos", Integer.toString(settings.xPos));
+
+		try {
+			FileOutputStream output = new FileOutputStream(SETTINGS_FILE_NAME);
+			props.store(output, "Saved settings");
+			output.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			LOGGER.warning("fail to create/save " + SETTINGS_FILE_NAME + ": " + e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			LOGGER.warning("fail to create/save " + SETTINGS_FILE_NAME + ": " + e.getMessage());
+		}
+	}
+
+	public static Settings loadSettings() {
+
+		Properties props = new Properties();
+		try {
+			FileInputStream input = new FileInputStream(SETTINGS_FILE_NAME);
+			props.load(input);
+			input.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			LOGGER.info("fail to load settings: " + e.getMessage());
+			return null;
+		} catch (IOException e) {
+			LOGGER.info("fail to load settings: " + e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+
+		int xPos = 0;
+		try {
+			xPos = Integer.parseInt(props.getProperty("xPos", ""));
+		} catch (NumberFormatException e) {
+			LOGGER.info("fail to parse settings: " + e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
+		Settings settings = new Settings();
+		settings.xPos = xPos;
+		return settings;
 	}
 }

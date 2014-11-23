@@ -3,6 +3,8 @@ package lc;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -42,7 +44,7 @@ public class LCmain extends JFrame {
 	CardSet iCardSet;
 	
 	JMenuBar menuBar;
-	JMenu menu, submenu;
+	JMenu menu;
 	JMenuItem menuItem;
 	
 	public static final String LC_TITLE = "Language Cards";
@@ -144,6 +146,47 @@ public class LCmain extends JFrame {
 		catch (IOException e)				{ShowErr(e);return;}
 
 		CreateMenu();
+
+		addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent windowEvent) {
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent windowEvent) {
+				LCutils.Settings settings = new LCutils.Settings();
+				settings.xPos = 0;
+				LCutils.saveSettings(settings);
+				System.exit(0);
+			}
+
+			@Override
+			public void windowClosed(WindowEvent windowEvent) {
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent windowEvent) {
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent windowEvent) {
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent windowEvent) {
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent windowEvent) {
+
+			}
+		});
+
 		pack();
 	}
 
