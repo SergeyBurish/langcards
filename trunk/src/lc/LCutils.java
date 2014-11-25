@@ -48,6 +48,9 @@ public class LCutils {
 
 	public static class Settings {
 		public int xPos;
+		public int yPos;
+		public int editWidth;
+		public int editHeight;
 	}
 
 	public static String CurrentLocaleString() {
@@ -238,10 +241,13 @@ public class LCutils {
 	public static void saveSettings(Settings settings) {
 		Properties props = new Properties();
 		props.setProperty("xPos", Integer.toString(settings.xPos));
+		props.setProperty("yPos", Integer.toString(settings.yPos));
+		props.setProperty("editWidth", Integer.toString(settings.editWidth));
+		props.setProperty("editHeight", Integer.toString(settings.editHeight));
 
 		try {
 			FileOutputStream output = new FileOutputStream(SETTINGS_FILE_NAME);
-			props.store(output, "Saved settings");
+			props.store(output, "Language Cards settings");
 			output.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -270,8 +276,14 @@ public class LCutils {
 		}
 
 		int xPos = 0;
+		int yPos = 0;
+		int editWidth = 0;
+		int editHeight = 0;
 		try {
 			xPos = Integer.parseInt(props.getProperty("xPos", ""));
+			yPos = Integer.parseInt(props.getProperty("yPos", ""));
+			editWidth = Integer.parseInt(props.getProperty("editWidth", ""));
+			editHeight = Integer.parseInt(props.getProperty("editHeight", ""));
 		} catch (NumberFormatException e) {
 			LOGGER.info("fail to parse settings: " + e.getMessage());
 			e.printStackTrace();
@@ -279,6 +291,9 @@ public class LCutils {
 		}
 		Settings settings = new Settings();
 		settings.xPos = xPos;
+		settings.yPos = yPos;
+		settings.editWidth = editWidth;
+		settings.editHeight = editHeight;
 		return settings;
 	}
 }

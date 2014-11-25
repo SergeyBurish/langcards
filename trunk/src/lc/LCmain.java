@@ -1,6 +1,6 @@
 package lc;
 
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
 public class LCmain extends JFrame {
 
 	public static LCmain mainFrame;
+	private static LCutils.Settings settings;
 	public Container iContainer;
 	public GroupLayout iLayout;
 	
@@ -155,8 +156,13 @@ public class LCmain extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
+				Rectangle frameBounds = getBounds();
+
 				LCutils.Settings settings = new LCutils.Settings();
-				settings.xPos = 0;
+				settings.xPos = frameBounds.x;
+				settings.yPos = frameBounds.y;
+				settings.editWidth = frameBounds.width;
+				settings.editHeight = frameBounds.height;
 				LCutils.saveSettings(settings);
 				System.exit(0);
 			}
@@ -186,8 +192,6 @@ public class LCmain extends JFrame {
 
 			}
 		});
-
-		pack();
 	}
 
 	private void initLogger() {
@@ -308,6 +312,18 @@ public class LCmain extends JFrame {
 		return false;
 	}
 
+	public static void setEditViewBounds() {
+		if (settings == null) {
+			settings = LCutils.loadSettings();
+		}
+
+		if (settings != null) {
+			mainFrame.setBounds(settings.xPos, settings.yPos, settings.editWidth, settings.editHeight);
+		} else {
+			mainFrame.pack();
+		}
+	}
+
 	private String filePathWithLcExt(File file) {
 		String fName = file.toString();
 
@@ -375,5 +391,8 @@ public class LCmain extends JFrame {
 	
 	public void ChangeSetNameInTitle(String setName) {
 		setTitle(setName + " - " + LC_TITLE);
+	}
+
+	public static void setEditMode() {
 	}
 }
