@@ -146,6 +146,8 @@ public class LCmain extends JFrame {
 		catch (SAXException e)				{ShowErr(e);return;}
 		catch (IOException e)				{ShowErr(e);return;}
 
+		setEditMode();
+
 		CreateMenu();
 
 		addWindowListener(new WindowListener() {
@@ -394,5 +396,6 @@ public class LCmain extends JFrame {
 	}
 
 	public static void setEditMode() {
+		setEditViewBounds();
 	}
 }
