@@ -177,8 +177,9 @@ public class EditView {
 				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 				.addComponent(iBtStart)
 		);
-		
-		LCmain.mainFrame.pack();
+
+		LCmain.setEditViewBounds();
+		LCmain.setEditMode();
 	}
 	
 	private JPanel makeStatePanel() throws XPathExpressionException{
