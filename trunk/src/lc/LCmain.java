@@ -429,4 +429,13 @@ public class LCmain extends JFrame {
 			mainFrame.pack();
 		}
 	}
+
+	public void saveEditSizes() {
+		if (iSettings == null) {
+			iSettings = new LCutils.Settings();
+		}
+		Rectangle frameBounds = getBounds();
+		iSettings.editWidth = frameBounds.width;
+		iSettings.editHeight = frameBounds.height;
+	}
 }

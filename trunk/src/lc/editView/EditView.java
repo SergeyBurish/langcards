@@ -142,6 +142,7 @@ public class EditView {
 				}
 
 				try {
+					LCmain.mainFrame.saveEditSizes();
 					LessonView lessonView = new LessonView(iSet);
 					lessonView.Show();
 					LCmain.mainFrame.setLessonMode();
