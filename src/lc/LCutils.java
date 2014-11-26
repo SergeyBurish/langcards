@@ -21,6 +21,13 @@ public class LCutils {
 	private static final String STRING_RESOURCE_NAME = "NameInLanguageList";
 	private static final String SETTINGS_FILE_NAME = "langCardsSettings";
 
+	private static final String X_POS = "xPos";
+	private static final String Y_POS = "yPos";
+	private static final String EDIT_WIDTH = "editWidth";
+	private static final String EDIT_HEIGHT = "editHeight";
+	private static final String LESSON_WIDTH = "lessonWidth";
+	private static final String LESSON_HEIGHT = "lessonHeight";
+
 	private static String iCurrentLocaleString;
 	private static ResourceBundle iResourceBundle;
 	
@@ -51,6 +58,8 @@ public class LCutils {
 		public int yPos;
 		public int editWidth;
 		public int editHeight;
+		public int lessonWidth;
+		public int lessonHeight;
 	}
 
 	public static String CurrentLocaleString() {
@@ -240,10 +249,12 @@ public class LCutils {
 
 	public static void saveSettings(Settings settings) {
 		Properties props = new Properties();
-		props.setProperty("xPos", Integer.toString(settings.xPos));
-		props.setProperty("yPos", Integer.toString(settings.yPos));
-		props.setProperty("editWidth", Integer.toString(settings.editWidth));
-		props.setProperty("editHeight", Integer.toString(settings.editHeight));
+		props.setProperty(X_POS, Integer.toString(settings.xPos));
+		props.setProperty(Y_POS, Integer.toString(settings.yPos));
+		props.setProperty(EDIT_WIDTH, Integer.toString(settings.editWidth));
+		props.setProperty(EDIT_HEIGHT, Integer.toString(settings.editHeight));
+		props.setProperty(LESSON_WIDTH, Integer.toString(settings.lessonWidth));
+		props.setProperty(LESSON_HEIGHT, Integer.toString(settings.lessonHeight));
 
 		try {
 			FileOutputStream output = new FileOutputStream(SETTINGS_FILE_NAME);
@@ -275,25 +286,20 @@ public class LCutils {
 			return null;
 		}
 
-		int xPos = 0;
-		int yPos = 0;
-		int editWidth = 0;
-		int editHeight = 0;
+		Settings settings = new Settings();
 		try {
-			xPos = Integer.parseInt(props.getProperty("xPos", ""));
-			yPos = Integer.parseInt(props.getProperty("yPos", ""));
-			editWidth = Integer.parseInt(props.getProperty("editWidth", ""));
-			editHeight = Integer.parseInt(props.getProperty("editHeight", ""));
+			settings.xPos = Integer.parseInt(props.getProperty(X_POS, ""));
+			settings.yPos = Integer.parseInt(props.getProperty(Y_POS, ""));
+			settings.editWidth = Integer.parseInt(props.getProperty(EDIT_WIDTH, ""));
+			settings.editHeight = Integer.parseInt(props.getProperty(EDIT_HEIGHT, ""));
+			settings.lessonWidth = Integer.parseInt(props.getProperty(LESSON_WIDTH, ""));
+			settings.lessonHeight = Integer.parseInt(props.getProperty(LESSON_HEIGHT, ""));
 		} catch (NumberFormatException e) {
 			LOGGER.info("fail to parse settings: " + e.getMessage());
 			e.printStackTrace();
 			return null;
 		}
-		Settings settings = new Settings();
-		settings.xPos = xPos;
-		settings.yPos = yPos;
-		settings.editWidth = editWidth;
-		settings.editHeight = editHeight;
+
 		return settings;
 	}
 }

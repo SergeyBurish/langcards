@@ -175,8 +175,6 @@ public class LessonView {
 		iLessonStatus = LessonStatus.ANSWERED;
 		iAnswerTextPane.hideDefaultString();
 		iAnswerTextPane.setEditable(false);
-
-		LCmain.mainFrame.pack();
 	}
 
 	private void NextCard() throws XPathExpressionException, LangCardsException {
@@ -203,8 +201,6 @@ public class LessonView {
 		iAnswerTextPane.setText("");
 		iAnswerStatusLabel.setText(LCutils.String("Question_mark"));
 		iAnswerStatusLabel.setIcon(iPondering);
-
-		LCmain.mainFrame.pack();
 	}
 	
 	private ExTreeNode LngPhraseToTreeNode(LngPhrase phrase) {

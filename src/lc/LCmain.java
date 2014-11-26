@@ -32,13 +32,12 @@ import lc.editView.EditView;
 import lc.langCardsException.LangCardsException;
 
 import org.apache.commons.io.FilenameUtils;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class LCmain extends JFrame {
 
 	public static LCmain mainFrame;
-	private static LCutils.Settings settings;
+	private static LCutils.Settings iSettings;
 	public Container iContainer;
 	public GroupLayout iLayout;
 	
@@ -56,9 +55,14 @@ public class LCmain extends JFrame {
 	FileFilter iFilefilter = null;
 
 	public DocumentBuilder iParser;
-	Document doc;
-	
+
 	Vector<JDialog> iCloseArray= new Vector<JDialog>();
+
+	enum State {
+		EDIT,
+		LESSON,
+	}
+	State iState;
 
 	public static void main(String[] args) {
 		mainFrame = new LCmain();
@@ -140,13 +144,12 @@ public class LCmain extends JFrame {
 		// load the last set, otherwise create new
 		try {
 			NewOpen(null);
+			setEditMode();
 		}
 		catch (XPathExpressionException e)	{ShowErr(e);return;}
 		catch (LangCardsException e)			{ShowErr(e);return;}
 		catch (SAXException e)				{ShowErr(e);return;}
 		catch (IOException e)				{ShowErr(e);return;}
-
-		setEditMode();
 
 		CreateMenu();
 
@@ -160,12 +163,29 @@ public class LCmain extends JFrame {
 			public void windowClosing(WindowEvent windowEvent) {
 				Rectangle frameBounds = getBounds();
 
-				LCutils.Settings settings = new LCutils.Settings();
-				settings.xPos = frameBounds.x;
-				settings.yPos = frameBounds.y;
-				settings.editWidth = frameBounds.width;
-				settings.editHeight = frameBounds.height;
-				LCutils.saveSettings(settings);
+				if (iSettings == null) {
+					iSettings = new LCutils.Settings();
+					iSettings.editWidth = frameBounds.width;
+					iSettings.editHeight = frameBounds.height;
+					iSettings.lessonWidth = frameBounds.width;
+					iSettings.lessonHeight = frameBounds.height;
+				} else {
+					switch (iState) {
+						case EDIT:
+							iSettings.editWidth = frameBounds.width;
+							iSettings.editHeight = frameBounds.height;
+							break;
+						case LESSON:
+							iSettings.lessonWidth = frameBounds.width;
+							iSettings.lessonHeight = frameBounds.height;
+							break;
+					}
+				}
+
+				iSettings.xPos = frameBounds.x;
+				iSettings.yPos = frameBounds.y;
+
+				LCutils.saveSettings(iSettings);
 				System.exit(0);
 			}
 
@@ -314,18 +334,6 @@ public class LCmain extends JFrame {
 		return false;
 	}
 
-	public static void setEditViewBounds() {
-		if (settings == null) {
-			settings = LCutils.loadSettings();
-		}
-
-		if (settings != null) {
-			mainFrame.setBounds(settings.xPos, settings.yPos, settings.editWidth, settings.editHeight);
-		} else {
-			mainFrame.pack();
-		}
-	}
-
 	private String filePathWithLcExt(File file) {
 		String fName = file.toString();
 
@@ -358,8 +366,6 @@ public class LCmain extends JFrame {
 				iLayout.createSequentialGroup()
 				.addComponent(label)
 		);
-
-		pack();
 	}
 	
 	public void AddToCloseArray(JDialog dlg) {
@@ -395,7 +401,32 @@ public class LCmain extends JFrame {
 		setTitle(setName + " - " + LC_TITLE);
 	}
 
-	public static void setEditMode() {
-		setEditViewBounds();
+	public void setEditMode() {
+		iState = State.EDIT;
+		setViewBounds();
+	}
+
+	public void setLessonMode() {
+		iState = State.LESSON;
+		setViewBounds();
+	}
+
+	private void setViewBounds() {
+		if (iSettings == null) {
+			iSettings = LCutils.loadSettings();
+		}
+
+		if (iSettings != null) {
+			switch (iState) {
+				case EDIT:
+					mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.editWidth, iSettings.editHeight);
+					break;
+				case LESSON:
+					mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.lessonWidth, iSettings.lessonHeight);
+					break;
+			}
+		} else {
+			mainFrame.pack();
+		}
 	}
 }

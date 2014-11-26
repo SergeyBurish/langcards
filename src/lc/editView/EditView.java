@@ -144,6 +144,7 @@ public class EditView {
 				try {
 					LessonView lessonView = new LessonView(iSet);
 					lessonView.Show();
+					LCmain.mainFrame.setLessonMode();
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
 				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
@@ -153,29 +154,29 @@ public class EditView {
 
 	public void Show() throws XPathExpressionException, LangCardsException {
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
-		
+
 		JPanel panState = makeStatePanel();
 		iTabbedPane.addTab(LCutils.String("State"), panState);
-		
+
 		JPanel panCards = makeCardsPanel();
 		iTabbedPane.addTab(LCutils.String("Cards"), panCards);
-		
+
 		JPanel panSett = makeSettingsPanel();
 		iTabbedPane.addTab(LCutils.String("Settings"), panSett);
-		
+
 		iTabbedPane.setSelectedIndex(1); // select Cards panel
-		
+
 		LCmain.mainFrame.iLayout.setHorizontalGroup(
 				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-				.addComponent(iTabbedPane)
-				.addComponent(iBtStart)
+						.addComponent(iTabbedPane)
+						.addComponent(iBtStart)
 		);
-				
+
 		LCmain.mainFrame.iLayout.setVerticalGroup(
 				LCmain.mainFrame.iLayout.createSequentialGroup()
-				.addComponent(iTabbedPane)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(iBtStart)
+						.addComponent(iTabbedPane)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(iBtStart)
 		);
 	}
 	
