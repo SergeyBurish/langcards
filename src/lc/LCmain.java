@@ -348,9 +348,9 @@ public class LCmain extends JFrame {
 		e.printStackTrace();
 		
 		for (int i = 0; i < iCloseArray.size(); i++) {
-			iCloseArray.get(i).dispose();			
+			iCloseArray.get(i).dispose();
 		}
-		iCloseArray.removeAllElements();		
+		iCloseArray.removeAllElements();
 
 		setTitle("Internal Error");
 		this.setJMenuBar(null); // remove menu
@@ -364,7 +364,7 @@ public class LCmain extends JFrame {
 		
 		iLayout.setVerticalGroup(
 				iLayout.createSequentialGroup()
-				.addComponent(label)
+						.addComponent(label)
 		);
 	}
 	
@@ -419,15 +419,21 @@ public class LCmain extends JFrame {
 		if (iSettings != null) {
 			switch (iState) {
 				case EDIT:
-					mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.editWidth, iSettings.editHeight);
+					if (iSettings.editWidth > 0 && iSettings.editHeight > 0) {
+						mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.editWidth, iSettings.editHeight);
+						return;
+					}
 					break;
 				case LESSON:
-					mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.lessonWidth, iSettings.lessonHeight);
+					if (iSettings.lessonWidth > 0 && iSettings.lessonHeight > 0) {
+						mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.lessonWidth, iSettings.lessonHeight);
+						return;
+					}
 					break;
 			}
-		} else {
-			mainFrame.pack();
 		}
+
+		mainFrame.pack();
 	}
 
 	public void saveEditSizes() {
