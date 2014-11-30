@@ -172,6 +172,9 @@ public class LessonView {
 		}
 
 		iVerifyNextBtn.setText(LCutils.String("Next_Card"));
+		if (iLesson.unansweredCount() == 0) {
+			iVerifyNextBtn.setEnabled(false);
+		}
 		iLessonStatus = LessonStatus.ANSWERED;
 		iAnswerTextPane.hideDefaultString();
 		iAnswerTextPane.setEditable(false);

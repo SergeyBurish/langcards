@@ -35,4 +35,8 @@ public class Lesson {
 	public void markWrong(LngCard lngCard) throws TransformerException, XPathExpressionException, LangCardsException {
 		iSet.decreaseHits(lngCard.id());
 	}
+
+	public int unansweredCount() {
+		return iCards.getLength() - iPos;
+	}
 }
