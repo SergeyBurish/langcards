@@ -31,6 +31,7 @@ import lc.cardSet.CardSet;
 import lc.editView.EditView;
 import lc.langCardsException.LangCardsException;
 
+import lc.lessonView.LessonView;
 import org.apache.commons.io.FilenameUtils;
 import org.xml.sax.SAXException;
 
@@ -144,12 +145,15 @@ public class LCmain extends JFrame {
 		// load the last set, otherwise create new
 		try {
 			NewOpen(null);
-			setEditMode();
 		}
 		catch (XPathExpressionException e)	{ShowErr(e);return;}
 		catch (LangCardsException e)			{ShowErr(e);return;}
 		catch (SAXException e)				{ShowErr(e);return;}
 		catch (IOException e)				{ShowErr(e);return;}
+
+		// initial state
+		iState = State.EDIT;
+		setViewBounds();
 
 		CreateMenu();
 
@@ -377,13 +381,44 @@ public class LCmain extends JFrame {
 	}
 
 	private void NewOpen(File file) throws XPathExpressionException, LangCardsException, IOException, SAXException {
-		iCardSet = (file == null) ? new CardSet() : new CardSet(file);
+		if (file != null) {
+			iCardSet = new CardSet(file);
+		}
+
+		showEdit();
+	}
+
+	public void showEdit() throws XPathExpressionException, LangCardsException {
+		if (iCardSet == null) {
+			iCardSet = new CardSet();
+		}
 		ChangeSetNameInTitle(iCardSet.Name());
 
 		EditView editView = new EditView(iCardSet);
 		editView.Show();
+
+		if (iState == State.LESSON) {
+			saveLessonSizes();
+			iState = State.EDIT;
+			setViewBounds();
+		}
 	}
-	
+
+	public void showLesson() throws XPathExpressionException, LangCardsException {
+		if (iCardSet == null) {
+			throw new LangCardsException("Lesson can't be started: card set isn't ready");
+		}
+
+		LessonView lessonView = new LessonView(iCardSet);
+		lessonView.Show();
+
+		if (iState == State.EDIT) {
+			saveEditSizes();
+			iState = State.LESSON;
+			setViewBounds();
+		}
+	}
+
 	public void SetFileFilterPrompt(String ffPrompt) {
 		if (iFilefilter != null) {
 			iFileChooser.removeChoosableFileFilter(iFilefilter);
@@ -401,36 +436,24 @@ public class LCmain extends JFrame {
 		setTitle(setName + " - " + LC_TITLE);
 	}
 
-	public void setEditMode() {
-		iState = State.EDIT;
-		setViewBounds();
-	}
-
-	public void setLessonMode() {
-		iState = State.LESSON;
-		setViewBounds();
-	}
-
 	private void setViewBounds() {
 		if (iSettings == null) {
 			iSettings = LCutils.loadSettings();
 		}
 
-		if (iSettings != null) {
-			switch (iState) {
-				case EDIT:
-					if (iSettings.editWidth > 0 && iSettings.editHeight > 0) {
-						mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.editWidth, iSettings.editHeight);
-						return;
-					}
-					break;
-				case LESSON:
-					if (iSettings.lessonWidth > 0 && iSettings.lessonHeight > 0) {
-						mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.lessonWidth, iSettings.lessonHeight);
-						return;
-					}
-					break;
-			}
+		switch (iState) {
+			case EDIT:
+				if (iSettings.editWidth > 0 && iSettings.editHeight > 0) {
+					mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.editWidth, iSettings.editHeight);
+					return;
+				}
+				break;
+			case LESSON:
+				if (iSettings.lessonWidth > 0 && iSettings.lessonHeight > 0) {
+					mainFrame.setBounds(iSettings.xPos, iSettings.yPos, iSettings.lessonWidth, iSettings.lessonHeight);
+					return;
+				}
+				break;
 		}
 
 		mainFrame.pack();
@@ -438,10 +461,19 @@ public class LCmain extends JFrame {
 
 	public void saveEditSizes() {
 		if (iSettings == null) {
-			iSettings = new LCutils.Settings();
+			iSettings = LCutils.loadSettings();
 		}
 		Rectangle frameBounds = getBounds();
 		iSettings.editWidth = frameBounds.width;
 		iSettings.editHeight = frameBounds.height;
+	}
+
+	public void saveLessonSizes() {
+		if (iSettings == null) {
+			iSettings = LCutils.loadSettings();
+		}
+		Rectangle frameBounds = getBounds();
+		iSettings.lessonWidth = frameBounds.width;
+		iSettings.lessonHeight = frameBounds.height;
 	}
 }
