@@ -92,6 +92,12 @@ public class LessonView {
 		iCorrectAnswersTextPane.setEditable(false);
 
 		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
+		finishLessonBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ShowResults();
+			}
+		});
 		
 		iAnswerStatusLabel = new JLabel(LCutils.String("Question_mark"), iPondering, JLabel.CENTER);
 		iAnswerStatusLabel.setVerticalTextPosition(JLabel.TOP);
@@ -140,6 +146,38 @@ public class LessonView {
 		);
 		
 		NextCard();
+	}
+
+	private void ShowResults() {
+		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
+
+		JLabel label = new JLabel("Lesson is over");
+		JButton button = new JButton(LCutils.String("Edit_cards"));
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				//LangCardsException
+
+				try {
+					LCmain.mainFrame.showEdit();
+				}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+			}
+		});
+
+		LCmain.mainFrame.iLayout.setHorizontalGroup(
+				LCmain.mainFrame.iLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(label)
+						.addComponent(button)
+		);
+
+		LCmain.mainFrame.iLayout.setVerticalGroup(
+				LCmain.mainFrame.iLayout.createSequentialGroup()
+						.addComponent(label)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(button)
+		);
 	}
 
 	private void VerifyAnswer(String answer) throws LangCardsException, XPathExpressionException, TransformerException {

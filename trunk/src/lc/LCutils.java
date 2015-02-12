@@ -279,11 +279,11 @@ public class LCutils {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			LOGGER.info("fail to load settings: " + e.getMessage());
-			return null;
+			return new Settings();
 		} catch (IOException e) {
 			LOGGER.info("fail to load settings: " + e.getMessage());
 			e.printStackTrace();
-			return null;
+			return new Settings();
 		}
 
 		Settings settings = new Settings();
@@ -297,7 +297,7 @@ public class LCutils {
 		} catch (NumberFormatException e) {
 			LOGGER.info("fail to parse settings: " + e.getMessage());
 			e.printStackTrace();
-			return null;
+			return new Settings();
 		}
 
 		return settings;

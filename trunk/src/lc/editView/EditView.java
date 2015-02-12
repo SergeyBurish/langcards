@@ -142,10 +142,7 @@ public class EditView {
 				}
 
 				try {
-					LCmain.mainFrame.saveEditSizes();
-					LessonView lessonView = new LessonView(iSet);
-					lessonView.Show();
-					LCmain.mainFrame.setLessonMode();
+					LCmain.mainFrame.showLesson();
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
 				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
