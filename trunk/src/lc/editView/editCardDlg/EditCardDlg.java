@@ -69,10 +69,9 @@ public class EditCardDlg extends JDialog {
 			}
 		}
 		else {
-		iLngFrstNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true)); // \n" + "3333\n"  + "4444
+			iLngFrstNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
 		}
 
-		
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
 
 		int scndPhraseCount = iLngCard.ScndPhraseCount();
@@ -83,7 +82,7 @@ public class EditCardDlg extends JDialog {
 			}
 		}
 		else {
-		iLngScndNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
+			iLngScndNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
 		}
 		
 		rootNode.add(iLngFrstNode);
@@ -163,12 +162,12 @@ public class EditCardDlg extends JDialog {
 				ExTreeNode node;
 				for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngFrstNode.getChildAt(i);
-					iLngCard.AddFrstPhrase(new LngPhrase(node.toString()));
+					iLngCard.AddFrstPhrase(new LngPhrase(node.getChangedString()));
 				}
 
 				for (int i = 0; i < iLngScndNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngScndNode.getChildAt(i);
-					iLngCard.AddScndPhrase(new LngPhrase(node.toString()));
+					iLngCard.AddScndPhrase(new LngPhrase(node.getChangedString()));
 				}
 
 				iAccepted = true;

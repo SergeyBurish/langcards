@@ -12,12 +12,14 @@ import javax.swing.tree.DefaultTreeModel;
 
 import lc.LCmain;
 import lc.LCutils;
+import lc.controls.TextPaneWithDefault;
 
 public class MultiLineCellEditor extends DefaultCellEditor {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	static ExTextPane iTextPane;
 	DefaultTreeModel iModel;
 	ExTreeNode iNode = null;
+	private boolean textChanged;
 
 	public MultiLineCellEditor(DefaultTreeModel model) {
 		super(new JTextField());
@@ -26,22 +28,31 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 	}
 
 	private ExTextPane createTextPane(String defaultString, String currentValue) {
-		ExTextPane textPane =
-		new ExTextPane(new ExTextPaneListener() {
-			@Override
-			public void enterTyped() {
-				stopCellEditing();
-			}
+		ExTextPane textPane = new ExTextPane(
+				new ExTextPaneListener() {
+					@Override
+					public void enterTyped() {
+						stopCellEditing();
+					}
 
-			@Override
-			public void ctrlEnterTyped() {
-				try {
-					iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
-				} catch (BadLocationException e) {
-					LCmain.mainFrame.ShowErr(e);
-				}
-			}
-		}, defaultString, currentValue, null);
+					@Override
+					public void ctrlEnterTyped() {
+						try {
+							iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
+						} catch (BadLocationException e) {
+							LCmain.mainFrame.ShowErr(e);
+						}
+					}
+				}, defaultString, currentValue,
+				new TextPaneWithDefault.TypingStateListener() {
+					@Override
+					public void textChanged(boolean changed) {
+						textChanged = changed;
+						if (iNode != null) {
+							iNode.setChanged(textChanged);
+						}
+					}
+				});
 
 		textPane.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
@@ -92,6 +103,7 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 
 		if (value instanceof ExTreeNode) {
 			iNode = (ExTreeNode)value;
+			iNode.setChanged(textChanged);
 		}
 		
 		return iTextPane;

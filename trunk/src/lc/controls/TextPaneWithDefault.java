@@ -14,11 +14,17 @@ public class TextPaneWithDefault extends JTextPane {
 	private AttributeSet attributeSet = null;
 
 	public interface TypingStateListener {
-		public void typingStarted();
-		public void typingStopped();
+		public void textChanged(boolean changed);
 	}
 
 	TypingStateListener typingStateListener = null;
+
+	public void setTyping(boolean typing) {
+		this.typing = typing;
+		if (typingStateListener != null) {
+			typingStateListener.textChanged(typing);
+		}
+	}
 
 	public TextPaneWithDefault(String defaultString, TypingStateListener listener) {
 		this(defaultString, null, listener);
@@ -30,11 +36,11 @@ public class TextPaneWithDefault extends JTextPane {
 
 		if (currentValue != null && currentValue.length() > 0) {
 			setText(currentValue);
-			typing = true;
+			setTyping(true);
 			setForeground(getSelectedTextColor());
 		} else {
 			setText(this.defaultString);
-			typing = false;
+			setTyping(false);
 			setForeground(getDisabledTextColor());
 			setCaretPosition(0);
 		}
@@ -50,19 +56,16 @@ public class TextPaneWithDefault extends JTextPane {
 
 		Document doc = getDocument();
 		if (doc instanceof AbstractDocument) {
-			((AbstractDocument)doc).setDocumentFilter(new DocumentFilter(){
+			((AbstractDocument) doc).setDocumentFilter(new DocumentFilter() {
 				@Override
 				public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
 					if (!typing) {
-						typing = true;
+						setTyping(true);
 						attributeSet = attrs;
 
 						super.replace(fb, 0, TextPaneWithDefault.this.getText().length(), text, attrs);
 						TextPaneWithDefault.this.setForeground(TextPaneWithDefault.this.getSelectedTextColor());
-
-						if (typingStateListener != null) typingStateListener.typingStarted();
-					}
-					else {
+					} else {
 						super.replace(fb, offset, length, text, attrs);
 					}
 				}
@@ -76,15 +79,12 @@ public class TextPaneWithDefault extends JTextPane {
 							super.insertString(fb, 0, TextPaneWithDefault.this.defaultString, TextPaneWithDefault.this.attributeSet);
 							TextPaneWithDefault.this.setForeground(TextPaneWithDefault.this.getDisabledTextColor());
 							TextPaneWithDefault.this.setCaretPosition(0);
-
-							typing = false;
-							if (typingStateListener != null) typingStateListener.typingStopped();
+							setTyping(false);
 						}
 					}
 				}
 			});
-		}
-		else {
+		} else {
 			LOGGER.warning("fail to properly initialize TextPaneWithDefault");
 		}
 	}
