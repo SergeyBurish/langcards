@@ -464,6 +464,8 @@ public class LCmain extends JFrame {
 			iSettings = LCutils.loadSettings();
 		}
 		Rectangle frameBounds = getBounds();
+		iSettings.xPos = frameBounds.x;
+		iSettings.yPos = frameBounds.y;
 		iSettings.editWidth = frameBounds.width;
 		iSettings.editHeight = frameBounds.height;
 	}
@@ -473,6 +475,8 @@ public class LCmain extends JFrame {
 			iSettings = LCutils.loadSettings();
 		}
 		Rectangle frameBounds = getBounds();
+		iSettings.xPos = frameBounds.x;
+		iSettings.yPos = frameBounds.y;
 		iSettings.lessonWidth = frameBounds.width;
 		iSettings.lessonHeight = frameBounds.height;
 	}
