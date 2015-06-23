@@ -27,6 +27,10 @@ public class LCutils {
 	private static final String EDIT_HEIGHT = "editHeight";
 	private static final String LESSON_WIDTH = "lessonWidth";
 	private static final String LESSON_HEIGHT = "lessonHeight";
+	private static final String DIALOG_X_POS = "dialogXpos";
+	private static final String DIALOG_Y_POS = "dialogYpos";
+	private static final String DIALOG_WIDTH = "dialogWidth";
+	private static final String DIALOG_HEIGHT = "dialogHeight";
 
 	private static String iCurrentLocaleString;
 	private static ResourceBundle iResourceBundle;
@@ -60,6 +64,11 @@ public class LCutils {
 		public int editHeight;
 		public int lessonWidth;
 		public int lessonHeight;
+
+		public int dialogXpos;
+		public int dialogYpos;
+		public int dialogWidth;
+		public int dialogHeight;
 	}
 
 	public static String CurrentLocaleString() {
@@ -255,6 +264,10 @@ public class LCutils {
 		props.setProperty(EDIT_HEIGHT, Integer.toString(settings.editHeight));
 		props.setProperty(LESSON_WIDTH, Integer.toString(settings.lessonWidth));
 		props.setProperty(LESSON_HEIGHT, Integer.toString(settings.lessonHeight));
+		props.setProperty(DIALOG_X_POS, Integer.toString(settings.dialogXpos));
+		props.setProperty(DIALOG_Y_POS, Integer.toString(settings.dialogYpos));
+		props.setProperty(DIALOG_WIDTH, Integer.toString(settings.dialogWidth));
+		props.setProperty(DIALOG_HEIGHT, Integer.toString(settings.dialogHeight));
 
 		try {
 			FileOutputStream output = new FileOutputStream(SETTINGS_FILE_NAME);
@@ -294,6 +307,10 @@ public class LCutils {
 			settings.editHeight = Integer.parseInt(props.getProperty(EDIT_HEIGHT, ""));
 			settings.lessonWidth = Integer.parseInt(props.getProperty(LESSON_WIDTH, ""));
 			settings.lessonHeight = Integer.parseInt(props.getProperty(LESSON_HEIGHT, ""));
+			settings.dialogXpos = Integer.parseInt(props.getProperty(DIALOG_X_POS, ""));
+			settings.dialogYpos = Integer.parseInt(props.getProperty(DIALOG_Y_POS, ""));
+			settings.dialogWidth = Integer.parseInt(props.getProperty(DIALOG_WIDTH, ""));
+			settings.dialogHeight = Integer.parseInt(props.getProperty(DIALOG_HEIGHT, ""));
 		} catch (NumberFormatException e) {
 			LOGGER.info("fail to parse settings: " + e.getMessage());
 			e.printStackTrace();

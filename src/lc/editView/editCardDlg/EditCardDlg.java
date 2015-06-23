@@ -1,32 +1,23 @@
 package lc.editView.editCardDlg;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import lc.LCmain;
+import lc.LCutils;
+import lc.cardSet.lngCard.LngCard;
+import lc.cardSet.lngPhrase.LngPhrase;
+import lc.editView.editCardDlg.exTree.ExTree;
+import lc.editView.editCardDlg.exTree.ExTreeNode;
+import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
+import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
+import lc.langCardsException.LangCardsException;
 
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.LayoutStyle;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-
-import lc.LCmain;
-import lc.LCutils;
-
-import lc.cardSet.lngCard.LngCard;
-import lc.cardSet.lngPhrase.LngPhrase;
-
-import lc.editView.editCardDlg.exTree.ExTree;
-import lc.editView.editCardDlg.exTree.MultiLineCellEditor;
-import lc.editView.editCardDlg.exTree.MultiLineCellRenderer;
-import lc.editView.editCardDlg.exTree.ExTreeNode;
-import lc.langCardsException.LangCardsException;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class EditCardDlg extends JDialog {
 	ExTreeNode rootNode = new ExTreeNode(LCutils.String("New_Card"), false);
@@ -181,17 +172,32 @@ public class EditCardDlg extends JDialog {
 	
 	// JDialog
 	@Override
-	public void setVisible(boolean b) {
-		try {
-			InitControls();
-			InitLayout();
-			super.setVisible(b);
-		} catch (LangCardsException e) {
-			LCmain.mainFrame.ShowErr(e);
+	public void setVisible(boolean visible) {
+		if (visible) {
+			try {
+				InitControls();
+				InitLayout();
+
+				LCutils.Settings settings = LCmain.getSettings();
+				if (settings != null && settings.dialogWidth > 0 && settings.dialogHeight > 0) {
+					this.setBounds(settings.dialogXpos, settings.dialogYpos, settings.dialogWidth, settings.dialogHeight);
+				}
+			} catch (LangCardsException e) {
+				LCmain.mainFrame.ShowErr(e);
+			}
 		}
+		super.setVisible(visible);
 	}
 	
 	public Boolean Accepted() {
+		LCutils.Settings settings = LCmain.getSettings();
+		if (settings != null) {
+			Rectangle frameBounds = getBounds();
+			settings.dialogXpos = frameBounds.x;
+			settings.dialogYpos = frameBounds.y;
+			settings.dialogWidth = frameBounds.width;
+			settings.dialogHeight = frameBounds.height;
+		}
 		return iAccepted;
 	}
 }

@@ -480,4 +480,11 @@ public class LCmain extends JFrame {
 		iSettings.lessonWidth = frameBounds.width;
 		iSettings.lessonHeight = frameBounds.height;
 	}
+
+	public static LCutils.Settings getSettings() {
+		if (iSettings == null) {
+			iSettings = LCutils.loadSettings();
+		}
+		return iSettings;
+	}
 }
