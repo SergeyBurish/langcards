@@ -42,6 +42,7 @@ public class EditCardDlg extends JDialog {
 		iLngCard = lngCard;
 		
 		LCmain.mainFrame.AddToCloseArray(this);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
 	public void SetLanguages(String langFrst, String langScnd) {
@@ -166,11 +167,22 @@ public class EditCardDlg extends JDialog {
 				dispose();
 			}
 		});
-		
-		pack();
 	}
-	
-	// JDialog
+
+	@Override
+	public void dispose() {
+		LCutils.Settings settings = LCmain.getSettings();
+		if (settings != null) {
+			Rectangle frameBounds = getBounds();
+			settings.dialogXpos = frameBounds.x;
+			settings.dialogYpos = frameBounds.y;
+			settings.dialogWidth = frameBounds.width;
+			settings.dialogHeight = frameBounds.height;
+		}
+
+		super.dispose();
+	}
+
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
@@ -181,6 +193,8 @@ public class EditCardDlg extends JDialog {
 				LCutils.Settings settings = LCmain.getSettings();
 				if (settings != null && settings.dialogWidth > 0 && settings.dialogHeight > 0) {
 					this.setBounds(settings.dialogXpos, settings.dialogYpos, settings.dialogWidth, settings.dialogHeight);
+				} else {
+					pack();
 				}
 			} catch (LangCardsException e) {
 				LCmain.mainFrame.ShowErr(e);
@@ -190,14 +204,10 @@ public class EditCardDlg extends JDialog {
 	}
 	
 	public Boolean Accepted() {
-		LCutils.Settings settings = LCmain.getSettings();
-		if (settings != null) {
-			Rectangle frameBounds = getBounds();
-			settings.dialogXpos = frameBounds.x;
-			settings.dialogYpos = frameBounds.y;
-			settings.dialogWidth = frameBounds.width;
-			settings.dialogHeight = frameBounds.height;
-		}
 		return iAccepted;
+	}
+
+	public LngCard getLngCard() {
+		return iLngCard;
 	}
 }
