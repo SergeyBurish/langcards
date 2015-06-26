@@ -1,7 +1,6 @@
 package lc.editView.editCardDlg.exTree;
 
 import java.awt.Component;
-import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -15,7 +14,6 @@ import lc.LCutils;
 import lc.controls.TextPaneWithDefault;
 
 public class MultiLineCellEditor extends DefaultCellEditor {
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	static ExTextPane iTextPane;
 	DefaultTreeModel iModel;
 	ExTreeNode iNode = null;

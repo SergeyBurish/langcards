@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
-import java.util.logging.Logger;
 
 public class MultiLineCellRenderer implements TreeCellRenderer {
 	private static final int GAP_WIDTH = 4;
@@ -15,8 +14,6 @@ public class MultiLineCellRenderer implements TreeCellRenderer {
 	protected JLabel icon;
 	protected TreeTextArea text;
 
-	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
 	public MultiLineCellRenderer() {
 	}
 
@@ -62,10 +59,21 @@ public class MultiLineCellRenderer implements TreeCellRenderer {
 			icon.setIcon(UIManager.getIcon("Tree.closedIcon"));
 		}
 
+		ExTreeNode node = null;
+		if (value instanceof ExTreeNode) {
+			node = (ExTreeNode)value;
+		}
+
 		if (LCutils.String("Type_new_word_or_phrase_here").contentEquals(stringValue)) {
 			text.setForeground(text.getDisabledTextColor());
+			if (node != null) {
+				node.setChanged(false);
+			}
 		} else {
 			text.setForeground(text.getSelectedTextColor());
+			if (node != null) {
+				node.setChanged(true);
+			}
 		}
 
 		return panel;
