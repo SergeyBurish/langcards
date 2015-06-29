@@ -21,7 +21,7 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 
 	public MultiLineCellEditor(DefaultTreeModel model) {
 		super(new JTextField());
-		iTextPane = createTextPane(LCutils.String("Type_new_word_or_phrase_here"), null);
+		iTextPane = createTextPane(LCutils.string("Type_new_word_or_phrase_here"), null);
 		iModel = model;
 	}
 
@@ -38,7 +38,7 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 						try {
 							iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
 						} catch (BadLocationException e) {
-							LCmain.mainFrame.ShowErr(e);
+							LCmain.mainFrame.showErr(e);
 						}
 					}
 				}, defaultString, currentValue,
@@ -55,25 +55,25 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 		textPane.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent documentEvent) {
-				UpdateSizes();
+				updateSizes();
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent documentEvent) {
-				UpdateSizes();
+				updateSizes();
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent documentEvent) {
-				UpdateSizes();
+				updateSizes();
 			}
 		});
 
 		return textPane;
 	}
 
-	private void UpdateSizes() {
-		iTextPane.UpdateSize();
+	private void updateSizes() {
+		iTextPane.updateSize();
 		
 		if (iModel != null && iNode != null) {
 			iModel.nodeChanged(iNode);
@@ -91,7 +91,7 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 
 		String stringValue = tree.convertValueToText(value, isSelected, expanded, leaf, row, true);
-		String defaultString = LCutils.String("Type_new_word_or_phrase_here");
+		String defaultString = LCutils.string("Type_new_word_or_phrase_here");
 
 		if (defaultString.contentEquals(stringValue)) {
 			iTextPane = createTextPane(defaultString, null);

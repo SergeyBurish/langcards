@@ -19,13 +19,13 @@ public class Lesson {
 		iCards = iSet.getLessonCardsList();
 	}
 	
-	public LngCard NextCard() throws XPathExpressionException, LangCardsException {
+	public LngCard nextCard() throws XPathExpressionException, LangCardsException {
 		Node nextNode = iCards.item(iPos++);
-		return iSet.XmlNodeToLngCard(nextNode);
+		return iSet.xmlNodeToLngCard(nextNode);
 	}
 	
-	public int CurrentCardPos() {
-		return iPos;		
+	public int currentCardPos() {
+		return iPos;
 	}
 
 	public void markCorrect(LngCard lngCard) throws XPathExpressionException, LangCardsException, TransformerException {

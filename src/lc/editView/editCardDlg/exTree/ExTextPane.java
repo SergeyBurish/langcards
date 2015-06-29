@@ -15,7 +15,7 @@ public class ExTextPane extends TextPaneWithDefault {
 		exTextPaneListener = tpListener;
 	}
 	
-	public void UpdateSize() {
+	public void updateSize() {
 		String str = getText();
 		iDummy.setText(str);
 		Dimension d = iDummy.getPreferredSize();

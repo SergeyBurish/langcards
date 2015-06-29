@@ -64,7 +64,7 @@ public class MultiLineCellRenderer implements TreeCellRenderer {
 			node = (ExTreeNode)value;
 		}
 
-		if (LCutils.String("Type_new_word_or_phrase_here").contentEquals(stringValue)) {
+		if (LCutils.string("Type_new_word_or_phrase_here").contentEquals(stringValue)) {
 			text.setForeground(text.getDisabledTextColor());
 			if (node != null) {
 				node.setChanged(false);

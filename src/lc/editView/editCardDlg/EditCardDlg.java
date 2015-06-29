@@ -20,10 +20,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EditCardDlg extends JDialog {
-	ExTreeNode rootNode = new ExTreeNode(LCutils.String("New_Card"), false);
+	ExTreeNode rootNode = new ExTreeNode(LCutils.string("New_Card"), false);
 	DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
 	ExTree iTree = new ExTree(iModel);
-	JButton iOkBtn = new JButton(LCutils.String("Save"));
+	JButton iOkBtn = new JButton(LCutils.string("Save"));
 	JLabel iStatusLbl = new JLabel("Test");
 	JScrollPane iTreeScrollPane;
 	
@@ -38,43 +38,43 @@ public class EditCardDlg extends JDialog {
 	Boolean iAccepted = false;
 	
 	public EditCardDlg(JFrame parent, LngCard lngCard) {
-		super(parent, lngCard.id().isEmpty() ? LCutils.String("New_Card") : "card " + lngCard.id(), true);
+		super(parent, lngCard.id().isEmpty() ? LCutils.string("New_Card") : "card " + lngCard.id(), true);
 		iLngCard = lngCard;
 		
-		LCmain.mainFrame.AddToCloseArray(this);
+		LCmain.mainFrame.addToCloseArray(this);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 	
-	public void SetLanguages(String langFrst, String langScnd) {
+	public void setLanguages(String langFrst, String langScnd) {
 		iLangFrst = langFrst;
 		iLangScnd = langScnd;
 	}
 	
-	private void InitControls() throws LangCardsException {
+	private void initControls() throws LangCardsException {
 		iLngFrstNode = new ExTreeNode(iLangFrst, false);
 
-		int frstPhraseCount = iLngCard.FrstPhraseCount();
+		int frstPhraseCount = iLngCard.frstPhraseCount();
 		if (frstPhraseCount > 0) {
 			for (int i = 0; i < frstPhraseCount; i++) {
-				LngPhrase lngPhrase = iLngCard.GetFrstPhrase(i);
+				LngPhrase lngPhrase = iLngCard.getFrstPhrase(i);
 				iLngFrstNode.add(new ExTreeNode(lngPhrase.iValue, true));
 			}
 		}
 		else {
-			iLngFrstNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
+			iLngFrstNode.add(new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true));
 		}
 
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
 
-		int scndPhraseCount = iLngCard.ScndPhraseCount();
+		int scndPhraseCount = iLngCard.scndPhraseCount();
 		if (scndPhraseCount > 0) {
 			for (int i = 0; i < scndPhraseCount; i++) {
-				LngPhrase lngPhrase = iLngCard.GetScndPhrase(i);
+				LngPhrase lngPhrase = iLngCard.getScndPhrase(i);
 				iLngScndNode.add(new ExTreeNode(lngPhrase.iValue, true));
 			}
 		}
 		else {
-			iLngScndNode.add(new ExTreeNode(LCutils.String("Type_new_word_or_phrase_here"), true));
+			iLngScndNode.add(new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true));
 		}
 		
 		rootNode.add(iLngFrstNode);
@@ -116,7 +116,7 @@ public class EditCardDlg extends JDialog {
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 	}
 	
-	private void InitLayout() {
+	private void initLayout() {
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		
@@ -156,16 +156,16 @@ public class EditCardDlg extends JDialog {
 				ExTreeNode node;
 				for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngFrstNode.getChildAt(i);
-					iLngCard.AddFrstPhrase(new LngPhrase(node.getChangedString()));
+					iLngCard.addFrstPhrase(new LngPhrase(node.getChangedString()));
 				}
 
 				for (int i = 0; i < iLngScndNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngScndNode.getChildAt(i);
-					iLngCard.AddScndPhrase(new LngPhrase(node.getChangedString()));
+					iLngCard.addScndPhrase(new LngPhrase(node.getChangedString()));
 				}
 
 				iAccepted = true;
-				LCmain.mainFrame.RemoveFromCloseArray(self);
+				LCmain.mainFrame.removeFromCloseArray(self);
 				dispose();
 			}
 		});
@@ -189,8 +189,8 @@ public class EditCardDlg extends JDialog {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			try {
-				InitControls();
-				InitLayout();
+				initControls();
+				initLayout();
 
 				LCutils.Settings settings = LCmain.getSettings();
 				if (settings != null && settings.dialogWidth > 0 && settings.dialogHeight > 0) {
@@ -199,13 +199,13 @@ public class EditCardDlg extends JDialog {
 					pack();
 				}
 			} catch (LangCardsException e) {
-				LCmain.mainFrame.ShowErr(e);
+				LCmain.mainFrame.showErr(e);
 			}
 		}
 		super.setVisible(visible);
 	}
 	
-	public Boolean Accepted() {
+	public Boolean accepted() {
 		return iAccepted;
 	}
 

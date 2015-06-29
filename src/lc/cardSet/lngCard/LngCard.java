@@ -20,36 +20,36 @@ public class LngCard {
 		iScndPrases = new ArrayList<LngPhrase>();
 	}
 	
-	public void AddFrstPhrase(LngPhrase lngPhrase) {
+	public void addFrstPhrase(LngPhrase lngPhrase) {
 		iFrstPrases.add(lngPhrase);
 	}
 	
-	public void AddScndPhrase(LngPhrase lngPhrase) {
+	public void addScndPhrase(LngPhrase lngPhrase) {
 		iScndPrases.add(lngPhrase);
 	}
 	
-	public int FrstPhraseCount() {
+	public int frstPhraseCount() {
 		return iFrstPrases.size();
 	}
 	
-	public int ScndPhraseCount() {
+	public int scndPhraseCount() {
 		return iScndPrases.size();
 	}
 	
-	public LngPhrase GetFrstPhrase(int i) throws LangCardsException {
+	public LngPhrase getFrstPhrase(int i) throws LangCardsException {
 		if (i >= 0 && i < iFrstPrases.size()) {
 			return iFrstPrases.get(i);
 		}
 		
-		throw new LangCardsException("GetFrstPhrase: out of bounds");
+		throw new LangCardsException("getFrstPhrase: out of bounds");
 	}
 	
-	public LngPhrase GetScndPhrase(int i) throws LangCardsException {
+	public LngPhrase getScndPhrase(int i) throws LangCardsException {
 		if (i < iScndPrases.size()) {
 			return iScndPrases.get(i);
 		}
 		
-		throw new LangCardsException("GetScndPhrase: out of bounds");
+		throw new LangCardsException("getScndPhrase: out of bounds");
 	}
 
 	public String id() {

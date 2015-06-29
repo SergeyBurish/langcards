@@ -46,12 +46,12 @@ public class LessonView {
 		iSet = set;
 		iLesson = iSet.newLesson();
 		
-		iNegative = LCutils.Image("Negative.png");
-		iPondering = LCutils.Image("Pondering.png");
-		iPositive = LCutils.Image("Positive.png");
+		iNegative = LCutils.image("Negative.png");
+		iPondering = LCutils.image("Pondering.png");
+		iPositive = LCutils.image("Positive.png");
 	}
 	
-	public void Show() throws LangCardsException, XPathExpressionException {
+	public void show() throws LangCardsException, XPathExpressionException {
 		
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 		
@@ -66,40 +66,40 @@ public class LessonView {
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-		iVerifyNextBtn = new JButton(LCutils.String("Verify"));
+		iVerifyNextBtn = new JButton(LCutils.string("Verify"));
 		iVerifyNextBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
 					switch (iLessonStatus) {
 						case ANSWER_TYPING:
-							VerifyAnswer(iAnswerTextPane.getText());
+							verifyAnswer(iAnswerTextPane.getText());
 							break;
 
 						default: // ANSWERED
-							NextCard();
+							nextCard();
 					}
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
-				catch (TransformerException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
+				catch (TransformerException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 
-		iAnswerTextPane = new TextPaneWithDefault(LCutils.String("Type_your_variant_of_translation_here"), null);
+		iAnswerTextPane = new TextPaneWithDefault(LCutils.string("Type_your_variant_of_translation_here"), null);
 		iCorrectAnswersTextPane = new JTextPane();
-		iCorrectAnswersTextPane.setText(LCutils.String("Correct_answers"));
+		iCorrectAnswersTextPane.setText(LCutils.string("Correct_answers"));
 		iCorrectAnswersTextPane.setEditable(false);
 
-		JButton finishLessonBtn = new JButton(LCutils.String("Finish_Lesson"));
+		JButton finishLessonBtn = new JButton(LCutils.string("Finish_Lesson"));
 		finishLessonBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ShowResults();
+				showResults();
 			}
 		});
 		
-		iAnswerStatusLabel = new JLabel(LCutils.String("Question_mark"), iPondering, JLabel.CENTER);
+		iAnswerStatusLabel = new JLabel(LCutils.string("Question_mark"), iPondering, JLabel.CENTER);
 		iAnswerStatusLabel.setVerticalTextPosition(JLabel.TOP);
 		iAnswerStatusLabel.setHorizontalTextPosition(JLabel.CENTER);
 
@@ -145,14 +145,14 @@ public class LessonView {
 						)
 		);
 		
-		NextCard();
+		nextCard();
 	}
 
-	private void ShowResults() {
+	private void showResults() {
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 
 		JLabel label = new JLabel("Lesson is over");
-		JButton button = new JButton(LCutils.String("Edit_cards"));
+		JButton button = new JButton(LCutils.string("Edit_cards"));
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -161,8 +161,8 @@ public class LessonView {
 				try {
 					LCmain.mainFrame.showEdit();
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 
@@ -180,14 +180,14 @@ public class LessonView {
 		);
 	}
 
-	private void VerifyAnswer(String answer) throws LangCardsException, XPathExpressionException, TransformerException {
+	private void verifyAnswer(String answer) throws LangCardsException, XPathExpressionException, TransformerException {
 		if (iCurrentCard == null) throw new LangCardsException("No lesson cards");
 
 		String correctAnswers = "";
 		boolean correct = false;
-		for (int i = 0; i < iCurrentCard.ScndPhraseCount(); i++) {
+		for (int i = 0; i < iCurrentCard.scndPhraseCount(); i++) {
 
-			final String value = iCurrentCard.GetScndPhrase(i).iValue;
+			final String value = iCurrentCard.getScndPhrase(i).iValue;
 			correctAnswers += String.format("%d) %s; ", i+1, value);
 
 			String s = value.toLowerCase().trim();
@@ -196,20 +196,20 @@ public class LessonView {
 			}
 		}
 
-		iCorrectAnswersTextPane.setText(LCutils.String("Correct_answers") + correctAnswers);
+		iCorrectAnswersTextPane.setText(LCutils.string("Correct_answers") + correctAnswers);
 
 		if (correct) {
-			iAnswerStatusLabel.setText(LCutils.String("Correct"));
+			iAnswerStatusLabel.setText(LCutils.string("Correct"));
 			iAnswerStatusLabel.setIcon(iPositive);
 			iLesson.markCorrect(iCurrentCard);
 		}
 		else {
-			iAnswerStatusLabel.setText(LCutils.String("Wrong"));
+			iAnswerStatusLabel.setText(LCutils.string("Wrong"));
 			iAnswerStatusLabel.setIcon(iNegative);
 			iLesson.markWrong(iCurrentCard);
 		}
 
-		iVerifyNextBtn.setText(LCutils.String("Next_Card"));
+		iVerifyNextBtn.setText(LCutils.string("Next_Card"));
 		if (iLesson.unansweredCount() == 0) {
 			iVerifyNextBtn.setEnabled(false);
 		}
@@ -218,33 +218,33 @@ public class LessonView {
 		iAnswerTextPane.setEditable(false);
 	}
 
-	private void NextCard() throws XPathExpressionException, LangCardsException {
-		iCurrentCard = iLesson.NextCard();
+	private void nextCard() throws XPathExpressionException, LangCardsException {
+		iCurrentCard = iLesson.nextCard();
 		if (iCurrentCard == null) {
 			throw new LangCardsException("No lesson cards");
 		}
 		
-		iCardNode.setUserObject(LCutils.String("Card") + " " + iLesson.CurrentCardPos());
+		iCardNode.setUserObject(LCutils.string("Card") + " " + iLesson.currentCardPos());
 		iCardNode.removeAllChildren();
 		
-		for (int i = 0; i < iCurrentCard.FrstPhraseCount(); i++) {
-			ExTreeNode phraseNode = LngPhraseToTreeNode(iCurrentCard.GetFrstPhrase(i));
+		for (int i = 0; i < iCurrentCard.frstPhraseCount(); i++) {
+			ExTreeNode phraseNode = lngPhraseToTreeNode(iCurrentCard.getFrstPhrase(i));
 			iCardNode.add(phraseNode);
 		}
 		
 		iTree.updateUI();
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 
-		iCorrectAnswersTextPane.setText(LCutils.String("Correct_answers"));
-		iVerifyNextBtn.setText(LCutils.String("Verify"));
+		iCorrectAnswersTextPane.setText(LCutils.string("Correct_answers"));
+		iVerifyNextBtn.setText(LCutils.string("Verify"));
 		iLessonStatus = LessonStatus.ANSWER_TYPING;
 		iAnswerTextPane.setEditable(true);
 		iAnswerTextPane.setText("");
-		iAnswerStatusLabel.setText(LCutils.String("Question_mark"));
+		iAnswerStatusLabel.setText(LCutils.string("Question_mark"));
 		iAnswerStatusLabel.setIcon(iPondering);
 	}
 	
-	private ExTreeNode LngPhraseToTreeNode(LngPhrase phrase) {
+	private ExTreeNode lngPhraseToTreeNode(LngPhrase phrase) {
 		ExTreeNode phraseNode = new ExTreeNode(phrase.iValue, false);
 		
 		if (phrase.iTranscription != null && !phrase.iTranscription.isEmpty()) {
@@ -253,7 +253,7 @@ public class LessonView {
 		}
 
 		if (phrase.iExamples.size() > 0) {
-			ExTreeNode examples = new ExTreeNode(LCutils.String("Examples"), false);
+			ExTreeNode examples = new ExTreeNode(LCutils.string("Examples"), false);
 			for (int j = 0; j < phrase.iExamples.size(); j++) {
 				ExTreeNode exampleNode = new ExTreeNode(phrase.iExamples.get(j), false);
 				examples.add(exampleNode);

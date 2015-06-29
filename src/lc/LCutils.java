@@ -36,7 +36,7 @@ public class LCutils {
 	private static ResourceBundle iResourceBundle;
 	
 	private interface SearchResourceListener{
-		Object OnFind(Object param);
+		Object onFind(Object param);
 	}
 	
 	public static class LanguageResourceItem{
@@ -71,11 +71,11 @@ public class LCutils {
 		public int dialogHeight;
 	}
 
-	public static String CurrentLocaleString() {
+	public static String currentLocaleString() {
 		return iCurrentLocaleString;
 	}
 	
-	public static int GetCurrentLocaleIndexOfList(Collection<LanguageResourceItem> langListModel) {
+	public static int getCurrentLocaleIndexOfList(Collection<LanguageResourceItem> langListModel) {
 		int i = 0;
 		for (LanguageResourceItem languageResourceItem : langListModel) {
 			if (languageResourceItem.localeString().equals(iCurrentLocaleString)) {
@@ -86,7 +86,7 @@ public class LCutils {
 		return 0;
 	}
 	
-	public static void SetLocale(String localeString) {
+	public static void setLocale(String localeString) {
 		String[] localeStringsArr = localeString.split("_");
 		
 		Locale locale = null;
@@ -110,18 +110,18 @@ public class LCutils {
 		
 		if (locale != null) {
 			iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", locale);
-			LOGGER.info("SetLocale: " + iResourceBundle.getLocale().toString());
+			LOGGER.info("setLocale: " + iResourceBundle.getLocale().toString());
 			
 			iCurrentLocaleString = localeString;
 		}
 	}
 
 	// current locale string
-	public static String String(String key) {
+	public static String string(String key) {
 		return iResourceBundle.getString(key);
 	}
 	
-	public static ImageIcon Image(String imgName) {
+	public static ImageIcon image(String imgName) {
 		java.net.URL imgURL = LCmain.class.getResource("/resources/images/" + imgName);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, "");
@@ -151,7 +151,7 @@ public class LCutils {
 						new SearchResourceListener() {
 
 							@Override
-							public Object OnFind(Object fileName) {
+							public Object onFind(Object fileName) {
 								String baseName = FilenameUtils
 										.getBaseName((String) fileName);
 								LanguageResourceItem langItem = itemOfStringResource(baseName);
@@ -218,7 +218,7 @@ public class LCutils {
 				resourcesList.add(fileName);
 
 				if (listener != null) {
-					listener.OnFind(fileName);
+					listener.onFind(fileName);
 				}
 			}
 		}
@@ -246,7 +246,7 @@ public class LCutils {
 						resourcesList.add(fileName);
 
 						if (listener != null) {
-							listener.OnFind(fileName);
+							listener.onFind(fileName);
 						}
 					}
 				}

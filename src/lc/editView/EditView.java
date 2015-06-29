@@ -23,11 +23,11 @@ public class EditView {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	CardSet iSet;
 	
-	JButton iBtAdd = new JButton(LCutils.String("Add"));
-	JButton iBtDel = new JButton(LCutils.String("Delete"));
-	JButton iBtEd = new JButton(LCutils.String("Edit"));
+	JButton iBtAdd = new JButton(LCutils.string("Add"));
+	JButton iBtDel = new JButton(LCutils.string("Delete"));
+	JButton iBtEd = new JButton(LCutils.string("Edit"));
 	
-	JButton iBtStart = new JButton(LCutils.String("Start_lesson"));
+	JButton iBtStart = new JButton(LCutils.string("Start_lesson"));
 
 	NotEditableTableModel iTableModelState = new NotEditableTableModel();
 	JTable iTableState;
@@ -48,19 +48,19 @@ public class EditView {
 					LngCard lngCard = new LngCard();
 
 					EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
-					newCardDlg.SetLanguages(iSet.LanguageFrst(), iSet.LanguageScnd());
+					newCardDlg.setLanguages(iSet.languageFrst(), iSet.languageScnd());
 					newCardDlg.setVisible(true);
 
-					if (newCardDlg.Accepted()) {
+					if (newCardDlg.accepted()) {
 						iSet.addNewCard(lngCard);
-						UpdateTable();
-						UpdateStateTable();
-						ScrollTableToShowRaw(iTableModel.getRowCount() - 1);
+						updateTable();
+						updateStateTable();
+						scrollTableToShowRaw(iTableModel.getRowCount() - 1);
 					}
 
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 
@@ -73,12 +73,12 @@ public class EditView {
 					if (selectedRow >= 0) {
 						String cardId = (String) iTableModel.getValueAt(selectedRow, 0);
 						iSet.deleteCard(cardId);
-						UpdateTable();
-						UpdateStateTable();
+						updateTable();
+						updateStateTable();
 					}
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 
@@ -93,17 +93,17 @@ public class EditView {
 						LngCard lngCard = iSet.getCard(cardId);
 
 						EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
-						newCardDlg.SetLanguages(iSet.LanguageFrst(), iSet.LanguageScnd());
+						newCardDlg.setLanguages(iSet.languageFrst(), iSet.languageScnd());
 						newCardDlg.setVisible(true);
 
-						if (newCardDlg.Accepted()) {
+						if (newCardDlg.accepted()) {
 							iSet.saveCard(lngCard);
-							UpdateTable();
+							updateTable();
 						}
 					}
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 
@@ -113,11 +113,11 @@ public class EditView {
 			public void actionPerformed(ActionEvent event) {
 				if (!iSet.isSaved()) {
 
-					Object[] options = {LCutils.String("Save_and_start_lesson"),
-							LCutils.String("Cancel_and_continue_edit")};
+					Object[] options = {LCutils.string("Save_and_start_lesson"),
+							LCutils.string("Cancel_and_continue_edit")};
 					int result = JOptionPane.showOptionDialog(LCmain.mainFrame,
-							LCutils.String("All_changes_should_be_saved_before_the_start_of_the_lesson"),
-							LCutils.String("Unsaved_changes_in_the_set"),
+							LCutils.string("All_changes_should_be_saved_before_the_start_of_the_lesson"),
+							LCutils.string("Unsaved_changes_in_the_set"),
 							JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE,
 							null,
@@ -140,23 +140,23 @@ public class EditView {
 				try {
 					LCmain.mainFrame.showLesson();
 				}
-				catch (XPathExpressionException e)	{LCmain.mainFrame.ShowErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.ShowErr(e);}
+				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 	}
 
-	public void Show() throws XPathExpressionException, LangCardsException {
+	public void show() throws XPathExpressionException, LangCardsException {
 		LCmain.mainFrame.iContainer.removeAll(); // remove all ui controls
 
 		JPanel panState = makeStatePanel();
-		iTabbedPane.addTab(LCutils.String("State"), panState);
+		iTabbedPane.addTab(LCutils.string("State"), panState);
 
 		JPanel panCards = makeCardsPanel();
-		iTabbedPane.addTab(LCutils.String("Cards"), panCards);
+		iTabbedPane.addTab(LCutils.string("Cards"), panCards);
 
 		JPanel panSett = makeSettingsPanel();
-		iTabbedPane.addTab(LCutils.String("Settings"), panSett);
+		iTabbedPane.addTab(LCutils.string("Settings"), panSett);
 
 		iTabbedPane.setSelectedIndex(1); // select Cards panel
 
@@ -178,7 +178,7 @@ public class EditView {
 		JPanel panel = new JPanel(false);
 		
 		iTableState = new JTable(iTableModelState);
-		UpdateStateTable();
+		updateStateTable();
 		
 		JScrollPane sp = new JScrollPane(iTableState);
 		
@@ -192,7 +192,7 @@ public class EditView {
 		JPanel panel = new JPanel(false);
 		
 		iTable = new JTable(iTableModel);
-		UpdateTable();
+		updateTable();
 		
 		JScrollPane sp = new JScrollPane(iTable);
 		
@@ -248,7 +248,7 @@ public class EditView {
 			langListModel.add(new LanguageResourceItem("English (English)", "en_EN"));
 		}
 		else {
-			currentLangInd = LCutils.GetCurrentLocaleIndexOfList(langListModel);
+			currentLangInd = LCutils.getCurrentLocaleIndexOfList(langListModel);
 		}
 		
 		JComboBox<LanguageResourceItem> langListCombobox = new JComboBox<LanguageResourceItem>(langListModel);
@@ -261,9 +261,9 @@ public class EditView {
 				JComboBox comboBox = (JComboBox)event.getSource();
 				LanguageResourceItem item = (LanguageResourceItem)comboBox.getSelectedItem();
 				
-				if (!item.localeString().equals(LCutils.CurrentLocaleString())) {
+				if (!item.localeString().equals(LCutils.currentLocaleString())) {
 					LOGGER.info("a new language selected: " + item + "; locale: " + item.localeString());
-					ChangeUiLanguage(item.localeString());
+					changeUiLanguage(item.localeString());
 				}
 			}
 		});
@@ -280,52 +280,52 @@ public class EditView {
 		return panel;
 	}
 	
-	private void UpdateStateTable() throws XPathExpressionException{
+	private void updateStateTable() throws XPathExpressionException{
 		
 		Vector<Vector<String>> rows=new Vector<Vector<String>>();
 		
 		Vector<String> rowVect=new Vector<String>();
-		rowVect.addElement(LCutils.String("Total_number"));
-		rowVect.addElement(Integer.toString(iSet.CardsCount()));
+		rowVect.addElement(LCutils.string("Total_number"));
+		rowVect.addElement(Integer.toString(iSet.cardsCount()));
 		rows.addElement(rowVect);
 		
 		rowVect=new Vector<String>();
-		rowVect.addElement(LCutils.String("Learned"));
+		rowVect.addElement(LCutils.string("Learned"));
 		rowVect.addElement("0");
 		rows.addElement(rowVect);
 
 		rowVect=new Vector<String>();
-		rowVect.addElement(LCutils.String("Idle"));
+		rowVect.addElement(LCutils.string("Idle"));
 		rowVect.addElement("0");
 		rows.addElement(rowVect);
 		
 		
 		Vector<String> columns= new Vector<String>();
-		columns.addElement(LCutils.String("Status"));
-		columns.addElement(LCutils.String("Quantity"));
+		columns.addElement(LCutils.string("Status"));
+		columns.addElement(LCutils.string("Quantity"));
 		
 		iTableModelState.setDataVector(rows, columns);
 	}
 	
-	private void UpdateTable() throws XPathExpressionException, LangCardsException {
+	private void updateTable() throws XPathExpressionException, LangCardsException {
 		
-		Vector<Vector<String>> rows = iSet.GetAllCardsIdFrstScnd();
+		Vector<Vector<String>> rows = iSet.getAllCardsIdFrstScnd();
 		Vector<String> columns= new Vector<String>();
 		
 		columns.addElement("#");
-		columns.addElement(iSet.LanguageFrst());
-		columns.addElement(iSet.LanguageScnd());
+		columns.addElement(iSet.languageFrst());
+		columns.addElement(iSet.languageScnd());
 		
 		iTableModel.setDataVector(rows, columns);
 	}
 	
-	private void ScrollTableToShowRaw(int row) {
+	private void scrollTableToShowRaw(int row) {
 		Rectangle r = iTable.getCellRect(row, 0, true);
 		iTable.scrollRectToVisible(r);
 	}
 	
-	private void ChangeUiLanguage(String localeString) {
-		LCutils.SetLocale(localeString);
+	private void changeUiLanguage(String localeString) {
+		LCutils.setLocale(localeString);
 		
 		//recreate all invisible elements
 		try {
@@ -339,21 +339,21 @@ public class EditView {
 		
 		// rename all visible elements
 		if (iSet.unnamed()) {
-			iSet.SetName(LCutils.String("Unnamed"));
-			LCmain.mainFrame.ChangeSetNameInTitle(iSet.Name());
+			iSet.setName(LCutils.string("Unnamed"));
+			LCmain.mainFrame.changeSetNameInTitle(iSet.name());
 		}
 
-		LCmain.mainFrame.SetFileFilterPrompt(LCutils.String("Language_Cards_file"));
-		LCmain.mainFrame.CreateMenu();
+		LCmain.mainFrame.setFileFilterPrompt(LCutils.string("Language_Cards_file"));
+		LCmain.mainFrame.createMenu();
 		
-		iTabbedPane.setTitleAt(0, LCutils.String("State"));
-		iTabbedPane.setTitleAt(1, LCutils.String("Cards"));
-		iTabbedPane.setTitleAt(2, LCutils.String("Settings"));
+		iTabbedPane.setTitleAt(0, LCutils.string("State"));
+		iTabbedPane.setTitleAt(1, LCutils.string("Cards"));
+		iTabbedPane.setTitleAt(2, LCutils.string("Settings"));
 		
-		iBtAdd.setText(LCutils.String("Add"));
-		iBtDel.setText(LCutils.String("Delete"));
-		iBtEd.setText(LCutils.String("Edit"));
-		iBtStart.setText(LCutils.String("Start_lesson"));
+		iBtAdd.setText(LCutils.string("Add"));
+		iBtDel.setText(LCutils.string("Delete"));
+		iBtEd.setText(LCutils.string("Edit"));
+		iBtStart.setText(LCutils.string("Start_lesson"));
 	}
 
 	private class NotEditableTableModel  extends DefaultTableModel{
