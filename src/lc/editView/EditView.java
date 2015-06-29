@@ -1,19 +1,5 @@
 package lc.editView;
 
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.xml.xpath.XPathExpressionException;
-
 import lc.LCmain;
 import lc.LCutils;
 import lc.LCutils.LanguageResourceItem;
@@ -21,7 +7,17 @@ import lc.cardSet.CardSet;
 import lc.cardSet.lngCard.LngCard;
 import lc.editView.editCardDlg.EditCardDlg;
 import lc.langCardsException.LangCardsException;
-import lc.lessonView.LessonView;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.xpath.XPathExpressionException;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 public class EditView {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -32,11 +28,11 @@ public class EditView {
 	JButton iBtEd = new JButton(LCutils.String("Edit"));
 	
 	JButton iBtStart = new JButton(LCutils.String("Start_lesson"));
-	
-	DefaultTableModel iTableModelState = new DefaultTableModel();
+
+	NotEditableTableModel iTableModelState = new NotEditableTableModel();
 	JTable iTableState;
 	
-	DefaultTableModel iTableModel = new DefaultTableModel();
+	NotEditableTableModel iTableModel = new NotEditableTableModel();
 	JTable iTable;
 	
 	JTabbedPane iTabbedPane = new JTabbedPane();
@@ -358,5 +354,12 @@ public class EditView {
 		iBtDel.setText(LCutils.String("Delete"));
 		iBtEd.setText(LCutils.String("Edit"));
 		iBtStart.setText(LCutils.String("Start_lesson"));
+	}
+
+	private class NotEditableTableModel  extends DefaultTableModel{
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
 	}
 }
