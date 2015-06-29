@@ -148,6 +148,8 @@ public class EditCardDlg extends JDialog {
 		iOkBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				iTree.stopEditing();
+
 				// Verify(); // - check, display corresponding error;
 				iLngCard.clear();
 
