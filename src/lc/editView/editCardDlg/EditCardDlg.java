@@ -14,10 +14,13 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class EditCardDlg extends JDialog {
 	ExTreeNode rootNode = new ExTreeNode(LCutils.string("New_Card"), false);
@@ -57,11 +60,15 @@ public class EditCardDlg extends JDialog {
 		if (frstPhraseCount > 0) {
 			for (int i = 0; i < frstPhraseCount; i++) {
 				LngPhrase lngPhrase = iLngCard.getFrstPhrase(i);
-				iLngFrstNode.add(new ExTreeNode(lngPhrase.iValue, true));
+				ExTreeNode nodePhrase = new ExTreeNode(lngPhrase.iValue, true);
+				nodePhrase.setPopupMenu(newPhrasePopupMenu());
+				iLngFrstNode.add(nodePhrase);
 			}
 		}
 		else {
-			iLngFrstNode.add(new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true));
+			ExTreeNode nodePhrase = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true);
+			nodePhrase.setPopupMenu(newPhrasePopupMenu());
+			iLngFrstNode.add(nodePhrase);
 		}
 
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
@@ -70,11 +77,15 @@ public class EditCardDlg extends JDialog {
 		if (scndPhraseCount > 0) {
 			for (int i = 0; i < scndPhraseCount; i++) {
 				LngPhrase lngPhrase = iLngCard.getScndPhrase(i);
-				iLngScndNode.add(new ExTreeNode(lngPhrase.iValue, true));
+				ExTreeNode nodePhrase = new ExTreeNode(lngPhrase.iValue, true);
+				nodePhrase.setPopupMenu(newPhrasePopupMenu());
+				iLngScndNode.add(nodePhrase);
 			}
 		}
 		else {
-			iLngScndNode.add(new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true));
+			ExTreeNode nodePhrase = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true);
+			nodePhrase.setPopupMenu(newPhrasePopupMenu());
+			iLngScndNode.add(nodePhrase);
 		}
 		
 		rootNode.add(iLngFrstNode);
@@ -109,13 +120,54 @@ public class EditCardDlg extends JDialog {
 			}
 		});
 		iTree.setInvokesStopCellEditing(true);
+
+		iTree.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int button = e.getButton();
+				if (button  == MouseEvent.BUTTON3) {
+					TreePath selectedPath = iTree.getPathForLocation(e.getX(), e.getY());
+					if (selectedPath != null) {
+						Object selectedComponent = selectedPath.getLastPathComponent();
+						if (selectedComponent instanceof ExTreeNode) {
+							ExTreeNode node = (ExTreeNode) selectedComponent;
+							node.showPopupMenu(iTree, e);
+						}
+					}
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+		});
 		
 		iTreeScrollPane = new JScrollPane(iTree);
 		
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 	}
-	
+
+	private JPopupMenu newPhrasePopupMenu() {
+		JPopupMenu popup = new JPopupMenu();
+		popup.add(new JMenuItem(LCutils.string("Add_transcription")));
+		popup.add(new JMenuItem(LCutils.string("Add_example")));
+
+		return popup;
+	}
+
 	private void initLayout() {
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);

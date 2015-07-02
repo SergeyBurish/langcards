@@ -1,10 +1,13 @@
 package lc.editView.editCardDlg.exTree;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.event.MouseEvent;
 
 public class ExTreeNode extends DefaultMutableTreeNode {
 	private boolean iEditable;
 	private boolean changed;
+	private JPopupMenu iPopupMenu = null;
 
 	public ExTreeNode (Object userObject, boolean editable) {
 		super(userObject);
@@ -24,5 +27,15 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 			return super.toString();
 		}
 		return "";
+	}
+
+	public void showPopupMenu(JTree tree, MouseEvent event) {
+		if (changed && iPopupMenu != null) {
+			iPopupMenu.show(tree, event.getX(), event.getY());
+		}
+	}
+
+	public void setPopupMenu(JPopupMenu popupMenu) {
+		iPopupMenu = popupMenu;
 	}
 }
