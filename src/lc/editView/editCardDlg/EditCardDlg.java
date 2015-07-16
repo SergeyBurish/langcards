@@ -43,7 +43,11 @@ public class EditCardDlg extends JDialog {
 	public EditCardDlg(JFrame parent, LngCard lngCard) {
 		super(parent, lngCard.id().isEmpty() ? LCutils.string("New_Card") : "card " + lngCard.id(), true);
 		iLngCard = lngCard;
-		
+
+		if (!lngCard.id().isEmpty()) {
+			rootNode.setUserObject("card " + lngCard.id());
+		}
+
 		LCmain.mainFrame.addToCloseArray(this);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
