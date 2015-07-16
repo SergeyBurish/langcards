@@ -1,17 +1,15 @@
 package lc.editView.editCardDlg.exTree;
 
-import java.awt.Component;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import lc.LCmain;
+import lc.LCutils;
+import lc.controls.TextPaneWithDefault;
+
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultTreeModel;
-
-import lc.LCmain;
-import lc.LCutils;
-import lc.controls.TextPaneWithDefault;
+import java.awt.*;
 
 public class MultiLineCellEditor extends DefaultCellEditor {
 	static ExTextPane iTextPane;
@@ -105,5 +103,14 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 		}
 		
 		return iTextPane;
+	}
+
+	@Override
+	public boolean stopCellEditing() {
+		if (iNode != null) {
+			iNode.stopNodeEditing();
+		}
+
+		return super.stopCellEditing();
 	}
 }

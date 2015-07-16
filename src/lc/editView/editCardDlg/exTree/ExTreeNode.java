@@ -8,10 +8,16 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 	private boolean iEditable;
 	private boolean changed;
 	private JPopupMenu iPopupMenu = null;
+	private ExTreeNodeListener listener = null;
 
 	public ExTreeNode (Object userObject, boolean editable) {
+		this(userObject, editable, null);
+	}
+
+	public ExTreeNode (Object userObject, boolean editable, ExTreeNodeListener listener) {
 		super(userObject);
 		iEditable = editable;
+		this.listener = listener;
 	}
 	
 	public boolean isEditable() {
@@ -37,5 +43,15 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 
 	public void setPopupMenu(JPopupMenu popupMenu) {
 		iPopupMenu = popupMenu;
+	}
+
+	public void stopNodeEditing() {
+		if (listener != null) {
+			listener.onStopNodeEditing();
+		}
+	}
+
+	public interface ExTreeNodeListener {
+		void onStopNodeEditing();
 	}
 }

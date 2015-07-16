@@ -60,15 +60,11 @@ public class EditCardDlg extends JDialog {
 		if (frstPhraseCount > 0) {
 			for (int i = 0; i < frstPhraseCount; i++) {
 				LngPhrase lngPhrase = iLngCard.getFrstPhrase(i);
-				ExTreeNode nodePhrase = new ExTreeNode(lngPhrase.iValue, true);
-				nodePhrase.setPopupMenu(newPhrasePopupMenu());
-				iLngFrstNode.add(nodePhrase);
+				addPhrase(lngPhrase, iLngFrstNode);
 			}
 		}
 		else {
-			ExTreeNode nodePhrase = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true);
-			nodePhrase.setPopupMenu(newPhrasePopupMenu());
-			iLngFrstNode.add(nodePhrase);
+			addPhrase(null, iLngFrstNode);
 		}
 
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
@@ -77,15 +73,11 @@ public class EditCardDlg extends JDialog {
 		if (scndPhraseCount > 0) {
 			for (int i = 0; i < scndPhraseCount; i++) {
 				LngPhrase lngPhrase = iLngCard.getScndPhrase(i);
-				ExTreeNode nodePhrase = new ExTreeNode(lngPhrase.iValue, true);
-				nodePhrase.setPopupMenu(newPhrasePopupMenu());
-				iLngScndNode.add(nodePhrase);
+				addPhrase(lngPhrase, iLngScndNode);
 			}
 		}
 		else {
-			ExTreeNode nodePhrase = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true);
-			nodePhrase.setPopupMenu(newPhrasePopupMenu());
-			iLngScndNode.add(nodePhrase);
+			addPhrase(null, iLngScndNode);
 		}
 		
 		rootNode.add(iLngFrstNode);
@@ -158,6 +150,54 @@ public class EditCardDlg extends JDialog {
 		
 		// correct sizes
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
+	}
+
+	private void addPhrase(LngPhrase lngPhrase, ExTreeNode lngNode) {
+		String phraseValue;
+		if (lngPhrase != null) {
+			phraseValue = lngPhrase.iValue;
+		} else {
+			phraseValue = LCutils.string("Type_new_word_or_phrase_here");
+		}
+
+		ExTreeNode nodePhrase = new ExTreeNode(phraseValue, true, new ExTreeNode.ExTreeNodeListener() {
+			@Override
+			public void onStopNodeEditing() {
+				addEmptyPhrase(lngNode);
+			}
+		});
+
+		nodePhrase.setPopupMenu(newPhrasePopupMenu());
+		lngNode.add(nodePhrase);
+	}
+
+	private void addEmptyPhrase(ExTreeNode lngNode) {
+
+		boolean hasEmpty = false;
+		for (int i = 0; i < lngNode.getChildCount(); i++) {
+			Object child = lngNode.getChildAt(i);
+			if (child instanceof ExTreeNode) {
+				ExTreeNode node = (ExTreeNode) child;
+
+				String changedString = node.getChangedString();
+				if (changedString.isEmpty()) {
+					hasEmpty = true;
+					break;
+				}
+			}
+		}
+
+		if (!hasEmpty) {
+			ExTreeNode emptyNode = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
+				@Override
+				public void onStopNodeEditing() {
+					addEmptyPhrase(lngNode);
+				}
+			});
+
+			iModel.insertNodeInto(emptyNode, lngNode, lngNode.getChildCount());
+			//iModel.reload(emptyNode);
+		}
 	}
 
 	private JPopupMenu newPhrasePopupMenu() {
