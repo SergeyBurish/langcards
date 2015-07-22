@@ -164,7 +164,7 @@ public class EditCardDlg extends JDialog {
 			phraseValue = LCutils.string("Type_new_word_or_phrase_here");
 		}
 
-		ExTreeNode nodePhrase = new ExTreeNode(phraseValue, true, new ExTreeNode.ExTreeNodeListener() {
+		ExTreeNode nodePhrase = new ExTreeNode(phraseValue, LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
 			@Override
 			public void onStopNodeEditing() {
 				addEmptyPhrase(lngNode);
@@ -172,7 +172,9 @@ public class EditCardDlg extends JDialog {
 		});
 
 		nodePhrase.setPopupMenu(newPhrasePopupMenu());
-		lngNode.add(nodePhrase);
+
+		iModel.insertNodeInto(nodePhrase, lngNode, lngNode.getChildCount());
+		//iModel.reload(emptyNode);
 	}
 
 	private void addEmptyPhrase(ExTreeNode lngNode) {
@@ -192,7 +194,7 @@ public class EditCardDlg extends JDialog {
 		}
 
 		if (!hasEmpty) {
-			ExTreeNode emptyNode = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
+			ExTreeNode emptyNode = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
 				@Override
 				public void onStopNodeEditing() {
 					addEmptyPhrase(lngNode);

@@ -1,7 +1,5 @@
 package lc.editView.editCardDlg.exTree;
 
-import lc.LCutils;
-
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.TreeCellRenderer;
@@ -60,11 +58,13 @@ public class MultiLineCellRenderer implements TreeCellRenderer {
 		}
 
 		ExTreeNode node = null;
+		String defaultString = null;
 		if (value instanceof ExTreeNode) {
 			node = (ExTreeNode)value;
+			defaultString = node.getDefaultString();
 		}
 
-		if (LCutils.string("Type_new_word_or_phrase_here").contentEquals(stringValue)) {
+		if (defaultString != null && defaultString.contentEquals(stringValue)) {
 			text.setForeground(text.getDisabledTextColor());
 			if (node != null) {
 				node.setChanged(false);

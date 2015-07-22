@@ -1,7 +1,6 @@
 package lc.editView.editCardDlg.exTree;
 
 import lc.LCmain;
-import lc.LCutils;
 import lc.controls.TextPaneWithDefault;
 
 import javax.swing.*;
@@ -19,7 +18,6 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 
 	public MultiLineCellEditor(DefaultTreeModel model) {
 		super(new JTextField());
-		iTextPane = createTextPane(LCutils.string("Type_new_word_or_phrase_here"), null);
 		iModel = model;
 	}
 
@@ -34,7 +32,9 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 					@Override
 					public void ctrlEnterTyped() {
 						try {
-							iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
+							if (iTextPane != null) {
+								iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
+							}
 						} catch (BadLocationException e) {
 							LCmain.mainFrame.showErr(e);
 						}
@@ -89,7 +89,13 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 
 		String stringValue = tree.convertValueToText(value, isSelected, expanded, leaf, row, true);
-		String defaultString = LCutils.string("Type_new_word_or_phrase_here");
+		String defaultString = null;
+
+		if (value instanceof ExTreeNode) {
+			iNode = (ExTreeNode)value;
+			iNode.setChanged(textChanged);
+			defaultString = iNode.getDefaultString();
+		}
 
 		if (defaultString.contentEquals(stringValue)) {
 			iTextPane = createTextPane(defaultString, null);
@@ -97,11 +103,6 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 			iTextPane = createTextPane(defaultString, stringValue);
 		}
 
-		if (value instanceof ExTreeNode) {
-			iNode = (ExTreeNode)value;
-			iNode.setChanged(textChanged);
-		}
-		
 		return iTextPane;
 	}
 

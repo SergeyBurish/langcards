@@ -5,17 +5,19 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.event.MouseEvent;
 
 public class ExTreeNode extends DefaultMutableTreeNode {
+	private String defaultString = null;
 	private boolean iEditable;
 	private boolean changed;
 	private JPopupMenu iPopupMenu = null;
 	private ExTreeNodeListener listener = null;
 
 	public ExTreeNode (Object userObject, boolean editable) {
-		this(userObject, editable, null);
+		this(userObject, null, editable, null);
 	}
 
-	public ExTreeNode (Object userObject, boolean editable, ExTreeNodeListener listener) {
+	public ExTreeNode (Object userObject, String defaultString, boolean editable, ExTreeNodeListener listener) {
 		super(userObject);
+		this.defaultString = defaultString;
 		iEditable = editable;
 		this.listener = listener;
 	}
@@ -49,6 +51,10 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 		if (listener != null) {
 			listener.onStopNodeEditing();
 		}
+	}
+
+	public String getDefaultString() {
+		return defaultString;
 	}
 
 	public interface ExTreeNodeListener {
