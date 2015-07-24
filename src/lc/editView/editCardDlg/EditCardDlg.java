@@ -66,6 +66,7 @@ public class EditCardDlg extends JDialog {
 				LngPhrase lngPhrase = iLngCard.getFrstPhrase(i);
 				addPhrase(lngPhrase, iLngFrstNode);
 			}
+			addPhrase(null, iLngFrstNode);
 		}
 		else {
 			addPhrase(null, iLngFrstNode);
@@ -79,6 +80,7 @@ public class EditCardDlg extends JDialog {
 				LngPhrase lngPhrase = iLngCard.getScndPhrase(i);
 				addPhrase(lngPhrase, iLngScndNode);
 			}
+			addPhrase(null, iLngScndNode);
 		}
 		else {
 			addPhrase(null, iLngScndNode);
@@ -254,12 +256,18 @@ public class EditCardDlg extends JDialog {
 				ExTreeNode node;
 				for (int i = 0; i < iLngFrstNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngFrstNode.getChildAt(i);
-					iLngCard.addFrstPhrase(new LngPhrase(node.getChangedString()));
+					String changedString = node.getChangedString();
+					if (!changedString.isEmpty()) {
+						iLngCard.addFrstPhrase(new LngPhrase(changedString));
+					}
 				}
 
 				for (int i = 0; i < iLngScndNode.getChildCount(); i++) {
 					node = (ExTreeNode)iLngScndNode.getChildAt(i);
-					iLngCard.addScndPhrase(new LngPhrase(node.getChangedString()));
+					String changedString = node.getChangedString();
+					if (!changedString.isEmpty()) {
+						iLngCard.addScndPhrase(new LngPhrase(changedString));
+					}
 				}
 
 				iAccepted = true;
