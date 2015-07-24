@@ -208,6 +208,8 @@ public class EditCardDlg extends JDialog {
 				}
 			});
 
+			emptyNode.setPopupMenu(newPhrasePopupMenu());
+
 			iModel.insertNodeInto(emptyNode, lngNode, lngNode.getChildCount());
 			//iModel.reload(emptyNode);
 		}
