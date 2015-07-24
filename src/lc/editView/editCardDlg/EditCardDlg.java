@@ -168,8 +168,8 @@ public class EditCardDlg extends JDialog {
 
 		ExTreeNode nodePhrase = new ExTreeNode(phraseValue, LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
 			@Override
-			public void onStopNodeEditing() {
-				addEmptyPhrase(lngNode);
+			public void onStopNodeEditing(ExTreeNode changedNode) {
+				addRemoveEmptyPhrase(lngNode, changedNode);
 			}
 		});
 
@@ -179,7 +179,7 @@ public class EditCardDlg extends JDialog {
 		//iModel.reload(emptyNode);
 	}
 
-	private void addEmptyPhrase(ExTreeNode lngNode) {
+	private void addRemoveEmptyPhrase(ExTreeNode lngNode, ExTreeNode changedNode) {
 
 		boolean hasEmpty = false;
 		for (int i = 0; i < lngNode.getChildCount(); i++) {
@@ -190,7 +190,12 @@ public class EditCardDlg extends JDialog {
 				String changedString = node.getChangedString();
 				if (changedString.isEmpty()) {
 					hasEmpty = true;
-					break;
+
+					if (changedNode.getChangedString().isEmpty() && changedNode != node) {
+						iModel.removeNodeFromParent(node);
+						//iModel.reload(emptyNode);
+						return;
+					}
 				}
 			}
 		}
@@ -198,8 +203,8 @@ public class EditCardDlg extends JDialog {
 		if (!hasEmpty) {
 			ExTreeNode emptyNode = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
 				@Override
-				public void onStopNodeEditing() {
-					addEmptyPhrase(lngNode);
+				public void onStopNodeEditing(ExTreeNode changedNode) {
+					addRemoveEmptyPhrase(lngNode, changedNode);
 				}
 			});
 

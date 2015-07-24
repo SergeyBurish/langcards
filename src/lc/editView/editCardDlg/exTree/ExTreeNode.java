@@ -49,7 +49,7 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 
 	public void stopNodeEditing() {
 		if (listener != null) {
-			listener.onStopNodeEditing();
+			listener.onStopNodeEditing(this);
 		}
 	}
 
@@ -58,6 +58,6 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 	}
 
 	public interface ExTreeNodeListener {
-		void onStopNodeEditing();
+		void onStopNodeEditing(ExTreeNode changedNode);
 	}
 }
