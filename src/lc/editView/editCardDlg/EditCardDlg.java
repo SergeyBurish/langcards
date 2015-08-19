@@ -13,6 +13,7 @@ import lc.langCardsException.LangCardsException;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -66,11 +67,8 @@ public class EditCardDlg extends JDialog {
 				LngPhrase lngPhrase = iLngCard.getFrstPhrase(i);
 				addPhrase(lngPhrase, iLngFrstNode);
 			}
-			addPhrase(null, iLngFrstNode);
 		}
-		else {
-			addPhrase(null, iLngFrstNode);
-		}
+		addPhrase(null, iLngFrstNode);
 
 		iLngScndNode = new ExTreeNode(iLangScnd, false);
 
@@ -80,22 +78,30 @@ public class EditCardDlg extends JDialog {
 				LngPhrase lngPhrase = iLngCard.getScndPhrase(i);
 				addPhrase(lngPhrase, iLngScndNode);
 			}
-			addPhrase(null, iLngScndNode);
 		}
-		else {
-			addPhrase(null, iLngScndNode);
-		}
+		addPhrase(null, iLngScndNode);
 		
 		rootNode.add(iLngFrstNode);
 		rootNode.add(iLngScndNode);
 
 		iTree.setCellRenderer(new MultiLineCellRenderer());
 		iTree.setCellEditor(new MultiLineCellEditor(iModel));
-		//expand all nodes
-		for (int i = 0; i < iTree.getRowCount(); i++) {
-			iTree.expandRow(i);
+
+		//expand all nodes but Transcription and Examples
+		Object root = iModel.getRoot();
+		DefaultMutableTreeNode treeTop = null;
+		if (root instanceof DefaultMutableTreeNode) {
+			treeTop = (DefaultMutableTreeNode) root;
+
+			DefaultMutableTreeNode currentNode = treeTop.getNextNode();
+			do {
+				if (currentNode.getLevel() < 2)
+					iTree.expandPath(new TreePath(currentNode.getPath()));
+				currentNode = currentNode.getNextNode();
+			}
+			while (currentNode != null);
 		}
-		
+
 		//iTree.setToggleClickCount(1);
 		iTree.setEditable(true);
 		iTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -169,21 +175,54 @@ public class EditCardDlg extends JDialog {
 		ExTreeNode nodePhrase = new ExTreeNode(phraseValue, LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
 			@Override
 			public void onStopNodeEditing(ExTreeNode changedNode) {
-				addRemoveEmptyPhrase(lngNode, changedNode);
+				onStopPhraseEditing(lngNode, changedNode);
 			}
 		});
 
-		nodePhrase.setPopupMenu(newPhrasePopupMenu());
+		//nodePhrase.setPopupMenu(newPhrasePopupMenu());
 
 		iModel.insertNodeInto(nodePhrase, lngNode, lngNode.getChildCount());
-		//iModel.reload(emptyNode);
+		//iModel.reload(nodePhrase);
+
+		if (lngPhrase != null) {
+			addTranscriptionAndExamples(nodePhrase, lngPhrase);
+		}
 	}
 
-	private void addRemoveEmptyPhrase(ExTreeNode lngNode, ExTreeNode changedNode) {
+	private void onStopPhraseEditing(ExTreeNode lngNode, ExTreeNode changedNode) {
+		if (changedNode.getChangedString().isEmpty()) {
+			for (int i = changedNode.getChildCount() - 1; i >= 0; i--) {
+				Object child = changedNode.getChildAt(i);
+				if (child instanceof DefaultMutableTreeNode) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) child;
+					iModel.removeNodeFromParent(node);
+				}
+			}
+		} else if (changedNode.getChildCount() == 0) {
+			addTranscriptionAndExamples(changedNode, null);
+		}
 
+		addRemoveEmptyNode(lngNode, changedNode, LCutils.string("Type_new_word_or_phrase_here"), new ExTreeNode.ExTreeNodeListener() {
+			@Override
+			public void onStopNodeEditing(ExTreeNode changedNode) {
+				onStopPhraseEditing(lngNode, changedNode);
+			}
+		});
+	}
+
+	private void onStopExampleEditing(ExTreeNode nodeExamples, ExTreeNode changedNode) {
+		addRemoveEmptyNode(nodeExamples, changedNode, LCutils.string("Example_can_be_added_here"), new ExTreeNode.ExTreeNodeListener() {
+			@Override
+			public void onStopNodeEditing(ExTreeNode changedNode) {
+				onStopExampleEditing(nodeExamples, changedNode);
+			}
+		});
+	}
+
+	private void addRemoveEmptyNode(ExTreeNode parentNode, ExTreeNode changedNode, String emptyNodeString, ExTreeNode.ExTreeNodeListener emptyNodeListener) {
 		boolean hasEmpty = false;
-		for (int i = 0; i < lngNode.getChildCount(); i++) {
-			Object child = lngNode.getChildAt(i);
+		for (int i = 0; i < parentNode.getChildCount(); i++) {
+			Object child = parentNode.getChildAt(i);
 			if (child instanceof ExTreeNode) {
 				ExTreeNode node = (ExTreeNode) child;
 
@@ -201,18 +240,54 @@ public class EditCardDlg extends JDialog {
 		}
 
 		if (!hasEmpty) {
-			ExTreeNode emptyNode = new ExTreeNode(LCutils.string("Type_new_word_or_phrase_here"), LCutils.string("Type_new_word_or_phrase_here"), true, new ExTreeNode.ExTreeNodeListener() {
-				@Override
-				public void onStopNodeEditing(ExTreeNode changedNode) {
-					addRemoveEmptyPhrase(lngNode, changedNode);
-				}
-			});
+			ExTreeNode emptyNode = new ExTreeNode(emptyNodeString, emptyNodeString, true, emptyNodeListener);
+			//emptyNode.setPopupMenu(newPhrasePopupMenu());
 
-			emptyNode.setPopupMenu(newPhrasePopupMenu());
-
-			iModel.insertNodeInto(emptyNode, lngNode, lngNode.getChildCount());
+			iModel.insertNodeInto(emptyNode, parentNode, parentNode.getChildCount());
 			//iModel.reload(emptyNode);
 		}
+	}
+
+	private void addTranscriptionAndExamples(ExTreeNode nodePhrase, LngPhrase lngPhrase) {
+		// transcription
+		String transcription;
+		if (lngPhrase != null && lngPhrase.iTranscription != null && !lngPhrase.iTranscription.isEmpty()) {
+			transcription = lngPhrase.iTranscription;
+		}else {
+			transcription = LCutils.string("Transcription_can_be_added_here");
+		}
+
+		ExTreeNode nodeTranscription = new ExTreeNode(transcription, LCutils.string("Transcription_can_be_added_here"), true, null);
+		iModel.insertNodeInto(nodeTranscription, nodePhrase, nodePhrase.getChildCount());
+		//iModel.reload(nodeTranscription);
+
+		// examples
+		ExTreeNode nodeExamples = new ExTreeNode(LCutils.string("Examples"), false);
+		iModel.insertNodeInto(nodeExamples, nodePhrase, nodePhrase.getChildCount());
+		//iModel.reload(nodeExamples);
+
+		if (lngPhrase != null && lngPhrase.iExamples != null) {
+			for (int i = 0; i < lngPhrase.iExamples.size(); i++) {
+				ExTreeNode nodeExample = new ExTreeNode(lngPhrase.iExamples.get(i), LCutils.string("Example_can_be_added_here"), true, new ExTreeNode.ExTreeNodeListener() {
+					@Override
+					public void onStopNodeEditing(ExTreeNode changedNode) {
+						onStopExampleEditing(nodeExamples, changedNode);
+					}
+				});
+				iModel.insertNodeInto(nodeExample, nodeExamples, nodeExamples.getChildCount());
+				//iModel.reload(nodeExample);
+			}
+		}
+
+		ExTreeNode nodeExample = new ExTreeNode(LCutils.string("Example_can_be_added_here"), LCutils.string("Example_can_be_added_here"), true, new ExTreeNode.ExTreeNodeListener() {
+			@Override
+			public void onStopNodeEditing(ExTreeNode changedNode) {
+				onStopExampleEditing(nodeExamples, changedNode);
+			}
+		});
+		iModel.insertNodeInto(nodeExample, nodeExamples, nodeExamples.getChildCount());
+		//iModel.reload(nodeExample);
+
 	}
 
 	private JPopupMenu newPhrasePopupMenu() {
