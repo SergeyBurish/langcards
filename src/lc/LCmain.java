@@ -57,7 +57,7 @@ public class LCmain extends JFrame {
 
 	public DocumentBuilder iParser;
 
-	Vector<JDialog> iCloseArray= new Vector<JDialog>();
+	Vector<JFrame> iCloseArray= new Vector<JFrame>();
 
 	enum State {
 		EDIT,
@@ -384,11 +384,11 @@ public class LCmain extends JFrame {
 		);
 	}
 	
-	public void addToCloseArray(JDialog dlg) {
+	public void addToCloseArray(JFrame dlg) {
 		iCloseArray.add(dlg);
 	}
 
-	public void removeFromCloseArray(JDialog dlg) {
+	public void removeFromCloseArray(JFrame dlg) {
 		iCloseArray.remove(dlg);
 	}
 

@@ -23,7 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class EditCardDlg extends JDialog {
+public class EditCardDlg extends JFrame {
 	ExTreeNode rootNode = new ExTreeNode(LCutils.string("New_Card"), false);
 	DefaultTreeModel iModel = new DefaultTreeModel(rootNode);
 	ExTree iTree = new ExTree(iModel);
@@ -42,7 +42,7 @@ public class EditCardDlg extends JDialog {
 	Boolean iAccepted = false;
 	
 	public EditCardDlg(JFrame parent, LngCard lngCard) {
-		super(parent, lngCard.id().isEmpty() ? LCutils.string("New_Card") : "card " + lngCard.id(), true);
+		super(lngCard.id().isEmpty() ? LCutils.string("New_Card") : "card " + lngCard.id());
 		iLngCard = lngCard;
 
 		if (!lngCard.id().isEmpty()) {
@@ -325,8 +325,6 @@ public class EditCardDlg extends JDialog {
 				.addComponent(iStatusLbl)
 		);
 
-		final EditCardDlg self = this;
-		
 		iOkBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -353,7 +351,6 @@ public class EditCardDlg extends JDialog {
 				}
 
 				iAccepted = true;
-				LCmain.mainFrame.removeFromCloseArray(self);
 				dispose();
 			}
 		});
@@ -370,6 +367,10 @@ public class EditCardDlg extends JDialog {
 			settings.dialogHeight = frameBounds.height;
 		}
 
+		// emulate modal
+		LCmain.mainFrame.setEnabled(true);
+
+		LCmain.mainFrame.removeFromCloseArray(this);
 		super.dispose();
 	}
 
@@ -386,11 +387,16 @@ public class EditCardDlg extends JDialog {
 				} else {
 					pack();
 				}
+
+				// emulate modal
+				LCmain.mainFrame.setEnabled(false);
+
+				super.setVisible(visible);
+
 			} catch (LangCardsException e) {
 				LCmain.mainFrame.showErr(e);
 			}
 		}
-		super.setVisible(visible);
 	}
 	
 	public Boolean accepted() {
