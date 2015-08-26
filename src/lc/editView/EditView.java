@@ -47,20 +47,24 @@ public class EditView {
 				try {
 					LngCard lngCard = new LngCard();
 
-					EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
+					EditCardDlg newCardDlg = new EditCardDlg(lngCard, new EditCardDlg.EditCardListener() {
+						@Override
+						public void onSaveCard(LngCard lngCard) {
+							try {
+								iSet.addNewCard(lngCard);
+								updateTable();
+								updateStateTable();
+								scrollTableToShowRaw(iTableModel.getRowCount() - 1);
+							}
+							catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+							catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
+						}
+					});
 					newCardDlg.setLanguages(iSet.languageFrst(), iSet.languageScnd());
 					newCardDlg.setVisible(true);
 
-					if (newCardDlg.accepted()) {
-						iSet.addNewCard(lngCard);
-						updateTable();
-						updateStateTable();
-						scrollTableToShowRaw(iTableModel.getRowCount() - 1);
-					}
-
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
-				catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
 			}
 		});
 
@@ -92,14 +96,19 @@ public class EditView {
 						String cardId = (String) iTableModel.getValueAt(selectedRow, 0);
 						LngCard lngCard = iSet.getCard(cardId);
 
-						EditCardDlg newCardDlg = new EditCardDlg(null, lngCard);
+						EditCardDlg newCardDlg = new EditCardDlg(lngCard, new EditCardDlg.EditCardListener() {
+							@Override
+							public void onSaveCard(LngCard lngCard) {
+								try {
+									iSet.saveCard(lngCard);
+									updateTable();
+								}
+								catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}
+								catch (LangCardsException e)		{LCmain.mainFrame.showErr(e);}
+							}
+						});
 						newCardDlg.setLanguages(iSet.languageFrst(), iSet.languageScnd());
 						newCardDlg.setVisible(true);
-
-						if (newCardDlg.accepted()) {
-							iSet.saveCard(lngCard);
-							updateTable();
-						}
 					}
 				}
 				catch (XPathExpressionException e)	{LCmain.mainFrame.showErr(e);}

@@ -39,11 +39,12 @@ public class EditCardDlg extends JFrame {
 	
 	LngCard iLngCard;
 	
-	Boolean iAccepted = false;
-	
-	public EditCardDlg(JFrame parent, LngCard lngCard) {
+	EditCardListener iEditCardListener;
+
+	public EditCardDlg(LngCard lngCard, EditCardListener editCardListener) {
 		super(lngCard.id().isEmpty() ? LCutils.string("New_Card") : "card " + lngCard.id());
 		iLngCard = lngCard;
+		iEditCardListener = editCardListener;
 
 		if (!lngCard.id().isEmpty()) {
 			rootNode.setUserObject("card " + lngCard.id());
@@ -350,7 +351,10 @@ public class EditCardDlg extends JFrame {
 					}
 				}
 
-				iAccepted = true;
+				if (iEditCardListener != null) {
+					iEditCardListener.onSaveCard(iLngCard);
+				}
+
 				dispose();
 			}
 		});
@@ -399,11 +403,11 @@ public class EditCardDlg extends JFrame {
 		}
 	}
 	
-	public Boolean accepted() {
-		return iAccepted;
-	}
-
 	public LngCard getLngCard() {
 		return iLngCard;
+	}
+
+	public interface EditCardListener {
+		void onSaveCard(LngCard lngCard);
 	}
 }
