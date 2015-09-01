@@ -33,7 +33,7 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 					public void ctrlEnterTyped() {
 						try {
 							if (iTextPane != null) {
-								iTextPane.getDocument().insertString(iTextPane.getCaretPosition(), "\n", null);
+								iTextPane.insertStringAtCaretPosition("\n");
 							}
 						} catch (BadLocationException e) {
 							LCmain.mainFrame.showErr(e);

@@ -89,16 +89,31 @@ public class TextPaneWithDefault extends JTextPane {
 		}
 	}
 
-	public void hideDefaultString() {
+	public void hideDefaultString(Document document) {
 		if (!typing) {
-			Document doc = getDocument();
-			if (doc instanceof AbstractDocument) {
+
+			if (document == null) {
+				document = getDocument();
+			}
+			if (document instanceof AbstractDocument) {
 				try {
-					((AbstractDocument) doc).replace(0, TextPaneWithDefault.this.defaultString.length(), "", TextPaneWithDefault.this.attributeSet);
+					((AbstractDocument) document).replace(0, TextPaneWithDefault.this.defaultString.length(), "", TextPaneWithDefault.this.attributeSet);
 				} catch (BadLocationException e) {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	public void insertStringAtCaretPosition(String s) throws BadLocationException {
+		if (!s.isEmpty()) {
+			Document document = getDocument();
+			if (!typing) {
+				hideDefaultString(document);
+				setTyping(true);
+				TextPaneWithDefault.this.setForeground(TextPaneWithDefault.this.getSelectedTextColor());
+			}
+			document.insertString(getCaretPosition(), s, null);
 		}
 	}
 }

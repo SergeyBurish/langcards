@@ -214,7 +214,7 @@ public class LessonView {
 			iVerifyNextBtn.setEnabled(false);
 		}
 		iLessonStatus = LessonStatus.ANSWERED;
-		iAnswerTextPane.hideDefaultString();
+		iAnswerTextPane.hideDefaultString(null);
 		iAnswerTextPane.setEditable(false);
 	}
 
