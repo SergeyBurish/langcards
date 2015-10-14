@@ -10,6 +10,7 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 	private boolean changed;
 	private JPopupMenu iPopupMenu = null;
 	private ExTreeNodeListener listener = null;
+	private boolean isTranscription = false;
 
 	public ExTreeNode (Object userObject, boolean editable) {
 		this(userObject, null, editable, null);
@@ -55,6 +56,14 @@ public class ExTreeNode extends DefaultMutableTreeNode {
 
 	public String getDefaultString() {
 		return defaultString;
+	}
+
+	public void setIsTranscriptionSign() {
+		isTranscription = true;
+	}
+
+	public boolean isTranscription() {
+		return isTranscription;
 	}
 
 	public interface ExTreeNodeListener {

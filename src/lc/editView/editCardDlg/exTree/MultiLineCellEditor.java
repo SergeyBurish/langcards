@@ -1,9 +1,13 @@
 package lc.editView.editCardDlg.exTree;
 
 import lc.LCmain;
+import lc.LCutils;
 import lc.controls.TextPaneWithDefault;
+import lc.editView.editCardDlg.Keyboard;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -15,6 +19,7 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 	DefaultTreeModel iModel;
 	ExTreeNode iNode = null;
 	private boolean textChanged;
+	private Keyboard iKeyboard;
 
 	public MultiLineCellEditor(DefaultTreeModel model) {
 		super(new JTextField());
@@ -72,6 +77,10 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 
 	private void updateSizes() {
 		iTextPane.updateSize();
+
+		if (iKeyboard != null) {
+			iKeyboard.updatePosition(iTextPane);
+		}
 		
 		if (iModel != null && iNode != null) {
 			iModel.nodeChanged(iNode);
@@ -103,6 +112,45 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 			iTextPane = createTextPane(defaultString, stringValue);
 		}
 
+		if ( iNode != null && iNode.isTranscription() ) {
+			if (iKeyboard == null) {
+
+				iKeyboard = new Keyboard(LCutils.string("EnglishTranscription"), new Keyboard.KBListener() {
+					@Override
+					public void keyPressed(String key) {
+						try {
+							if (iTextPane != null) {
+								iTextPane.insertStringAtCaretPosition(key);
+							}
+						} catch (BadLocationException e) {
+							LCmain.mainFrame.showErr(e);
+						}
+
+					}
+				});
+
+				iKeyboard.init();
+				iKeyboard.setAlwaysOnTop(true);
+			}
+
+			iTextPane.addAncestorListener(new AncestorListener() {
+				@Override
+				public void ancestorAdded(AncestorEvent event) {
+					updateSizes();
+					iKeyboard.setVisible(true);
+				}
+
+				@Override
+				public void ancestorRemoved(AncestorEvent event) {
+				}
+
+				@Override
+				public void ancestorMoved(AncestorEvent event) {
+					updateSizes();
+				}
+			});
+		}
+
 		return iTextPane;
 	}
 
@@ -112,6 +160,19 @@ public class MultiLineCellEditor extends DefaultCellEditor {
 			iNode.stopNodeEditing();
 		}
 
+		if (iKeyboard != null) {
+			iKeyboard.setVisible(false);
+		}
+
 		return super.stopCellEditing();
+	}
+
+	@Override
+	public void cancelCellEditing() {
+		if (iKeyboard != null) {
+			iKeyboard.setVisible(false);
+		}
+
+		super.cancelCellEditing();
 	}
 }

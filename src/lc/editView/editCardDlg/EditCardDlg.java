@@ -40,6 +40,7 @@ public class EditCardDlg extends JFrame {
 	LngCard iLngCard;
 	
 	EditCardListener iEditCardListener;
+	private MultiLineCellEditor iMultiLineCellEditor;
 
 	public EditCardDlg(LngCard lngCard, EditCardListener editCardListener) {
 		super(lngCard.id().isEmpty() ? LCutils.string("New_Card") : "card " + lngCard.id());
@@ -86,7 +87,8 @@ public class EditCardDlg extends JFrame {
 		rootNode.add(iLngScndNode);
 
 		iTree.setCellRenderer(new MultiLineCellRenderer());
-		iTree.setCellEditor(new MultiLineCellEditor(iModel));
+		iMultiLineCellEditor = new MultiLineCellEditor(iModel);
+		iTree.setCellEditor(iMultiLineCellEditor);
 
 		//expand all nodes but Transcription and Examples
 		Object root = iModel.getRoot();
@@ -259,6 +261,7 @@ public class EditCardDlg extends JFrame {
 		}
 
 		ExTreeNode nodeTranscription = new ExTreeNode(transcription, LCutils.string("Transcription_can_be_added_here"), true, null);
+		nodeTranscription.setIsTranscriptionSign();
 		iModel.insertNodeInto(nodeTranscription, nodePhrase, nodePhrase.getChildCount());
 		//iModel.reload(nodeTranscription);
 
@@ -375,6 +378,10 @@ public class EditCardDlg extends JFrame {
 		LCmain.mainFrame.setEnabled(true);
 
 		LCmain.mainFrame.removeFromCloseArray(this);
+
+		if (iMultiLineCellEditor != null) {
+			iMultiLineCellEditor.cancelCellEditing();
+		}
 		super.dispose();
 	}
 
