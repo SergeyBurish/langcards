@@ -32,6 +32,7 @@ import lc.editView.EditView;
 import lc.langCardsException.LangCardsException;
 
 import lc.lessonView.LessonView;
+import lc.utils.LCutils;
 import org.apache.commons.io.FilenameUtils;
 import org.xml.sax.SAXException;
 

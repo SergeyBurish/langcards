@@ -1,7 +1,7 @@
 package lc.lessonView;
 
 import lc.LCmain;
-import lc.LCutils;
+import lc.utils.LCutils;
 import lc.cardSet.CardSet;
 import lc.cardSet.Lesson;
 import lc.cardSet.lngCard.LngCard;

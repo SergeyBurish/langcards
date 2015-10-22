@@ -1,7 +1,7 @@
 package lc.editView.editCardDlg.exTree;
 
 import lc.LCmain;
-import lc.LCutils;
+import lc.utils.LCutils;
 import lc.controls.TextPaneWithDefault;
 import lc.editView.editCardDlg.Keyboard;
 

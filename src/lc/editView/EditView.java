@@ -1,8 +1,8 @@
 package lc.editView;
 
 import lc.LCmain;
-import lc.LCutils;
-import lc.LCutils.LanguageResourceItem;
+import lc.utils.LCutils;
+import lc.utils.LCutils.LanguageResourceItem;
 import lc.cardSet.CardSet;
 import lc.cardSet.lngCard.LngCard;
 import lc.editView.editCardDlg.EditCardDlg;

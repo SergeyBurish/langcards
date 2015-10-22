@@ -17,7 +17,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import lc.LCmain;
-import lc.LCutils;
+import lc.utils.LCutils;
 import lc.langCardsException.LangCardsException;
 import lc.cardSet.lngCard.LngCard;
 import lc.cardSet.lngPhrase.LngPhrase;

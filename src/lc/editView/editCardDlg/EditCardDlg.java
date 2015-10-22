@@ -1,7 +1,7 @@
 package lc.editView.editCardDlg;
 
 import lc.LCmain;
-import lc.LCutils;
+import lc.utils.LCutils;
 import lc.cardSet.lngCard.LngCard;
 import lc.cardSet.lngPhrase.LngPhrase;
 import lc.editView.editCardDlg.exTree.ExTree;
