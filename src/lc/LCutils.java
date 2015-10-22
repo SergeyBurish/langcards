@@ -12,8 +12,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.ImageIcon;
+import javax.xml.transform.TransformerException;
 
+import lc.utils.LCproperties;
 import org.apache.commons.io.FilenameUtils;
+import org.xml.sax.SAXException;
 
 
 public class LCutils {
@@ -257,7 +260,11 @@ public class LCutils {
 	}
 
 	public static void saveSettings(Settings settings) {
-		Properties props = new Properties();
+		LCproperties props = LCproperties.getInstance();
+		props.clear();
+
+		props.setComment("Language Cards settings");
+
 		props.setProperty(X_POS, Integer.toString(settings.xPos));
 		props.setProperty(Y_POS, Integer.toString(settings.yPos));
 		props.setProperty(EDIT_WIDTH, Integer.toString(settings.editWidth));
@@ -270,32 +277,24 @@ public class LCutils {
 		props.setProperty(DIALOG_HEIGHT, Integer.toString(settings.dialogHeight));
 
 		try {
-			FileOutputStream output = new FileOutputStream(SETTINGS_FILE_NAME);
-			props.store(output, "Language Cards settings");
-			output.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			LOGGER.warning("fail to create/save " + SETTINGS_FILE_NAME + ": " + e.getMessage());
-		} catch (IOException e) {
+			props.store(SETTINGS_FILE_NAME);
+		} catch (TransformerException e) {
 			e.printStackTrace();
 			LOGGER.warning("fail to create/save " + SETTINGS_FILE_NAME + ": " + e.getMessage());
 		}
 	}
 
 	public static Settings loadSettings() {
-
-		Properties props = new Properties();
+		LCproperties props = LCproperties.getInstance();
 		try {
-			FileInputStream input = new FileInputStream(SETTINGS_FILE_NAME);
-			props.load(input);
-			input.close();
-		} catch (FileNotFoundException e) {
+			props.load(SETTINGS_FILE_NAME);
+		} catch (IOException e) {
 			e.printStackTrace();
 			LOGGER.info("fail to load settings: " + e.getMessage());
 			return new Settings();
-		} catch (IOException e) {
-			LOGGER.info("fail to load settings: " + e.getMessage());
+		} catch (SAXException e) {
 			e.printStackTrace();
+			LOGGER.info("fail to load settings: " + e.getMessage());
 			return new Settings();
 		}
 
