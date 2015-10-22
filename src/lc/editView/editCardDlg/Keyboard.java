@@ -37,6 +37,8 @@ public class Keyboard extends JFrame {
 			base.add(panel);
 		}
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		base.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 		add(base);
 		pack();
 	}
