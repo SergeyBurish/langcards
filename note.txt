@@ -1,0 +1,18 @@
+TODO
+<Maven>
+
+	<UnitTests>
+	?JUnit
+	?TestNG
+	add LCproperties, CardSet
+	
+		<XMLStorage>
+		LCproperties, CardSet extends XMLStorage
+		
+			<EnglishTranscription>
+			to SETTINGS_FILE_NAME
+			(set of attempts to open-parse, use defaults if fail)
+			</EnglishTranscription>
+		</XMLStorage>
+	</UnitTests>
+</Maven>
