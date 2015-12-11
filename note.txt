@@ -5,7 +5,8 @@ TODO
 	?JUnit
 	?TestNG
 	add LCproperties, CardSet
-	
+	remove initDoc(); from LCproperties constructor
+
 		<XMLStorage>
 		LCproperties, CardSet extends XMLStorage
 		
