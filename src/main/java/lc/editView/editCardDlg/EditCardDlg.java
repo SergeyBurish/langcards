@@ -167,7 +167,7 @@ public class EditCardDlg extends JFrame {
 		iTreeScrollPane.getViewport().setPreferredSize(iTree.getPreferredSize());
 	}
 
-	private void addPhrase(LngPhrase lngPhrase, ExTreeNode lngNode) {
+	private void addPhrase(LngPhrase lngPhrase, final ExTreeNode lngNode) {
 		String phraseValue;
 		if (lngPhrase != null) {
 			phraseValue = lngPhrase.iValue;
@@ -192,7 +192,7 @@ public class EditCardDlg extends JFrame {
 		}
 	}
 
-	private void onStopPhraseEditing(ExTreeNode lngNode, ExTreeNode changedNode) {
+	private void onStopPhraseEditing(final ExTreeNode lngNode, ExTreeNode changedNode) {
 		if (changedNode.getChangedString().isEmpty()) {
 			for (int i = changedNode.getChildCount() - 1; i >= 0; i--) {
 				Object child = changedNode.getChildAt(i);
@@ -213,7 +213,7 @@ public class EditCardDlg extends JFrame {
 		});
 	}
 
-	private void onStopExampleEditing(ExTreeNode nodeExamples, ExTreeNode changedNode) {
+	private void onStopExampleEditing(final ExTreeNode nodeExamples, ExTreeNode changedNode) {
 		addRemoveEmptyNode(nodeExamples, changedNode, LCutils.string("Example_can_be_added_here"), new ExTreeNode.ExTreeNodeListener() {
 			@Override
 			public void onStopNodeEditing(ExTreeNode changedNode) {
@@ -266,7 +266,7 @@ public class EditCardDlg extends JFrame {
 		//iModel.reload(nodeTranscription);
 
 		// examples
-		ExTreeNode nodeExamples = new ExTreeNode(LCutils.string("Examples"), false);
+		final ExTreeNode nodeExamples = new ExTreeNode(LCutils.string("Examples"), false);
 		iModel.insertNodeInto(nodeExamples, nodePhrase, nodePhrase.getChildCount());
 		//iModel.reload(nodeExamples);
 
