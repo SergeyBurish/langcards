@@ -112,7 +112,7 @@ public class LCutils {
 		}
 		
 		if (locale != null) {
-			iResourceBundle = ResourceBundle.getBundle("resources.strings.strings", locale);
+			iResourceBundle = ResourceBundle.getBundle("strings.strings", locale);
 			LOGGER.info("setLocale: " + iResourceBundle.getLocale().toString());
 			
 			iCurrentLocaleString = localeString;
@@ -125,7 +125,7 @@ public class LCutils {
 	}
 	
 	public static ImageIcon image(String imgName) {
-		java.net.URL imgURL = LCmain.class.getResource("/resources/images/" + imgName);
+		java.net.URL imgURL = LCmain.class.getResource("/images/" + imgName);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, "");
 		}
