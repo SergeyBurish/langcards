@@ -21,6 +21,13 @@ import org.xml.sax.SAXException;
 
 public class LCutils {
 	private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+	private static final String STRINGS_RESOURCES_FILENAME_COMMON_PART = "strings_";
+	private static final String STRINGS_PROPERTIES_FILE_NAME_PATTERN = STRINGS_RESOURCES_FILENAME_COMMON_PART +
+								".*\\.properties";
+	private static final String DEFAULT_STRINGS_RESOURCE = "/strings/strings.properties";
+
+
 	private static final String STRING_RESOURCE_NAME = "NameInLanguageList";
 	private static final String SETTINGS_FILE_NAME = "langCardsSettings";
 
@@ -91,7 +98,6 @@ public class LCutils {
 	
 	public static void setLocale(String localeString) {
 		String[] localeStringsArr = localeString.split("_");
-		
 		Locale locale = null;
 		
 		switch (localeStringsArr.length) {
@@ -114,7 +120,6 @@ public class LCutils {
 		if (locale != null) {
 			iResourceBundle = ResourceBundle.getBundle("strings.strings", locale);
 			LOGGER.info("setLocale: " + iResourceBundle.getLocale().toString());
-			
 			iCurrentLocaleString = localeString;
 		}
 	}
@@ -137,50 +142,45 @@ public class LCutils {
 			URISyntaxException {
 		final Vector<LanguageResourceItem> langList = new Vector<LanguageResourceItem>();
 
-		CodeSource src = LCutils.class.getProtectionDomain().getCodeSource();
-		if (src != null) {
+		URL strResUrl = LCmain.class.getResource(DEFAULT_STRINGS_RESOURCE);
+		if (strResUrl != null) {
+			URI strResUri = strResUrl.toURI();
 
-			URL binJarUrl = src.getLocation();
-			if (binJarUrl != null) {
-				URI binJarUri = binJarUrl.toURI();
-				String separator = "(\\\\|/)";
-				String stringsPropertiesPath = ".*resources" + separator
-						+ "strings" + separator + "strings_.*\\.properties";
+			String strResUriPath = strResUri.getPath();
+			String strResFullPath = FilenameUtils.getFullPath(strResUriPath);
 
-				Pattern stringsPropertiesPattern = Pattern
-						.compile(stringsPropertiesPath);
+			Pattern stringsPropertiesPattern = Pattern
+					.compile(STRINGS_PROPERTIES_FILE_NAME_PATTERN);
 
-				getResources(binJarUri.getPath(), stringsPropertiesPattern,
-						new SearchResourceListener() {
+			getResources(strResFullPath, stringsPropertiesPattern,
+					new SearchResourceListener() {
+						@Override
+						public Object onFind(Object fileName) {
+							String baseName = FilenameUtils
+									.getBaseName((String) fileName);
+							LanguageResourceItem langItem = itemOfStringResource(baseName);
 
-							@Override
-							public Object onFind(Object fileName) {
-								String baseName = FilenameUtils
-										.getBaseName((String) fileName);
-								LanguageResourceItem langItem = itemOfStringResource(baseName);
-								
-								if (langItem != null) {
-									String name = langItem.toString();
-									String localeString = langItem.localeString();
-									
-									if (!name.isEmpty() && !localeString.isEmpty()) {
-										LOGGER.info("supported language found: " + langItem);
-										langList.add(new LanguageResourceItem(name, localeString));
-									}
+							if (langItem != null) {
+								String name = langItem.toString();
+								String localeString = langItem.localeString();
+
+								if (!name.isEmpty() && !localeString.isEmpty()) {
+									LOGGER.info("supported language found: " + langItem);
+									langList.add(new LanguageResourceItem(name, localeString));
 								}
-								return null;
 							}
-						});
-			}
+							return null;
+						}
+					});
 		}
 		return langList;
 	}
 
 	private static LanguageResourceItem itemOfStringResource(String fileBaseName) {
-		String localeString = fileBaseName.replaceFirst("strings_", "") ; // "strings_en_EN" -> "en_EN"
-		ResourceBundle iResourceBundle = ResourceBundle.getBundle("resources.strings." + fileBaseName);
+		String localeString = fileBaseName.replaceFirst(STRINGS_RESOURCES_FILENAME_COMMON_PART, "") ; // "strings_en_EN" -> "en_EN"
+		ResourceBundle resourceBundle = ResourceBundle.getBundle("strings." + fileBaseName);
 		
-		return new LanguageResourceItem(iResourceBundle.getString(STRING_RESOURCE_NAME), localeString);
+		return new LanguageResourceItem(resourceBundle.getString(STRING_RESOURCE_NAME), localeString);
 	}
 
 	// for all elements of searchPath get a Collection of resources Pattern
@@ -242,7 +242,7 @@ public class LCutils {
 					resourcesList.addAll(getResourcesFromDirectory(file, pattern,
 							listener));
 				} else {
-					final String fileName = file.getCanonicalPath();
+					final String fileName = file.getName();
 					final boolean accept = pattern.matcher(fileName).matches();
 
 					if (accept) {
