@@ -1,0 +1,8 @@
+# macOS
+
+.idea/
+out/
+
+langcards.iml
+langCardsLog.txt
+langCardsSettings
